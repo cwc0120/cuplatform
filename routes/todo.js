@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
+"use strict";
+var express = require('express'); 
 var mongoose = require('mongoose');
+var router = express.Router();
 var Todo = mongoose.model('Todo');
 
 router.route('/')
@@ -18,25 +19,27 @@ router.route('/')
 
 	// add a new task
 	.post(function(req, res, next) {
+		var content = req.body.content;
 		new Todo({
 			user_id: req.session.id,
-			content: req.body.content
+			content: content
 			}).save(function(err) {
 				if (err) return next(err);
-				console.log('POST success! Content: ' + req.body.content);
+				console.log('POST success! Content: ' + content);
 				res.redirect('/todo');
 			});
-	});
+	})
 
 router.route('/:id')
 	// update a task
 	.put(function(req, res, next) {
+		var content = req.body.content;
 		Todo.update(
 		{user_id: req.session.id, _id: req.params.id}, 
-		{$set: {content: req.body.content}},
+		{$set: {content: content}},
 		function (err) {
 			if (err) return next(err);
-			console.log('PUT success!');
+			console.log('PUT success! Content: ' + content);
 			res.status(200).json({redirectTo: '/todo'});
 		});
 	})
@@ -47,9 +50,9 @@ router.route('/:id')
 		{user_id: req.session.id, _id: req.params.id},
 		function(err) {
 			if (err) return next(err);
-			console.log('DELETE success!');
+			console.log('DELETE success! ID: ' + req.params.id);
 			res.status(200).json({redirectTo: '/todo'});
 		});
-	});
+	})
 
 module.exports = router;

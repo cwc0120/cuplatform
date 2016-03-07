@@ -1,3 +1,4 @@
+"use strict";
 $(window).load(function() {
 	var editing = false;
 	$('span.edit').click(function() {

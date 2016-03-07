@@ -10,6 +10,7 @@ var session = require('express-session');
 
 var index = require('./routes/index');
 var todo = require('./routes/todo');
+var register = require('./routes/register');
 
 var app = express();
 
@@ -33,6 +34,7 @@ app.use(session({
 }));
 app.use('/', index);
 app.use('/todo', todo);
+app.use('/register', register);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
