@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1 Register
+	form(action='/register', method='post', id='newUser')
+		input.uid(type='text', name='uid', placeholder='User ID')
+		br
+		input.email(type='text', name='email', placeholder='E-mail')
+		br
+		input.pwd(type='password', name='pwd1', placeholder='Password')
+		br
+		input.pwd(type='password', name='pwd2', placeholder='Type password again')
+		br
+		button(type='submit') Register

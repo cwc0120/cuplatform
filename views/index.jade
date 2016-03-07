@@ -1,0 +1,11 @@
+extends layout
+
+block content
+	h1 Welcome
+	form(action='/auth', method='post', id='loginform')
+		input.uid(type='text', name='uid', placeholder='User ID')
+		br
+		input.pwd(type='password', name='pwd', placeholder='Password')
+	button(type='submit', form='loginform') Login
+	t 
+	button(onclick='location.href="/register"') Register
