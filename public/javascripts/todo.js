@@ -24,7 +24,7 @@ $(window).load(function() {
 				content: $(this).find('input[name="content"]').val()
 			},
 			success: function(res) {
-				window.location = res.redirectTo;
+				window.location = res.redirect;
 			}
 		});
 	});
@@ -35,7 +35,7 @@ $(window).load(function() {
 			type: 'delete',
 			datatype: 'json',
 			success: function(res) {
-				window.location = res.redirectTo;
+				window.location = res.redirect;
 			}
 		});
 	});

@@ -8,7 +8,9 @@ router.route('/')
 	// show all tasks
 	.get(function(req, res, next) {
 		Todo.find({user_id: req.session.id}).exec(function (err, taskList) {
-			if (err) return next(err);
+			if (err) {
+				return next(err);
+			}
 			res.render('todo', {
 				title: 'Task List Example',
 				taskList: taskList
@@ -24,7 +26,9 @@ router.route('/')
 			user_id: req.session.id,
 			content: content
 			}).save(function(err) {
-				if (err) return next(err);
+				if (err) {
+					return next(err);
+				}
 				console.log('POST success! Content: ' + content);
 				res.redirect('/todo');
 			});
@@ -38,9 +42,11 @@ router.route('/:id')
 		{user_id: req.session.id, _id: req.params.id}, 
 		{$set: {content: content}},
 		function (err) {
-			if (err) return next(err);
+			if (err) {
+				return next(err);
+			}
 			console.log('PUT success! Content: ' + content);
-			res.status(200).json({redirectTo: '/todo'});
+			res.status(200).json({redirect: '/todo'});
 		});
 	})
 
@@ -49,9 +55,11 @@ router.route('/:id')
 		Todo.remove(
 		{user_id: req.session.id, _id: req.params.id},
 		function(err) {
-			if (err) return next(err);
+			if (err) {
+				return next(err);
+			}
 			console.log('DELETE success! ID: ' + req.params.id);
-			res.status(200).json({redirectTo: '/todo'});
+			res.status(200).json({redirect: '/todo'});
 		});
 	})
 
