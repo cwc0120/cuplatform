@@ -36,6 +36,10 @@ app.use('/', index);
 app.use('/todo', todo);
 app.use('/register', register);
 
+app.get('/task', function(req, res) {
+  res.sendFile('views/todo.html', {root:__dirname + '/public/'});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

@@ -7,60 +7,87 @@ var Todo = mongoose.model('Todo');
 router.route('/')
 	// show all tasks
 	.get(function(req, res, next) {
-		Todo.find({user_id: req.session.id}).exec(function (err, taskList) {
+		Todo.find({user_id: req.session.id}).exec(function (err, todos) {
 			if (err) {
-				return next(err);
+				res.send(err);
+			} else {
+				res.json(todos);
 			}
-			res.render('todo', {
-				title: 'Task List Example',
-				taskList: taskList
-			});
-			console.log('GET success!');
-		});	
+		});
 	})
 
 	// add a new task
 	.post(function(req, res, next) {
 		var content = req.body.content;
-		new Todo({
+		Todo.create({
 			user_id: req.session.id,
 			content: content
-			}).save(function(err) {
+			}, 
+			function(err) {
 				if (err) {
-					return next(err);
+					res.send(err);
+				} else {
+					Todo.find({user_id: req.session.id}).exec(function (err, todos) {
+						if (err) {
+							res.send(err);
+						} else {
+							res.status(200).json(todos);
+						}
+					});
 				}
-				console.log('POST success! Content: ' + content);
-				res.redirect('/todo');
 			});
-	})
+	});
 
 router.route('/:id')
 	// update a task
 	.put(function(req, res, next) {
 		var content = req.body.content;
 		Todo.update(
-		{user_id: req.session.id, _id: req.params.id}, 
-		{$set: {content: content}},
-		function (err) {
-			if (err) {
-				return next(err);
-			}
-			console.log('PUT success! Content: ' + content);
-			res.status(200).json({redirect: '/todo'});
-		});
+			{user_id: req.session.id, _id: req.params.id}, 
+			{$set: {content: content}},
+			function (err) {
+				if (err) {
+					res.send(err);
+				} else {
+					Todo.find({user_id: req.session.id}).exec(function (err, todos) {
+						if (err) {
+							res.send(err);
+						} else {
+							res.status(200).json(todos);
+						}
+					});
+				}
+			});
 	})
 
 	// delete a task
 	.delete(function(req, res, next) {
 		Todo.remove(
-		{user_id: req.session.id, _id: req.params.id},
-		function(err) {
+			{user_id: req.session.id, _id: req.params.id},
+			function(err) {
+				if (err) {
+					res.send(err);
+				} else {
+					Todo.find({user_id: req.session.id}).exec(function (err, todos) {
+						if (err) {
+							res.send(err);
+						} else {
+							res.status(200).json(todos);
+						}
+					});
+				}
+			});
+	});
+
+function find(id, next) {
+	Todo.find({user_id: id}).exec(
+		function (err, todos) {
 			if (err) {
 				return next(err);
+			} else {
+				return todos;
 			}
-			console.log('DELETE success! ID: ' + req.params.id);
-			res.status(200).json({redirect: '/todo'});
 		});
-	})
+}
 
 module.exports = router;

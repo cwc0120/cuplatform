@@ -1,42 +1,61 @@
-"use strict";
-$(window).load(function() {
-	var editing = false;
-	$('span.edit').click(function() {
-		if (!editing) {
-			var input = $("<input>", {
-				val: $(this).text(),
-				type: 'text',
-				name: 'content'
-			});
-			$(this).replaceWith(input);
-			input.select();
-			editing = true;
-		}
-	});
+'use strict';
 
-	$('form.edit').submit(function() {
-		event.preventDefault();
-		$.ajax({
-			url: '/todo/' + $(this).attr('id'),
-			type: 'put',
-			datatype: 'json',
-			data: {
-				content: $(this).find('input[name="content"]').val()
+var cupTodo = angular.module('cupTodo', [])
+	.factory('Todos', ['$http', function($http) {
+		return {
+			get: function() {
+				return $http.get('/todo');
 			},
-			success: function(res) {
-				window.location = res.redirect;
+			create: function(data) {
+				return $http.post('/todo', data);
+			},
+			edit: function(id, data) {
+				return $http.put('/todo/' + id, data);
+			},
+			delete: function(id) {
+				return $http.delete('/todo/' + id);
 			}
-		});
-	});
+		}
+	}])
+	.controller('mainController', ['$scope', '$http', 'Todos', function($scope, $http, Todos) {
+		$scope.newTask = {};
+		$scope.editTask = {};
+		$scope.editing = false;
 
-	$('button.delete').click(function() {
-		$.ajax({
-			url: '/todo/' + $(this).attr('id'),
-			type: 'delete',
-			datatype: 'json',
-			success: function(res) {
-				window.location = res.redirect;
-			}
+		Todos.get().success(function(data){
+			$scope.todos = data;
 		});
-	});
-});
+
+		$scope.create = function() {
+			if ($scope.newTask.content == undefined)
+				return;
+			Todos.create($scope.newTask).success(function(data) {
+				$scope.newTask = {};
+				$scope.todos = data;
+			});
+		};
+
+		$scope.edit = function(id) {
+			$scope.editing = false;
+			if ($scope.editTask.content == undefined)
+				return false;
+			Todos.edit(id, $scope.editTask).success(function(data) {
+				$scope.editTask = {};
+				$scope.todos = data;
+				return false;
+			});
+		};
+
+		$scope.delete = function(id) {
+			Todos.delete(id).success(function(data) {
+				$scope.todos = data;
+			});
+		};
+
+		$scope.enableEdit = function(data) {
+			if (!$scope.editing) {
+				$scope.editing = true;
+				return true;
+			}
+		};
+	}]);
