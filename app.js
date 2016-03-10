@@ -1,5 +1,5 @@
+'use strict';
 require('./db');
-
 var express = require('express');
 var path = require('path');
 //var favicon = require('serve-favicon');
@@ -9,8 +9,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var index = require('./routes/index');
-var todo = require('./routes/todo');
-var register = require('./routes/register');
 
 var app = express();
 
@@ -32,13 +30,10 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-app.use('/', index);
-app.use('/api/todo', todo);
-app.use('/api/register', register);
 
-app.get('/task', function(req, res) {
-  res.render('todo');
-});
+require('./routes/todo')(app);
+require('./routes/register')(app);
+app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
