@@ -4,16 +4,16 @@ var cupTodo = angular.module('cupTodo', [])
 	.factory('Todos', ['$http', function($http) {
 		return {
 			get: function() {
-				return $http.get('/todo');
+				return $http.get('/api/todo');
 			},
 			create: function(data) {
-				return $http.post('/todo', data);
+				return $http.post('/api/todo', data);
 			},
 			edit: function(id, data) {
-				return $http.put('/todo/' + id, data);
+				return $http.put('/api/todo/' + id, data);
 			},
 			delete: function(id) {
-				return $http.delete('/todo/' + id);
+				return $http.delete('/api/todo/' + id);
 			}
 		}
 	}])

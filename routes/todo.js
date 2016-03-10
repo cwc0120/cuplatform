@@ -7,13 +7,7 @@ var Todo = mongoose.model('Todo');
 router.route('/')
 	// show all tasks
 	.get(function(req, res, next) {
-		Todo.find({user_id: req.session.id}).exec(function (err, todos) {
-			if (err) {
-				res.send(err);
-			} else {
-				res.json(todos);
-			}
-		});
+		find(req, res, next);
 	})
 
 	// add a new task
@@ -25,15 +19,9 @@ router.route('/')
 			}, 
 			function(err) {
 				if (err) {
-					res.send(err);
+					return next(err);
 				} else {
-					Todo.find({user_id: req.session.id}).exec(function (err, todos) {
-						if (err) {
-							res.send(err);
-						} else {
-							res.status(200).json(todos);
-						}
-					});
+					find(req, res, next);
 				}
 			});
 	});
@@ -47,15 +35,9 @@ router.route('/:id')
 			{$set: {content: content}},
 			function (err) {
 				if (err) {
-					res.send(err);
+					return next(err);
 				} else {
-					Todo.find({user_id: req.session.id}).exec(function (err, todos) {
-						if (err) {
-							res.send(err);
-						} else {
-							res.status(200).json(todos);
-						}
-					});
+					find(req, res, next);
 				}
 			});
 	})
@@ -66,28 +48,21 @@ router.route('/:id')
 			{user_id: req.session.id, _id: req.params.id},
 			function(err) {
 				if (err) {
-					res.send(err);
+					return next(err);
 				} else {
-					Todo.find({user_id: req.session.id}).exec(function (err, todos) {
-						if (err) {
-							res.send(err);
-						} else {
-							res.status(200).json(todos);
-						}
-					});
+					find(req, res, next);
 				}
 			});
 	});
 
-function find(id, next) {
-	Todo.find({user_id: id}).exec(
-		function (err, todos) {
-			if (err) {
-				return next(err);
-			} else {
-				return todos;
-			}
-		});
+function find(req, res, next) {
+	Todo.find({user_id: req.session.id}).exec(function (err, todos) {
+		if (err) {
+			return next(err);
+		} else {
+			res.status(200).json(todos);
+		}
+	});	
 }
 
 module.exports = router;

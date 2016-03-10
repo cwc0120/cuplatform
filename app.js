@@ -33,11 +33,11 @@ app.use(session({
   saveUninitialized: true
 }));
 app.use('/', index);
-app.use('/todo', todo);
-app.use('/register', register);
+app.use('/api/todo', todo);
+app.use('/api/register', register);
 
 app.get('/task', function(req, res) {
-  res.sendFile('views/todo.html', {root:__dirname + '/public/'});
+  res.render('todo');
 });
 
 // catch 404 and forward to error handler

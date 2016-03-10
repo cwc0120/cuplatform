@@ -1,18 +1,31 @@
-extends layout
+doctype html
+html(ng-app='cupTodo')
+	head
+		title CUP Todo List
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(type= 'text/javascript', src= 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
+		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js')
+		script(type= 'text/javascript', src= '/javascripts/todo.js')
+	
+	body(ng-controller='mainController')
+		h1 I have 
+			span {{todos.length}} tasks.
 
-block append script
-	script(type= 'text/javascript', src= '/javascripts/todo.js')
+		form(ng-submit='create()')
+			p New Task: 
+				input(type='text', ng-model='newTask.content')
 
-block content
-	h1= title
-	form(action='/todo', method='post')
-		p New Task: 
-			input(type='text', name='content')
-	table.tasks
-		each task in taskList
-			tr
+		table
+			tr(ng-hide='todo.editing', ng-repeat-start='todo in todos')
 				td
-					form(class='edit', id='#{task._id}') 
-						span.edit #{task.content}
-				td
-					button(class='delete', id='#{task._id}') delete
+					span(ng-click='todo.editing=enableEdit(todo.content)') {{todo.content}}
+				td 
+					button(ng-click='delete(todo._id)') delete
+			tr(ng-show='todo.editing', ng-repeat-end)
+				td 
+					form(ng-submit='todo.editing=edit(todo._id)')
+						input(type='text', ng-model='editTask.content', ng-value='todo.content')
+				td 
+					button(ng-click='delete(todo._id)') delete
+			
+					
