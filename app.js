@@ -25,15 +25,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('secret', config.secret);
 
-var index = require('./routes/index');
 var auth = require('./routes/auth');
 var todo = require('./routes/todo');
 var register = require('./routes/register');
 
-app.use('/', index);
 app.use('/api/auth', auth);
 app.use('/api/register', register);
 app.use('/api/todo', todo);
+app.get('*', function(req, res) {
+  res.sendFile('/public/views/index.html', {root : __dirname});
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

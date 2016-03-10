@@ -1,0 +1,25 @@
+
+<h1>I have <span>{{todos.length}} tasks.</span></h1>
+<form ng-submit="create()">
+  <p>New Task: 
+    <input type="text" ng-model="newTask.content"/>
+  </p>
+</form>
+<table>
+  <tr ng-hide="todo.editing" ng-repeat-start="todo in todos">
+    <td><span ng-click="todo.editing=enableEdit(todo.content)">{{todo.content}}</span></td>
+    <td> 
+      <button ng-click="delete(todo._id)">delete</button>
+    </td>
+  </tr>
+  <tr ng-show="todo.editing" ng-repeat-end="ng-repeat-end">
+    <td> 
+      <form ng-submit="todo.editing=edit(todo._id)">
+        <input type="text" ng-model="editTask.content" ng-value="todo.content"/>
+      </form>
+    </td>
+    <td> 
+      <button ng-click="delete(todo._id)">delete</button>
+    </td>
+  </tr>
+</table>
