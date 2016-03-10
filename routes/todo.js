@@ -1,60 +1,73 @@
 "use strict";
-var mongoose = require('mongoose');
-var Todo = mongoose.model('Todo');
+var express = require('express');
+var router = express.Router();
+var jwt = require('jsonwebtoken');
+var Todo = require('../models/todo');
 
-module.exports = function(app) {
-	app.get('/api/todo', function(req, res, next) {
+router.use(function(req, res, next) {
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+	if (token) {
+		jwt.verify(token, req.app.get('secret'), function(err, decoded) {
+			if (err) {
+				return res.status(400).json({message: 'Failed to authenticate token.'});
+			} else {
+				req.decoded = decoded;
+				next();
+			}
+		});
+	} else {
+		return res.status(403).json({message: 'No token provided.'});
+	}
+});
+
+router.route('/')
+	.get(function(req, res, next) {
 		find(req, res, next);
-	});
+	})
 
-	app.post('/api/todo', function(req, res, next) {
-		var content = req.body.content;
+	.post(function(req, res, next) {
 		Todo.create({
-			user_id: req.session.id,
-			content: content
-			}, 
-			function(err) {
-				if (err) {
-					return next(err);
-				} else {
-					find(req, res, next);
-				}
-			});
+			user: req.decoded._doc.uid,
+			content: req.body.content
+		}, function(err) {
+			if (err) {
+				return next(err);
+			} else {
+				find(req, res, next);
+			}
+		});
 	});
 
-	app.put('/api/todo/:id', function(req, res, next) {
-		var content = req.body.content;
+router.route('/:id')
+	.put(function(req, res, next) {
 		Todo.update(
-			{user_id: req.session.id, _id: req.params.id}, 
-			{$set: {content: content}},
-			function (err) {
-				if (err) {
-					return next(err);
-				} else {
-					find(req, res, next);
-				}
-			});
-	});
+			{_id: req.params.id}, 
+			{$set: {content: req.body.content}
+		}, function (err) {
+			if (err) {
+				return next(err);
+			} else {
+				find(req, res, next);
+			}
+		});
+	})
 
-	app.delete('/api/todo/:id', function(req, res, next) {
+	.delete(function(req, res, next) {
 		Todo.remove(
-			{user_id: req.session.id, _id: req.params.id},
+			{_id: req.params.id},
 			function(err) {
 				if (err) {
 					return next(err);
 				} else {
 					find(req, res, next);
 				}
-			});
+			}
+		);
 	});
-
-	app.get('/task', function(req, res) {
-		res.render('todo');
-	});
-};
 
 function find(req, res, next) {
-	Todo.find({user_id: req.session.id}).exec(function (err, todos) {
+	Todo.find().exec(function (err, todos) {
 		if (err) {
 			return next(err);
 		} else {
@@ -62,3 +75,5 @@ function find(req, res, next) {
 		}
 	});	
 }
+
+module.exports = router;

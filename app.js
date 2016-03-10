@@ -1,16 +1,16 @@
 'use strict';
-require('./db');
+
 var express = require('express');
 var path = require('path');
 //var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
-
-var index = require('./routes/index');
+var mongoose = require('mongoose');
+var config = require('./config');
 
 var app = express();
+mongoose.connect(config.database);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,17 +23,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('secret', config.secret);
 
-app.use(session({
-  secret: 'CUPisthebest',
-  cookie: {maxAge: 1200000},
-  resave: true,
-  saveUninitialized: true
-}));
+var index = require('./routes/index');
+var auth = require('./routes/auth');
+var todo = require('./routes/todo');
+var register = require('./routes/register');
 
-require('./routes/todo')(app);
-require('./routes/register')(app);
 app.use('/', index);
+app.use('/api/auth', auth);
+app.use('/api/register', register);
+app.use('/api/todo', todo);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

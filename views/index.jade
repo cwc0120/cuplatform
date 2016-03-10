@@ -1,11 +1,19 @@
-extends layout
-
-block content
-	h1 Welcome
-	form(action='/auth', method='post', id='loginform')
-		input.uid(type='text', name='uid', placeholder='User ID')
-		br
-		input.pwd(type='password', name='pwd', placeholder='Password')
-	button(type='submit', form='loginform') Login
-	t 
-	button(onclick='location.href="/register"') Register
+doctype html
+html(ng-app='cupIndex')
+	head
+		title CUP Todo List
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(type= 'text/javascript', src= 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
+		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js')
+		script(type= 'text/javascript', src= '/javascripts/index.js')
+	
+	body(ng-controller='mainController')
+		h1 Welcome
+		form
+			input(type='text', ng-model='user.uid', placeholder='User ID')
+			br
+			input(type='password', ng-model='user.pwd', placeholder='Password')
+		button(type='submit', ng-click='submitUser()') Login
+		t 
+		button(onclick='location.href="/register"') Register
+		p {{message}}

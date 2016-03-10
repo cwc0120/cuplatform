@@ -10,11 +10,13 @@ router.route('/')
 		console.log('GET success!');
 	});
 
-router.route('/register')
-	.get(function(req, res) {
-		res.render('register', {
-			title: 'Register'
-		});
-	});
+router.get('/register', function(req, res) {
+	res.render('register');
+});
+
+
+router.get('/task', function(req, res) {
+	res.render('todo');
+});
 
 module.exports = router;
