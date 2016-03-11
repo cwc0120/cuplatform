@@ -5,32 +5,90 @@ cup.config(function($routeProvider) {
 	$routeProvider
 		.when('/', {
 			templateUrl: '/views/home.html',
-			controller: 'homeController'
+			controller: 'homeController',
+			requiredLogin: false
 		})
 
 		.when('/register', {
 			templateUrl: '/views/register.html',
-			controller: 'registerController'
+			controller: 'registerController',
+			requiredLogin: false
 		})
 
 		.when('/task', {
 			templateUrl: '/views/task.html',
-			controller: 'taskController'
+			controller: 'taskController',
+			requiredLogin: true
+		})
+		.otherwise({
+			redirectTo: '/'
 		});
 });
 
-cup.factory('User', ['$http', function($http) {
+cup.config(function($httpProvider) {
+	$httpProvider.interceptors.push('TokenInterceptor');
+});
+
+cup.run(function($rootScope, $location, $window, Auth) {
+	$rootScope.$on('$routeChangeStart', function(event, nextRoute, currentRoute) {
+		if (nextRoute !== null && nextRoute.requiredLogin && !Auth.isLogged() && !Auth.getToken()) {
+			$location.path('/');
+			console.log('Please log in');
+		}
+		if (!nextRoute.requiredLogin && Auth.isLogged() && Auth.getToken()) {
+			$location.path('/task');
+			console.log('Magic');
+		}
+	});
+});
+
+cup.factory('Auth', ['$window', function($window) {
 	return {
-		validate: function(data) {
-			return $http.post('/api/auth', data);
+		getToken: function() {
+			return $window.localStorage['cupToken'];
+		},
+		setToken: function(res) {
+			$window.localStorage['uid'] = res.uid;
+			$window.localStorage['cupToken'] = res.token;
+		},
+		isLogged: function() {
+			var token = this.getToken();
+			if (token) {
+				return true;
+			}
+			return false;
 		}
 	};
 }]);
 
-cup.factory('NewUser', ['$http', function($http) {
+cup.factory('User', ['$http', '$window', '$location', 'Auth', function($http, $window, $location, Auth) {
 	return {
-		create: function(data) {
+		register: function(data) {
 			return $http.post('/api/register', data);
+		},
+		login: function(data) {
+			return $http.post('/api/auth', data);
+		},
+		logout: function() {
+			Auth.isLogged();
+			$location.path('/');
+			$window.localStorage.removeItem('uid');
+			$window.localStorage.removeItem('cupToken');
+		}
+	};
+}]);
+
+cup.factory('TokenInterceptor', ['$q', 'Auth', function($q, Auth) {
+	return {
+		request: function(config) {
+			var token = Auth.getToken();
+			if (token) {
+				config.headers['x-access-token'] = token;
+			}
+			return config;
+		},
+		response: function(res) {
+			return res || $q.when(res);
 		}
 	};
 }]);
@@ -52,15 +110,16 @@ cup.factory('Todos', ['$http', function($http) {
 	};
 }]);
 
-cup.controller('homeController', ['$scope', '$http', '$window', 'User', function($scope, $http, $window, User) {
+cup.controller('homeController', ['$scope', '$location', 'User', 'Auth', function($scope, $location, User, Auth) {
 	$scope.user = {};
 
-	$scope.submitUser = function() {
+	$scope.login = function() {
 		if ($scope.user.uid !== undefined && $scope.user.pwd !== undefined) {
-			User.validate($scope.user)
+			User.login($scope.user)
 				.success(function(result) {
-					$window.localStorage['cupToken'] = result.token;
-					$window.location.href = result.redirect;
+					Auth.setToken(result);
+					Auth.isLogged();
+					$location.path(result.redirect);
 				})
 				.error(function(err) {
 					$scope.message = err.error;
@@ -68,12 +127,12 @@ cup.controller('homeController', ['$scope', '$http', '$window', 'User', function
 		}		
 	};
 
-	$scope.toRegister = function() {
-		$window.location.href = '#register';
+	$scope.register = function() {
+		$location.path('/register');
 	};
 }]);
 
-cup.controller('registerController', ['$scope', '$http', '$window', 'NewUser', function($scope, $http, $window, NewUser) {
+cup.controller('registerController', ['$scope', '$location', 'User', function($scope, $location, User) {
 	$scope.newUser = {};
 	$scope.disable = true;
 
@@ -137,9 +196,9 @@ cup.controller('registerController', ['$scope', '$http', '$window', 'NewUser', f
 	};
 
 	$scope.createUser = function() {
-		NewUser.create($scope.newUser)
+		User.register($scope.newUser)
 		.success(function(result) {
-			$window.location.href = result.redirect;
+			$location.path(result.redirect);
 		})
 		.error(function(err) {
 			$scope.message = err.error;
@@ -155,13 +214,18 @@ cup.controller('registerController', ['$scope', '$http', '$window', 'NewUser', f
 	}
 }]);
 
-cup.controller('taskController', ['$scope', '$http', 'Todos', function($scope, $http, Todos) {
+cup.controller('taskController', ['$scope', '$window', '$location', 'Todos', 'User', function($scope, $window, $location, Todos, User) {
 	$scope.newTask = {};
 	$scope.editTask = {};
 	$scope.editing = false;
+	$scope.uid = $window.localStorage['uid'];
 
 	Todos.get().success(function(data){
+		$scope.success = true;
 		$scope.todos = data;
+	}).error(function(data) {
+		$scope.success = false;
+		$scope.errorMessage = data.message;
 	});
 
 	$scope.create = function() {
@@ -171,6 +235,9 @@ cup.controller('taskController', ['$scope', '$http', 'Todos', function($scope, $
 		Todos.create($scope.newTask).success(function(data) {
 			$scope.newTask = {};
 			$scope.todos = data;
+		}).error(function(data) {
+			$scope.success = false;
+			$scope.errorMessage = data.message;
 		});
 	};
 
@@ -183,19 +250,29 @@ cup.controller('taskController', ['$scope', '$http', 'Todos', function($scope, $
 			$scope.editTask = {};
 			$scope.todos = data;
 			return false;
+		}).error(function(data) {
+			$scope.success = false;
+			$scope.errorMessage = data.message;
 		});
 	};
 
 	$scope.delete = function(id) {
 		Todos.delete(id).success(function(data) {
 			$scope.todos = data;
+		}).error(function(data) {
+			$scope.success = false;
+			$scope.errorMessage = data.message;
 		});
 	};
 
 	$scope.enableEdit = function(data) {
-		if (!$scope.editing) {
+		if (!$scope.editing && data.user == $scope.uid) {
 			$scope.editing = true;
 			return true;
 		}
+	};
+
+	$scope.logout = function() {
+		User.logout();
 	};
 }]);

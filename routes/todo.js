@@ -3,22 +3,10 @@ var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
 var Todo = require('../models/todo');
+var utils = require('../utils')
 
 router.use(function(req, res, next) {
-	var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-	if (token) {
-		jwt.verify(token, req.app.get('secret'), function(err, decoded) {
-			if (err) {
-				return res.status(400).json({message: 'Failed to authenticate token.'});
-			} else {
-				req.decoded = decoded;
-				next();
-			}
-		});
-	} else {
-		return res.status(403).json({message: 'No token provided.'});
-	}
+	utils.validateToken(req, res, next);
 });
 
 router.route('/')
@@ -42,7 +30,7 @@ router.route('/')
 router.route('/:id')
 	.put(function(req, res, next) {
 		Todo.update(
-			{_id: req.params.id}, 
+			{_id: req.params.id, user: req.decoded._doc.uid}, 
 			{$set: {content: req.body.content}
 		}, function (err) {
 			if (err) {
@@ -55,7 +43,7 @@ router.route('/:id')
 
 	.delete(function(req, res, next) {
 		Todo.remove(
-			{_id: req.params.id},
+			{_id: req.params.id, user: req.decoded._doc.uid},
 			function(err) {
 				if (err) {
 					return next(err);
