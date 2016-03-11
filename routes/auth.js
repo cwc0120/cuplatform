@@ -28,6 +28,7 @@ router.post('/', function(req, res, next) {
 				// return token
 				res.status(200).json({
 					token: token,
+					uid: uid,
 					redirect: '/task',
 					message: 'Login successful.'
 				});

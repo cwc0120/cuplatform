@@ -1,26 +1,16 @@
-doctype html
-html(ng-app='cupRegister')
-	head
-		title CUP Todo List
-		link(rel='stylesheet', href='/stylesheets/style.css')
-		script(type= 'text/javascript', src= 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
-		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js')
-		script(type= 'text/javascript', src= '/javascripts/register.js')
-	
-	body(ng-controller='mainController')
-		h1 Register
-		form
-			input(type='text', ng-model='newUser.uid', ng-change='checkUid()', placeholder='User ID')
-			span {{uidStatus}}
-			br
-			input(type='text', ng-model='newUser.email', ng-change='checkEmail()', placeholder='E-mail')
-			span {{emailStatus}}
-			br
-			input(type='password', ng-model='newUser.pwd1', ng-change='checkPwd1()', placeholder='Password')
-			span {{pwd1Status}}
-			br
-			input(type='password', ng-model='newUser.pwd2', ng-change='checkPwd2()', placeholder='Type password again')
-			span {{pwd2Status}}
-			br
-			button(type='submit', ng-click='createUser()', ng-disabled='disable') Register
-			p {{message}}
+h1 Register
+form
+	input(type='text', ng-model='newUser.uid', ng-change='checkUid()', placeholder='User ID')
+	span {{uidStatus}}
+	br
+	input(type='text', ng-model='newUser.email', ng-change='checkEmail()', placeholder='E-mail')
+	span {{emailStatus}}
+	br
+	input(type='password', ng-model='newUser.pwd1', ng-change='checkPwd1()', placeholder='Password')
+	span {{pwd1Status}}
+	br
+	input(type='password', ng-model='newUser.pwd2', ng-change='checkPwd2()', placeholder='Type password again')
+	span {{pwd2Status}}
+	br
+	button(type='submit', ng-click='createUser()', ng-disabled='disable') Register
+	p {{message}}
