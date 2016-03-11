@@ -1,11 +1,12 @@
-extends layout
-
-block content
-	h1 Welcome
-	form(action='/auth', method='post', id='loginform')
-		input.uid(type='text', name='uid', placeholder='User ID')
-		br
-		input.pwd(type='password', name='pwd', placeholder='Password')
-	button(type='submit', form='loginform') Login
-	t 
-	button(onclick='location.href="/register"') Register
+doctype html
+html(ng-app='CUP')
+	head
+		title CUP Todo List
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js')
+		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js')
+		script(type= 'text/javascript', src= '/javascripts/controller.js')
+	
+	body
+		div(id='main')
+			div(ng-view)

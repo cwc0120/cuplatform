@@ -1,4 +1,4 @@
-require('./db');
+'use strict';
 
 var express = require('express');
 var path = require('path');
@@ -6,12 +6,11 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
-
-var index = require('./routes/index');
-var todo = require('./routes/todo');
+var mongoose = require('mongoose');
+var config = require('./config');
 
 var app = express();
+mongoose.connect(config.database);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,15 +23,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('secret', config.secret);
 
-app.use(session({
-  secret: 'CUPisthebest',
-  cookie: {maxAge: 1200000},
-  resave: true,
-  saveUninitialized: true
-}));
-app.use('/', index);
-app.use('/todo', todo);
+var auth = require('./routes/auth');
+var todo = require('./routes/todo');
+var register = require('./routes/register');
+
+app.use('/api/auth', auth);
+app.use('/api/register', register);
+app.use('/api/todo', todo);
+app.get('*', function(req, res) {
+  res.sendFile('/public/views/index.html', {root : __dirname});
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

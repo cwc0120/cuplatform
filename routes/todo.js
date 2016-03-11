@@ -1,55 +1,66 @@
+"use strict";
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-var Todo = mongoose.model('Todo');
+var Todo = require('../models/todo');
+var utils = require('../utils');
+
+router.use(function(req, res, next) {
+	utils.validateToken(req, res, next);
+});
 
 router.route('/')
-	// show all tasks
 	.get(function(req, res, next) {
-		Todo.find({user_id: req.session.id}).exec(function (err, taskList) {
-			if (err) return next(err);
-			res.render('todo', {
-				title: 'Task List Example',
-				taskList: taskList
-			});
-			console.log('GET success!');
-		});	
+		find(req, res, next);
 	})
 
-	// add a new task
 	.post(function(req, res, next) {
-		new Todo({
-			user_id: req.session.id,
+		Todo.create({
+			user: req.decoded._doc.uid,
 			content: req.body.content
-			}).save(function(err) {
-				if (err) return next(err);
-				console.log('POST success! Content: ' + req.body.content);
-				res.redirect('/todo');
-			});
+		}, function(err) {
+			if (err) {
+				return next(err);
+			} else {
+				find(req, res, next);
+			}
+		});
 	});
 
 router.route('/:id')
-	// update a task
 	.put(function(req, res, next) {
 		Todo.update(
-		{user_id: req.session.id, _id: req.params.id}, 
-		{$set: {content: req.body.content}},
-		function (err) {
-			if (err) return next(err);
-			console.log('PUT success!');
-			res.status(200).json({redirectTo: '/todo'});
+			{_id: req.params.id, user: req.decoded._doc.uid}, 
+			{$set: {content: req.body.content}
+		}, function (err) {
+			if (err) {
+				return next(err);
+			} else {
+				find(req, res, next);
+			}
 		});
 	})
 
-	// delete a task
 	.delete(function(req, res, next) {
 		Todo.remove(
-		{user_id: req.session.id, _id: req.params.id},
-		function(err) {
-			if (err) return next(err);
-			console.log('DELETE success!');
-			res.status(200).json({redirectTo: '/todo'});
-		});
+			{_id: req.params.id, user: req.decoded._doc.uid},
+			function(err) {
+				if (err) {
+					return next(err);
+				} else {
+					find(req, res, next);
+				}
+			}
+		);
 	});
+
+function find(req, res, next) {
+	Todo.find().exec(function (err, todos) {
+		if (err) {
+			return next(err);
+		} else {
+			res.status(200).json(todos);
+		}
+	});	
+}
 
 module.exports = router;
