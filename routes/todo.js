@@ -1,9 +1,8 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
-var jwt = require('jsonwebtoken');
 var Todo = require('../models/todo');
-var utils = require('../utils')
+var utils = require('../utils');
 
 router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);

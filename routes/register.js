@@ -26,7 +26,7 @@ router.post('/', function(req, res, next) {
 				if (err) {
 					return next(err);
 				} else {
-					res.status(200).json({redirect: '/task'});
+					res.status(200).end();
 				}		
 			});
 		}
