@@ -11,10 +11,12 @@ router.use(function(req, res, next) {
 
 router.route('/')
 	.get(function(req, res, next) {
+		// see all the courses
 		findList(req, res, next);
 	})
 
 	.post(function(req, res, next) {
+		// add new course
 		if (req.decoded.admin) {
 			Dept.findOne({deptCode: req.body.deptCode}, function(err, dept) {
 				if (err) {
@@ -45,6 +47,7 @@ router.route('/')
 
 router.route('/:id')
 	.get(function(req, res, next) {
+		// see course list under a dept
 		Course.find({deptCode: req.params.id.toUpperCase()})
 			.sort({courseCode: 1})
 			.select('courseCode courseName')
@@ -61,10 +64,12 @@ router.route('/:id')
 
 router.route('/info/:id')
 	.get(function(req, res, next) {
+		// check course info
 		find(req, res, next);
 	})
 
 	.post(function(req, res, next) {
+		// add comment
 		var info = {
 			author: req.decoded.uid,
 			rating: req.body.rating,
@@ -78,7 +83,7 @@ router.route('/info/:id')
 				if (err) {
 					return next(err);
 				} else if (course === null) {
-					res.status(400).json({error: "Course not found"});
+					res.status(400).json({error: "Course not found!"});
 				} else {
 					var repeat = false;
 					course.info.forEach(function(c) {
@@ -105,6 +110,7 @@ router.route('/info/:id')
 	})
 
 	.put(function(req, res, next) {
+		// edit course info
 		if (req.decoded.admin) {
 			Course.update({courseCode: req.params.id.toUpperCase()},
 				{$set: {
@@ -126,11 +132,15 @@ router.route('/info/:id')
 	})
 
 	.delete(function(req, res, next) {
+		// delete course
 		if (req.decoded.admin) {
-			Course.remove({courseCode: req.params.id.toUpperCase()}, function(err) {
+			Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
 				if (err) {
 					return next(err);
+				} else if (course === null) {
+					res.status(400).json({error: "Course not found!"});
 				} else {
+					course.remove();
 					findList(req, res, next);
 				}
 			});
@@ -141,10 +151,13 @@ router.route('/info/:id')
 
 router.route('/info/:id/:cmid')
 	.delete(function(req, res, next) {
+		// delete comment
 		if (req.decoded.admin) {
 			Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
 				if (err) {
 					return next(err);
+				} else if (course === null) {
+					res.status(400).json({error: "Course not found!"});
 				} else {
 					course.update({$pull: {info: {_id: req.params.cmid}}}, function(err) {
 						if (err) {
@@ -156,7 +169,7 @@ router.route('/info/:id/:cmid')
 				}
 			});
 		} else {
-			res.status(401).json({error: "You are not authorized to delete a course!"});
+			res.status(401).json({error: "You are not authorized to delete a comment!"});
 		}	
 	});
 
