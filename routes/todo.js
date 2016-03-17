@@ -43,27 +43,21 @@ router.route('/:id')
 
 	.delete(function(req, res, next) {
 		if (req.decoded.admin){
-			Todo.remove(
-				{_id: req.params.id},
-				function(err) {
-					if (err) {
-						return next(err);
-					} else {
-						find(req, res, next);
-					}
+			Todo.remove({_id: req.params.id}, function(err) {
+				if (err) {
+					return next(err);
+				} else {
+					find(req, res, next);
 				}
-			);
+			});
 		} else {
-			Todo.remove(
-				{_id: req.params.id, user: req.decoded.uid},
-				function(err) {
-					if (err) {
-						return next(err);
-					} else {
-						find(req, res, next);
-					}
+			Todo.remove({_id: req.params.id, user: req.decoded.uid}, function(err) {
+				if (err) {
+					return next(err);
+				} else {
+					find(req, res, next);
 				}
-			);
+			});
 		}	
 	});
 

@@ -1,8 +1,9 @@
+'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var User = new Schema({
-	uid: {type: String, required: true},
+	uid: {type: String, required: true, unique: true},
 	email: {type: String, required: true},
 	salt: {type: String, required: true},
 	hash: {type: String, required: true},

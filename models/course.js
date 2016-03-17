@@ -1,10 +1,12 @@
+'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+//var Resource = require('./resource');
 
 var Course = new Schema({
-	courseCode: String,
+	courseCode: {type: String, unique: true, required: true},
 	courseName: String,
-	deptID: {type: Schema.Types.ObjectId, ref: 'Dept'},
+	deptCode: {type: String, ref: 'Dept', required: true},
 	term: String,
 	schedule: [{
 		day: Number,
@@ -12,12 +14,12 @@ var Course = new Schema({
 		venue: String 
 	}],
 	prof: String,
-	outline: String,
-	assessMethod: String,
-	comments: [{
-		author: {type: Schema.Types.ObjectId, ref: 'User'},
+	info: [{
+		author: {type: String, ref: 'User'},
 		rating: Number,
-		content: String,
+		outline: String,
+		assessMethod: String,
+		comment: String,
 		dateOfComment: Date
 	}],
 	resources: [{

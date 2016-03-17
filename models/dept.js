@@ -1,15 +1,23 @@
+'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var Course = require('./course');
+//var Resource = require('./resource');
 
 var Dept = new Schema({
-	deptCode: String,
-	deptName: String,
-	courses: [{
-		courseID: {type: Schema.Types.ObjectId, ref: 'Course'},
-	}],
-	resourses: [{
-		resourceID: {type: Schema.Types.ObjectId,, ref: 'Resource'},
-	}]
+	deptCode: {type: String, unique: true, required: true},
+	deptName: String
+});
+
+Dept.pre('remove', function(next) {
+	Course.remove({deptCode: this.deptCode}, function(err) {
+		if (err) {
+			return next(err);
+		} else {
+			console.log("Relative courses deleted.");
+		}
+	});
+	next();
 });
 
 module.exports = mongoose.model('Dept', Dept);

@@ -12,7 +12,7 @@ router.post('/', function(req, res, next) {
 	User.findOne({uid: uid}, function (err, user) {
 		if (err) {
 			return next(err);
-		} else if (user == undefined) {
+		} else if (user === null) {
 			res.status(400).json({error: 'User not found'});
 		} else {
 			var salt = user.salt;
@@ -25,7 +25,7 @@ router.post('/', function(req, res, next) {
 					uid: user.uid,
 					admin: user.admin
 				}, req.app.get('secret'), {
-					expiresIn: 7200
+					expiresIn: 14400
 				});
 
 				// return token
