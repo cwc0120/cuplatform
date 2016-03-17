@@ -9,7 +9,12 @@ var Resource = new Schema({
 	description: String,
 	uploader: {type: Schema.Types.ObjectId, ref: 'User'},
 	link: Schema.Types.ObjectId,
-	date: Date
+	dateOfUpload: Date,
+	comment: [{
+		author: {type: String, ref: 'User'},
+		content: String,
+		dateOfComment: Date
+	}]
 });
 
 module.exports = mongoose.model('Resource', Resource);
