@@ -25,16 +25,36 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 	})
 
 	.config(function($httpProvider) {
-		$httpProvider.interceptors.push('TokenInterceptor');
+		$httpProvider.interceptors.push(function($q, $window, $location) {
+			return {
+				request: function(config) {
+					config.headers = config.headers || {};
+					var token = $window.localStorage['cupToken'];
+					if (token) {
+						config.headers['x-access-token'] = token;
+					}
+					return config;
+				},
+				responseError: function(rejection) {
+					if (rejection != undefined) {
+						$location.path('/');
+						$window.localStorage.removeItem('uid');
+						$window.localStorage['uid'] = res.uid;
+						$window.localStorage.removeItem('cupToken');
+					}
+					return $q.reject(rejection);
+				}
+			};
+		});
 	})
 
 	.run(function($rootScope, $location, $window, Auth) {
 		$rootScope.$on('$routeChangeStart', function(event, nextRoute, currentRoute) {
-			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.isLogged() && !Auth.getToken()) {
+			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.getToken()) {
 				$location.path('/');
 				console.log('Please log in');
 			}
-			if (!nextRoute.requiredLogin && Auth.isLogged() && Auth.getToken()) {
+			if (!nextRoute.requiredLogin && Auth.getToken()) {
 				$location.path('/task');
 				console.log('Magic');
 			}

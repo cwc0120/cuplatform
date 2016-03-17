@@ -2,14 +2,14 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
-var UserCred = require('../models/usercred');
+var User = require('../models/user');
 
 router.post('/', function(req, res, next) {
 	var uid = req.body.uid;
 	var email = req.body.email;
 	var pwd1 = req.body.pwd1;
 
-	UserCred.findOne({$or: [{uid: uid}, {email:email}]}, function(err, result) {
+	User.findOne({$or: [{uid: uid}, {email:email}]}, function(err, result) {
 		if (err) {
 			return next(err);
 		} else if (result !== null) {
@@ -17,7 +17,7 @@ router.post('/', function(req, res, next) {
 		} else {
 			var salt = crypto.randomBytes(128).toString('base64');
 			var hash = crypto.pbkdf2Sync(pwd1, salt, 10000, 512);
-			UserCred.create({
+			User.create({
 				uid: uid,
 				email: email,
 				salt: salt,

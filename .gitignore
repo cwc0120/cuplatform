@@ -26,6 +26,9 @@ build/Release
 # Dependency directory
 node_modules
 
+# Database
+db
+
 # Optional npm cache directory
 .npm
 
@@ -34,3 +37,4 @@ node_modules
 
 # Update package script
 latestStablePackage
+startdb.sh
