@@ -1,15 +1,14 @@
 'use strict';
 angular.module('CUPControllers', [])
-	.controller('homeController', function($scope, $location, User, Auth) {
+	.controller('homeController', function($scope, $location, Auth) {
 		$scope.user = {};
 
 		$scope.login = function() {
 			if ($scope.user.uid !== undefined && $scope.user.pwd !== undefined) {
-				User.login($scope.user)
+				Auth.login($scope.user)
 					.success(function(result) {
 						Auth.setToken(result);
-						Auth.isLogged();
-						$location.path(result.redirect);
+						$location.path('/task');
 					})
 					.error(function(err) {
 						$scope.message = err.error;
@@ -22,7 +21,7 @@ angular.module('CUPControllers', [])
 		};
 	})
 
-	.controller('registerController', function($scope, $location, User, Auth) {
+	.controller('registerController', function($scope, $location, Auth) {
 		$scope.newUser = {};
 		$scope.disable = true;
 
@@ -86,13 +85,12 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.createUser = function() {
-			User.register($scope.newUser)
+			Auth.register($scope.newUser)
 			.success(function(result) {
-				User.login({uid: $scope.newUser.uid, pwd: $scope.newUser.pwd1})
+				Auth.login({uid: $scope.newUser.uid, pwd: $scope.newUser.pwd1})
 					.success(function(result) {
 						Auth.setToken(result);
-						Auth.isLogged();
-						$location.path(result.redirect);
+						$location.path('/task');
 					})
 					.error(function(err) {
 						$scope.message = err.error;
@@ -112,11 +110,12 @@ angular.module('CUPControllers', [])
 		}
 	})
 
-	.controller('taskController', function($scope, $window, $location, Todos, User) {
+	.controller('taskController', function($scope, $window, $location, Todos, Auth) {
 		$scope.newTask = {};
 		$scope.editTask = {};
 		$scope.editing = false;
 		$scope.uid = $window.localStorage['uid'];
+		$scope.admin = $window.localStorage['admin'];
 
 		Todos.get().success(function(data){
 			$scope.success = true;
@@ -171,6 +170,6 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.logout = function() {
-			User.logout();
+			Auth.logout();
 		};
 	});

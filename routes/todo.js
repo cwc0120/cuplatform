@@ -15,7 +15,7 @@ router.route('/')
 
 	.post(function(req, res, next) {
 		Todo.create({
-			user: req.decoded._doc.uid,
+			user: req.decoded.uid,
 			content: req.body.content
 		}, function(err) {
 			if (err) {
@@ -29,21 +29,9 @@ router.route('/')
 router.route('/:id')
 	.put(function(req, res, next) {
 		Todo.update(
-			{_id: req.params.id, user: req.decoded._doc.uid}, 
-			{$set: {content: req.body.content}
-		}, function (err) {
-			if (err) {
-				return next(err);
-			} else {
-				find(req, res, next);
-			}
-		});
-	})
-
-	.delete(function(req, res, next) {
-		Todo.remove(
-			{_id: req.params.id, user: req.decoded._doc.uid},
-			function(err) {
+			{_id: req.params.id, user: req.decoded.uid}, 
+			{$set: {content: req.body.content}}, 
+			function (err) {
 				if (err) {
 					return next(err);
 				} else {
@@ -51,10 +39,36 @@ router.route('/:id')
 				}
 			}
 		);
+	})
+
+	.delete(function(req, res, next) {
+		if (req.decoded.admin){
+			Todo.remove(
+				{_id: req.params.id},
+				function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next);
+					}
+				}
+			);
+		} else {
+			Todo.remove(
+				{_id: req.params.id, user: req.decoded.uid},
+				function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next);
+					}
+				}
+			);
+		}	
 	});
 
 function find(req, res, next) {
-	Todo.find().exec(function (err, todos) {
+	Todo.find().sort({deptCode: 1}).exec(function (err, todos) {
 		if (err) {
 			return next(err);
 		} else {

@@ -1,25 +1,6 @@
 'use strict';
-angular.module('CUPServices', [])
-	.factory('Auth', function($window) {
-		return {
-			getToken: function() {
-				return $window.localStorage['cupToken'];
-			},
-			setToken: function(res) {
-				$window.localStorage['uid'] = res.uid;
-				$window.localStorage['cupToken'] = res.token;
-			},
-			isLogged: function() {
-				var token = this.getToken();
-				if (token) {
-					return true;
-				}
-				return false;
-			}
-		};
-	})
-
-	.factory('User', function($http, $window, $location, Auth) {
+angular.module('CUPServices', [])	
+	.factory('Auth', function($http, $window, $location) {
 		return {
 			register: function(data) {
 				return $http.post('/api/register', data);
@@ -28,26 +9,19 @@ angular.module('CUPServices', [])
 				return $http.post('/api/auth', data);
 			},
 			logout: function() {
-				Auth.isLogged();
 				$location.path('/');
 				$window.localStorage.removeItem('uid');
+				$window.localStorage.removeItem('admin');
 				$window.localStorage.removeItem('cupToken');
-			}
-		};
-	})
-
-	.factory('TokenInterceptor', function($q, Auth) {
-		return {
-			request: function(config) {
-				var token = Auth.getToken();
-				if (token) {
-					config.headers['x-access-token'] = token;
-				}
-				return config;
 			},
-			response: function(res) {
-				return res || $q.when(res);
-			}
+			getToken: function() {
+				return $window.localStorage['cupToken'];
+			},
+			setToken: function(res) {
+				$window.localStorage['uid'] = res.uid;
+				$window.localStorage['admin'] = res.admin;
+				$window.localStorage['cupToken'] = res.token;
+			},
 		};
 	})
 
