@@ -1,7 +1,7 @@
 'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-//var Resource = require('./resource');
+var Resource = require('./resource');
 
 var Course = new Schema({
 	courseCode: {type: String, unique: true, required: true},
@@ -21,10 +21,19 @@ var Course = new Schema({
 		assessMethod: String,
 		comment: String,
 		dateOfComment: Date
-	}],
-	resources: [{
-		resourceID: {type: Schema.Types.ObjectId, ref: 'Resource'},
 	}]
 });
+
+Course.pre('remove', function(next) {
+	Resource.remove({courseCode: this.courseCode}, function(err) {
+		if (err) {
+			return next(err);
+		} else {
+			console.log("Relative resources deleted.");
+		}
+	});
+	next();
+});
+
 
 module.exports = mongoose.model('Course', Course);
