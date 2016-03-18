@@ -3,12 +3,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Resource = new Schema({
-	deptCode: {type: String, ref: 'Dept'},
-	courseCode: {type: String, ref: 'Course'},
+	deptID: {type: Schema.Types.ObjectId, ref: 'Dept'},
+	courseID: {type: Schema.Types.ObjectId, ref: 'Course'},
 	name: String,
 	description: String,
-	uploader: {type: String, ref: 'User'},
-	link: String,
+	uploader: {type: Schema.Types.ObjectId, ref: 'User'},
+	link: Schema.Types.ObjectId,
 	dateOfUpload: Date,
 	comment: [{
 		author: {type: String, ref: 'User'},

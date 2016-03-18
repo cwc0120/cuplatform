@@ -1,118 +1,33 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
-var multer = require('multer');
 var Resource = require('../models/resource');
 var Course = require('../models/course');
 var Dept = require('../models/dept');
 var utils = require('../utils');
 
-var upload = multer({
-	dest: 'uploads/',
-	fileFilter: function(req, file, cb) {
-		if (file.mimetype == 'application/msword' ||
-			file.mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-			file.mimetype == 'application/vnd.ms-powerpoint' ||
-			file.mimetype == 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
-			file.mimetype == 'application/pdf') {
-			cb(null, true);
-		}
-		cb(new Error('File type not supported.'));
-	},
-	limits: {fileSize: 10485760},
-	rename: function(fieldname, filename) {
-		return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
-	},
-	onFileUploadStart: function(file) {
-		console.log(file.fieldname + ' is starting ...');
-	},
-	onFileUploadComplete: function(file) {
-		console.log(file.fieldname + ' uploaded to  ' + file.path);
-	}
-});
-
 router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-router.route('/dept/:did')
+router.route('/:did')
 	.get(function(req, res, next) {
 		// see resources under dept
 		findDeptRes(req, res, next);
 	})
 
 	.post(function(req, res, next) {
-		var resFile = upload.single('resFile');
-		resFile(req, res, function(err) {
-			if (err) {
-				res.status(400).json({error: err});
-			} else if (!req.file) {
-				res.status(400).json({error: 'No file uploaded.'});
-			} else {
-				Dept.findOne({deptCode: req.body.deptCode}, function(err, dept) {
-					if (err) {
-						return next(err);
-					} else if (dept === null) {
-						res.status(400).json({error: 'Department not found!'});
-					} else {
-						Resource.create({
-							deptCode: req.body.deptCode,
-							name: req.body.name,
-							description: req.body.description,
-							uploader: req.decoded.uid,
-							link: req.file.filename,
-							dateOfUpload: Date.now(),
-						}, function(err) {
-							if (err) {
-								return next(err);
-							} else {
-								findDeptRes(req, res, next);
-							}
-						});
-					}
-				});		
-			}
-		});
+		// upload dept res
 	});
 
-router.route('/course/:cid')
+router.route('/:did/:cid')
 	.get(function(req, res, next) {
 		// see resources under course
 		findCosRes(req, res, next);
 	})
 
 	.post(function(req, res, next) {
-		var resFile = upload.single('resFile');
-		resFile(req, res, function(err) {
-			if (err) {
-				res.status(400).json({error: err});
-			} else if (!req.file) {
-				res.status(400).json({error: 'No file uploaded.'});
-			} else {
-				Course.findOne({courseCode: req.body.courseCode}, function(err, course) {
-					if (err) {
-						return next(err);
-					} else if (course === null) {
-						res.status(400).json({error: 'Course not found!'});
-					} else {
-						Resource.create({
-							courseCode: req.body.courseCode,
-							name: req.body.name,
-							description: req.body.description,
-							uploader: req.decoded.uid,
-							link: req.file.filename,
-							dateOfUpload: Date.now(),
-						}, function(err) {
-							if (err) {
-								return next(err);
-							} else {
-								findDeptRes(req, res, next);
-							}
-						});
-					}
-				});		
-			}
-		});
+		// upload course res
 	});
 
 router.route('/info/:id')
@@ -181,16 +96,7 @@ router.route('/info/:id')
 				if (err) {
 					return next(err);
 				} else {
-					Resource.find()
-						.sort({dateOfUpload: -1})
-						.select('name')
-						.exec(function(err, resources) {
-							if (err) {
-								return next(err);
-							} else {
-								res.status(200).json(resources);
-							}
-						});
+					findRes(req, res, next);
 				}
 			});
 		} else {
@@ -221,6 +127,19 @@ router.route('/info/:id/:cmid')
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
 		}	
 	});
+
+function findRes(req, res, next) {
+	Resource.find()
+		.sort({dateOfUpload: -1})
+		.select('name')
+		.exec(function(err, resources) {
+			if (err) {
+				return next(err);
+			} else {
+				res.status(200).json(resources);
+			}
+		});
+}
 
 function findDeptRes(req, res, next) {
 	Resource.find({deptCode: req.params.did})
