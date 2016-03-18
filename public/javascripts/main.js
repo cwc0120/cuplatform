@@ -35,11 +35,16 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 					}
 					return config;
 				},
+
+				response: function(response) {
+					return response;
+				},
+
 				responseError: function(rejection) {
 					if (rejection != undefined) {
 						$location.path('/');
 						$window.localStorage.removeItem('uid');
-						$window.localStorage['uid'] = res.uid;
+						$window.localStorage.removeItem('admin');
 						$window.localStorage.removeItem('cupToken');
 					}
 					return $q.reject(rejection);

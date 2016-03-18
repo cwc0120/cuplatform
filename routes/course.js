@@ -23,7 +23,7 @@ router.route('/')
 					return next(err);
 				} else if (dept === null) {
 					res.status(400).json({error: "Department not found!"});
-				} else {
+				} else {		
 					Course.create({
 						courseCode: req.body.courseCode,
 						courseName: req.body.courseName,
