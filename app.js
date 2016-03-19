@@ -30,12 +30,14 @@ var todo = require('./routes/todo');
 var register = require('./routes/register');
 var dept = require('./routes/dept');
 var course = require('./routes/course');
+var item = require('./routes/item');
 
 app.use('/api/auth', auth);
 app.use('/api/register', register);
 app.use('/api/todo', todo);
 app.use('/api/dept', dept);
 app.use('/api/course', course);
+app.use('/api/item', item);
 app.get('*', function(req, res) {
   res.sendFile('/public/views/index.html', {root : __dirname});
 });
