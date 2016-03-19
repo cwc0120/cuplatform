@@ -14,6 +14,18 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 				requiredLogin: false
 			})
 
+			.when('/dept', {
+				templateUrl: '/views/deptlist.html',
+				controller: 'deptListController',
+				requiredLogin: true
+			})
+
+			.when('/dept/:id', {
+				templateUrl: '/views/deptcourselist.html',
+				controller: 'deptCourseListController',
+				requiredLogin: true
+			})
+
 			.when('/task', {
 				templateUrl: '/views/task.html',
 				controller: 'taskController',
@@ -41,11 +53,11 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 				},
 
 				responseError: function(rejection) {
-					if (rejection != undefined) {
-						$location.path('/');
+					if (rejection != undefined && rejection.status == 403) {
 						$window.localStorage.removeItem('uid');
 						$window.localStorage.removeItem('admin');
 						$window.localStorage.removeItem('cupToken');
+						$location.path('/');
 					}
 					return $q.reject(rejection);
 				}
@@ -54,12 +66,12 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 	})
 
 	.run(function($rootScope, $location, $window, Auth) {
-		$rootScope.$on('$routeChangeStart', function(event, nextRoute, currentRoute) {
-			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.getToken()) {
+		$rootScope.$on('$routeChangeStart', function(event, nextRoute) {
+			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.isLogged) {
 				$location.path('/');
 				console.log('Please log in');
 			}
-			if (!nextRoute.requiredLogin && Auth.getToken()) {
+			if (!nextRoute.requiredLogin && Auth.isLogged) {
 				$location.path('/task');
 				console.log('Magic');
 			}

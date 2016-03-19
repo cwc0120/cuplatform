@@ -9,16 +9,16 @@ router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-router.route('/')
+router.route('/:id')
 	.get(function(req, res, next) {
-		// see all the courses
+		// see course list under a dept
 		findList(req, res, next);
 	})
 
 	.post(function(req, res, next) {
-		// add new course
+		// add new course under a dept
 		if (req.decoded.admin) {
-			Dept.findOne({deptCode: req.body.deptCode}, function(err, dept) {
+			Dept.findOne({deptCode: req.params.id.toUpperCase()}, function(err, dept) {
 				if (err) {
 					return next(err);
 				} else if (dept === null) {
@@ -27,7 +27,7 @@ router.route('/')
 					Course.create({
 						courseCode: req.body.courseCode,
 						courseName: req.body.courseName,
-						deptCode: req.body.deptCode,
+						deptCode: req.params.id,
 						term: req.body.term,
 						schedule: req.body.schedule,
 						prof: req.body.prof
@@ -43,23 +43,6 @@ router.route('/')
 		} else {
 			res.status(401).json({error: "You are not authorized to add a course!"});
 		}
-	});
-
-router.route('/:id')
-	.get(function(req, res, next) {
-		// see course list under a dept
-		Course.find({deptCode: req.params.id.toUpperCase()})
-			.sort({courseCode: 1})
-			.select('courseCode courseName')
-			.exec(function(err, courses) {
-				if (err) {
-					return next(err);
-				} else if (courses === null ) {
-					res.status(400).json({error: "Department not found!"});
-				} else {
-					res.status(200).json(courses);
-				}
-			});
 	});
 
 router.route('/info/:id')
@@ -174,12 +157,14 @@ router.route('/info/:id/:cmid')
 	});
 
 function findList(req, res, next) {
-	Course.find()
+	Course.find({deptCode: req.params.id.toUpperCase()})
 		.sort({courseCode: 1})
 		.select('courseCode courseName')
 		.exec(function(err, courses) {
 			if (err) {
 				return next(err);
+			} else if (courses === null ) {
+				res.status(400).json({error: "Department not found!"});
 			} else {
 				res.status(200).json(courses);
 			}

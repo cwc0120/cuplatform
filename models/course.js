@@ -10,7 +10,7 @@ var Course = new Schema({
 	term: String,
 	schedule: [{
 		day: Number,
-		lesson: Number,
+		time: Number,
 		venue: String 
 	}],
 	prof: String,

@@ -1,0 +1,35 @@
+
+<div ng-hide="success">
+  <h1>{{errorMessage}}</h1>
+  <button ng-click="$location.path(&quot;/&quot;)">Return</button>
+</div>
+<div ng-show="success">
+  <h1>Department List</h1>
+  <table>
+    <tr>
+      <th>Department Code</th>
+      <th>Department Name</th>
+      <th></th>
+    </tr>
+    <tr ng-show="admin">
+      <form>
+        <td>
+          <input type="text" ng-model="newDept.deptCode" placeholder="New Department Code"/>
+        </td>
+        <td>
+          <input type="text" ng-model="newDept.deptName" placeholder="New Department Name"/>
+        </td>
+        <td>
+          <button ng-show="admin" ng-click="add()">Add</button>
+        </td>
+      </form>
+    </tr>
+    <tr ng-repeat="dept in depts">
+      <td> <span ng-click="$location.path(&quot;/dept/&quot; + dept.deptCode)">{{dept.deptCode}}</span></td>
+      <td>{{dept.deptName}}</td>
+      <td>
+        <button ng-show="admin" ng-click="delete(dept.deptCode)">Delete</button>
+      </td>
+    </tr>
+  </table>
+</div>

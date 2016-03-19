@@ -1,24 +1,51 @@
 'use strict';
 angular.module('CUPControllers', [])
-	.controller('homeController', function($scope, $location, Auth) {
+	.controller('topBarController', function($scope, $location, $window, Auth) {
 		$scope.user = {};
+		$scope.$location = $location;
+
+		$scope.$watch(function() {
+			return Auth.isLogged;
+		}, function(newVal, oldVal) {
+			if(typeof newVal !== 'undefined') {
+				$scope.isLogged = Auth.isLogged;
+			}
+		});
+
+		$scope.$watch(function() {
+			return Auth.uid;
+		}, function(newVal, oldVal) {
+			if(typeof newVal !== 'undefined') {
+				$scope.uid = Auth.uid;
+			}
+		});
 
 		$scope.login = function() {
 			if ($scope.user.uid !== undefined && $scope.user.pwd !== undefined) {
-				Auth.login($scope.user)
-					.success(function(result) {
-						Auth.setToken(result);
-						$location.path('/task');
-					})
-					.error(function(err) {
-						$scope.message = err.error;
-					});
-			}		
+				Auth.login($scope.user).success(function(res) {
+					$scope.user = {};
+					Auth.uid = res.uid;
+					Auth.isLogged = true;	
+					Auth.setToken(res);
+					$location.path('/task');
+				}).error(function(err) {
+					$scope.message = err.error;
+				});
+			}
 		};
 
 		$scope.register = function() {
 			$location.path('/register');
 		};
+
+		$scope.logout = function() {
+			Auth.logout();
+		};
+	})
+
+	.controller('homeController', function($scope) {
+		$scope.user = {};
+
 	})
 
 	.controller('registerController', function($scope, $location, Auth) {
@@ -85,18 +112,16 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.createUser = function() {
-			Auth.register($scope.newUser)
-			.success(function(result) {
-				Auth.login({uid: $scope.newUser.uid, pwd: $scope.newUser.pwd1})
-					.success(function(result) {
-						Auth.setToken(result);
-						$location.path('/task');
-					})
-					.error(function(err) {
-						$scope.message = err.error;
-					});
-			})
-			.error(function(err) {
+			Auth.register($scope.newUser).success(function(result) {
+				Auth.login({uid: $scope.newUser.uid, pwd: $scope.newUser.pwd1}).success(function(res) {
+					Auth.uid = res.uid;
+					Auth.isLogged = true;	
+					Auth.setToken(res);
+					$location.path('/task');
+				}).error(function(err) {
+					$scope.message = err.error;
+				});
+			}).error(function(err) {
 				$scope.message = err.error;
 			});
 		};
@@ -115,7 +140,11 @@ angular.module('CUPControllers', [])
 		$scope.editTask = {};
 		$scope.editing = false;
 		$scope.uid = $window.localStorage['uid'];
-		$scope.admin = $window.localStorage['admin'];
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
 
 		Todos.get().success(function(data){
 			$scope.success = true;
@@ -139,22 +168,25 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.edit = function(id) {
-			$scope.editing = false;
-			if ($scope.editTask.content === undefined) {
-				return false;
+			console.log($scope.editTask.content);
+			if ($scope.editTask.content === '') {
+				return true;
+			} else {
+				Todos.edit(id, $scope.editTask).success(function(data) {
+					$scope.editing = false;
+					$scope.editTask = {};
+					$scope.todos = data;
+					return false;
+				}).error(function(data) {
+					$scope.success = false;
+					$scope.errorMessage = data.message;
+				});
 			}
-			Todos.edit(id, $scope.editTask).success(function(data) {
-				$scope.editTask = {};
-				$scope.todos = data;
-				return false;
-			}).error(function(data) {
-				$scope.success = false;
-				$scope.errorMessage = data.message;
-			});
 		};
 
 		$scope.delete = function(id) {
 			Todos.delete(id).success(function(data) {
+				$scope.editing = false;
 				$scope.todos = data;
 			}).error(function(data) {
 				$scope.success = false;
@@ -169,7 +201,132 @@ angular.module('CUPControllers', [])
 			}
 		};
 
-		$scope.logout = function() {
-			Auth.logout();
+		$scope.return = function() {
+			$location.path('/');
+		};
+	})
+
+	.controller('deptListController', function($scope, $window, $location, Dept) {
+		$scope.$location = $location;
+		$scope.newDept = {};
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		Dept.get().success(function(res){
+			$scope.success = true;
+			$scope.depts = res;
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.add = function() {
+			if (!($scope.newDept.deptCode === undefined || $scope.newDept.deptCode === '')) {
+				Dept.create($scope.newDept).success(function(res) {
+					$scope.newDept = {};
+					$scope.depts = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+			
+		};
+
+		$scope.delete = function(deptCode) {
+			Dept.delete(deptCode).success(function(res) {
+				$scope.depts = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+	})
+
+	.controller('deptCourseListController', function($scope, $window, $location, $routeParams, Dept, Course) {
+		$scope.$location = $location;
+		$scope.editing = false;
+		$scope.adding = false;
+		$scope.edit = {};
+		$scope.newCourse = {};
+		$scope.days = Course.day;
+		$scope.times = Course.time;
+		$scope.lessons = [];
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		var deptCode = $routeParams.id;
+
+		Dept.getOne(deptCode).success(function(res) {
+			$scope.success = true;
+			$scope.dept = res;
+			Course.get(deptCode).success(function(res1) {
+				$scope.courses = res1;
+			}).error(function(res1) {
+				$scope.success = false;
+				$scope.errorMessage = res1.error;
+			});
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.enableEdit = function() {
+			if (!$scope.editing) {
+				$scope.editing = true;
+			}
+		};
+
+		$scope.editDept = function() {
+			if ($scope.edit.deptName === undefined || $scope.edit.deptName === '') {
+				$scope.editing = true;
+			} else {
+				Dept.edit(deptCode, $scope.edit).success(function(res) {
+					$scope.editing = false;
+					$scope.dept = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+			
+		};
+
+		$scope.enableAdd = function() {
+			if (!$scope.adding) {
+				$scope.adding = true;
+			}
+		};
+
+		$scope.addLesson = function() {
+			var lesson = {
+				day: $scope.day,
+				time: $scope.time,
+				venue: $scope.venue
+			};
+			$scope.lessons.push(lesson);
+		};
+
+		$scope.removeLesson = function(index) {
+			$scope.lessons.splice(index, 1);
+		};
+
+		$scope.addCourse = function() {
+			
+		};
+
+		$scope.delete = function(courseCode) {
+			Course.delete(courseCode).success(function(res) {
+				$scope.courses = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
 		};
 	});
