@@ -8,7 +8,7 @@ div(ng-show='success')
 		p Department Name: {{dept.deptName}}
 		p
 			button(ng-show='admin' ng-click='enableEdit()') Edit Department
-			button(ng-show='admin' ng-click='enableAdd()') Add Course
+			button(ng-show='admin && !adding' ng-click='enableAdd()') Add Course
 	div(ng-show='editing')
 		form 
 			p Deparment Code: {{dept.deptCode}}
@@ -23,25 +23,28 @@ div(ng-show='success')
 			p Course Name:
 				input(type='text' ng-model='newCourse.courseName')
 			p Term:
-				input(type='text' ng-model='newCourse.term')
+				select(ng-model='term' ng-options='term.val for term in terms')
+					option(value='') --Choose Term--
 			p Professor:
 				input(type='text' ng-model='newCourse.prof')
 			p Schedule:
-			select(ng-model='day' ng-options='d.val for d in days')
-				option(value='') --Choose Day--
-			br
-			select(ng-model='time' ng-options='t.val for t in times')
-				option(value='') --Choose Lesson--
-			br
-			input(type='text' ng-model='venue')
-			br
-			button(type='button' ng-click='addLesson()') Add Lesson	
 			table
 				tr
 					th Day
 					th Time
 					th Venue
 					th
+				tr(ng-show='admin')
+					td
+						select(ng-model='day' ng-options='d.val for d in days')
+							option(value='') --Choose Day--
+					td
+						select(ng-model='time' ng-options='t.val for t in times')
+							option(value='') --Choose Lesson--
+					td
+						input(type='text' ng-model='venue')
+					td
+						button(type='button' ng-click='addLesson()') Add Lesson
 				tr(ng-repeat='lesson in lessons')
 					td {{lesson.day.val}}
 					td {{lesson.time.val}}
@@ -62,3 +65,4 @@ div(ng-show='success')
 			td {{course.courseName}}
 			td
 				button(ng-show='admin' ng-click='delete(course.courseCode)') Delete
+	button(ng-click='$location.path("/dept")') Back

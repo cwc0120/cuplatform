@@ -252,8 +252,10 @@ angular.module('CUPControllers', [])
 		$scope.adding = false;
 		$scope.edit = {};
 		$scope.newCourse = {};
-		$scope.days = Course.day;
-		$scope.times = Course.time;
+		$scope.term = {};
+		$scope.days = Course.days;
+		$scope.times = Course.times;
+		$scope.terms = Course.terms;
 		$scope.lessons = [];
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
@@ -318,7 +320,27 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.addCourse = function() {
-			
+			if (!($scope.newCourse.courseCode === undefined || $scope.newCourse.courseCode=== '')) {
+				$scope.newCourse.schedule = [];
+				for (var lesson in $scope.lessions) {
+					$scope.newCourse.schedule.push({
+						day: lesson.day.index,
+						time: lesson.time.index,
+						venue: lesson.venue
+					});
+				}
+				$scope.newCourse.term = $scope.term.index;
+				Course.create(deptCode, $scope.newCourse).success(function(res) {
+					$scope.adding = false;
+					$scope.newCourse = {};
+					$scope.term = {};
+					$scope.lessons = [];
+					$scope.courses = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
 		};
 
 		$scope.delete = function(courseCode) {

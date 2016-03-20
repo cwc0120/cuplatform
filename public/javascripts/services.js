@@ -64,7 +64,7 @@ angular.module('CUPServices', [])
 	.factory('Course', function($http) {
 		var Course = {};
 
-		Course.day = [{
+		Course.days = [{
 			index: 1,
 			val: 'Mon'
 		},
@@ -85,7 +85,7 @@ angular.module('CUPServices', [])
 			val: 'Fri'
 		}];
 
-		Course.time = [{
+		Course.times = [{
 			index: 1,
 			val: '08:30 - 09:15'
 		},
@@ -136,7 +136,12 @@ angular.module('CUPServices', [])
 		{
 			index: 13,
 			val: '20:30 - 21:15'
-		}]
+		}];
+
+		Course.terms = [{
+			index: 1,
+			val: '2015 Spring'
+		}];
 
 		Course.get = function(id) {
 			return $http.get('/api/course/' + id);

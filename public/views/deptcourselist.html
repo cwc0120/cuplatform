@@ -10,7 +10,7 @@
     <p>Department Name: {{dept.deptName}}</p>
     <p>
       <button ng-show="admin" ng-click="enableEdit()">Edit Department</button>
-      <button ng-show="admin" ng-click="enableAdd()">Add Course</button>
+      <button ng-show="admin &amp;&amp; !adding" ng-click="enableAdd()">Add Course</button>
     </p>
   </div>
   <div ng-show="editing">
@@ -33,26 +33,38 @@
         <input type="text" ng-model="newCourse.courseName"/>
       </p>
       <p>Term:
-        <input type="text" ng-model="newCourse.term"/>
+        <select ng-model="term" ng-options="term.val for term in terms">
+          <option value="">--Choose Term--</option>
+        </select>
       </p>
       <p>Professor:
         <input type="text" ng-model="newCourse.prof"/>
       </p>
       <p>Schedule:</p>
-      <select ng-model="day" ng-options="d.val for d in days">
-        <option value="">--Choose Day--</option>
-      </select><br/>
-      <select ng-model="time" ng-options="t.val for t in times">
-        <option value="">--Choose Lesson--</option>
-      </select><br/>
-      <input type="text" ng-model="venue"/><br/>
-      <button type="button" ng-click="addLesson()">Add Lesson	</button>
       <table>
         <tr>
           <th>Day</th>
           <th>Time</th>
           <th>Venue</th>
           <th></th>
+        </tr>
+        <tr ng-show="admin">
+          <td>
+            <select ng-model="day" ng-options="d.val for d in days">
+              <option value="">--Choose Day--</option>
+            </select>
+          </td>
+          <td>
+            <select ng-model="time" ng-options="t.val for t in times">
+              <option value="">--Choose Lesson--</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" ng-model="venue"/>
+          </td>
+          <td>
+            <button type="button" ng-click="addLesson()">Add Lesson</button>
+          </td>
         </tr>
         <tr ng-repeat="lesson in lessons">
           <td>{{lesson.day.val}}</td>
@@ -80,4 +92,5 @@
       </td>
     </tr>
   </table>
+  <button ng-click="$location.path(&quot;/dept&quot;)">Back</button>
 </div>

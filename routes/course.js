@@ -25,7 +25,7 @@ router.route('/:id')
 					res.status(400).json({error: "Department not found!"});
 				} else {		
 					Course.create({
-						courseCode: req.body.courseCode,
+						courseCode: req.body.courseCode.toUpperCase(),
 						courseName: req.body.courseName,
 						deptCode: req.params.id,
 						term: req.body.term,
