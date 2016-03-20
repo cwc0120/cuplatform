@@ -26,6 +26,12 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 				requiredLogin: true
 			})
 
+			.when('/course/:id', {
+				templateUrl: '/views/courseinfo.html',
+				controller: 'CourseInfoController',
+				requiredLogin: true
+			})
+
 			.when('/task', {
 				templateUrl: '/views/task.html',
 				controller: 'taskController',

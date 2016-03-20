@@ -22,9 +22,6 @@ div(ng-show='success')
 				input(type='text' ng-model='newCourse.courseCode')
 			p Course Name:
 				input(type='text' ng-model='newCourse.courseName')
-			p Term:
-				select(ng-model='term' ng-options='term.val for term in terms')
-					option(value='') --Choose Term--
 			p Professor:
 				input(type='text' ng-model='newCourse.prof')
 			p Schedule:
@@ -61,7 +58,7 @@ div(ng-show='success')
 			th
 		tr(ng-repeat='course in courses')
 			td 
-				span(ng-click='$location.path("/course" + course.courseCode)') {{course.courseCode}}
+				span(ng-click='$location.path("/course/" + course.courseCode)') {{course.courseCode}}
 			td {{course.courseName}}
 			td
 				button(ng-show='admin' ng-click='delete(course.courseCode)') Delete

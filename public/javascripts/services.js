@@ -138,9 +138,25 @@ angular.module('CUPServices', [])
 			val: '20:30 - 21:15'
 		}];
 
-		Course.terms = [{
+		Course.ratings = [{
 			index: 1,
-			val: '2015 Spring'
+			val: '1 (Worst)'
+		},
+		{
+			index: 2,
+			val: '2'
+		},
+		{
+			index: 3,
+			val: '3'
+		},
+		{
+			index: 4,
+			val: '4'
+		},
+		{
+			index: 5,
+			val: '5 (Best)'
 		}];
 
 		Course.get = function(id) {
@@ -167,7 +183,7 @@ angular.module('CUPServices', [])
 			return $http.delete('/api/course/info/' + id);
 		};
 
-		Course.deleteComment = function(id, cmid) {
+		Course.deleteInfo = function(id, cmid) {
 			return $http.delete('/api/course/info/' + id + '/' + cmid);
 		};
 

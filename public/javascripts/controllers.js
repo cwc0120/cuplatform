@@ -252,10 +252,8 @@ angular.module('CUPControllers', [])
 		$scope.adding = false;
 		$scope.edit = {};
 		$scope.newCourse = {};
-		$scope.term = {};
 		$scope.days = Course.days;
 		$scope.times = Course.times;
-		$scope.terms = Course.terms;
 		$scope.lessons = [];
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
@@ -320,20 +318,18 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.addCourse = function() {
-			if (!($scope.newCourse.courseCode === undefined || $scope.newCourse.courseCode=== '')) {
+			if (!($scope.newCourse.courseCode === undefined || $scope.newCourse.courseCode === '')) {
 				$scope.newCourse.schedule = [];
-				for (var lesson in $scope.lessions) {
-					$scope.newCourse.schedule.push({
-						day: lesson.day.index,
-						time: lesson.time.index,
-						venue: lesson.venue
+				for (var i=0; i < $scope.lessons.length; i++) {
+					$scope.newCourse.schedule.push({			
+						day: $scope.lessons[i].day.index,
+						time: $scope.lessons[i].time.index,
+						venue: $scope.lessons[i].venue
 					});
 				}
-				$scope.newCourse.term = $scope.term.index;
 				Course.create(deptCode, $scope.newCourse).success(function(res) {
 					$scope.adding = false;
 					$scope.newCourse = {};
-					$scope.term = {};
 					$scope.lessons = [];
 					$scope.courses = res;
 				}).error(function(res) {
@@ -346,6 +342,137 @@ angular.module('CUPControllers', [])
 		$scope.delete = function(courseCode) {
 			Course.delete(courseCode).success(function(res) {
 				$scope.courses = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+	})
+
+	.controller('CourseInfoController', function($scope, $window, $location, $routeParams, Course) {
+		$scope.$location = $location;
+		$scope.editing = false;
+		$scope.adding = false;
+		$scope.edit = {};
+		$scope.newInfo = {};
+		$scope.lessons = [];
+		$scope.days = Course.days;
+		$scope.times = Course.times;
+		$scope.ratings = Course.ratings;
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		var courseCode = $routeParams.id;
+
+		Course.getOne(courseCode).success(function(res) {
+			$scope.success = true;
+			$scope.course = res;
+			for (var i=0; i<res.schedule.length; i++) {
+				$scope.lessons.push({
+					day: {
+						index: res.schedule[i].day,
+						val: $scope.days[res.schedule[i].day-1].val
+					},
+					time: {
+						index: res.schedule[i].time,
+						val: $scope.times[res.schedule[i].time-1].val,
+					},
+					venue: res.schedule[i].venue
+				});
+			}
+			for (var i=0; i<$scope.course.info.length; i++) {
+				if ($scope.course.info[i].author === $window.localStorage['uid']) {
+					$scope.posted = true;
+				}
+			}
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.enableEdit = function() {
+			if (!$scope.editing) {
+				$scope.editing = true;
+			}
+		};
+
+		$scope.editCourse = function() {
+			$scope.edit.schedule = [];
+				for (var i=0; i < $scope.lessons.length; i++) {
+					$scope.edit.schedule.push({			
+						day: $scope.lessons[i].day.index,
+						time: $scope.lessons[i].time.index,
+						venue: $scope.lessons[i].venue
+					});
+				}
+			Course.edit(courseCode, $scope.edit).success(function(res) {
+				$scope.editing = false;
+				$scope.edit = {};
+				$scope.lessons = [];
+				$scope.course = res;
+				for (var i=0; i<res.schedule.length; i++) {
+				$scope.lessons.push({
+					day: {
+						index: res.schedule[i].day,
+						val: $scope.days[res.schedule[i].day-1].val
+					},
+					time: {
+						index: res.schedule[i].time,
+						val: $scope.times[res.schedule[i].time-1].val,
+					},
+					venue: res.schedule[i].venue
+				});
+			}
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+
+		$scope.addLesson = function() {
+			var lesson = {
+				day: $scope.day,
+				time: $scope.time,
+				venue: $scope.venue
+			};
+			$scope.lessons.push(lesson);
+		};
+
+		$scope.removeLesson = function(index) {
+			$scope.lessons.splice(index, 1);
+		};
+
+		$scope.enableAdd = function() {
+			if (!$scope.adding) {
+				$scope.adding = true;
+			}
+		};
+
+		$scope.addInfo = function() {
+			$scope.newInfo.rating = $scope.rating.index;
+			if (!($scope.newInfo.rating === undefined || $scope.newInfo.rating === '' ||
+				$scope.newInfo.outline === undefined || $scope.newInfo.outline.length < 30 ||
+				$scope.newInfo.assessMethod === undefined || $scope.newInfo.assessMethod.length < 30 ||
+				$scope.newInfo.comment === undefined || $scope.newInfo.comment.length < 30)) {
+
+				Course.postInfo(courseCode, $scope.newInfo).success(function(res) {
+					$scope.adding = false;
+					$scope.posted = true;
+					$scope.newInfo = {};
+					$scope.course = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+		};
+
+		$scope.deleteInfo = function(cmid) {
+			Course.deleteInfo(courseCode, cmid).success(function(res) {
+				$scope.course = res;
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;

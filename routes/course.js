@@ -28,7 +28,6 @@ router.route('/:id')
 						courseCode: req.body.courseCode.toUpperCase(),
 						courseName: req.body.courseName,
 						deptCode: req.params.id,
-						term: req.body.term,
 						schedule: req.body.schedule,
 						prof: req.body.prof
 					}, function(err) {
@@ -98,7 +97,6 @@ router.route('/info/:id')
 			Course.update({courseCode: req.params.id.toUpperCase()},
 				{$set: {
 					courseName: req.body.courseName,
-					term: req.body.term,
 					schedule: req.body.schedule,
 					prof: req.body.prof
 				}}, function(err) {
@@ -123,6 +121,7 @@ router.route('/info/:id')
 				} else if (course === null) {
 					res.status(400).json({error: "Course not found!"});
 				} else {
+					req.params.id = course.deptCode;
 					course.remove();
 					findList(req, res, next);
 				}

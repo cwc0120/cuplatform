@@ -32,11 +32,6 @@
       <p>Course Name:
         <input type="text" ng-model="newCourse.courseName"/>
       </p>
-      <p>Term:
-        <select ng-model="term" ng-options="term.val for term in terms">
-          <option value="">--Choose Term--</option>
-        </select>
-      </p>
       <p>Professor:
         <input type="text" ng-model="newCourse.prof"/>
       </p>
@@ -85,7 +80,7 @@
       <th></th>
     </tr>
     <tr ng-repeat="course in courses">
-      <td> <span ng-click="$location.path(&quot;/course&quot; + course.courseCode)">{{course.courseCode}}</span></td>
+      <td> <span ng-click="$location.path(&quot;/course/&quot; + course.courseCode)">{{course.courseCode}}</span></td>
       <td>{{course.courseName}}</td>
       <td>
         <button ng-show="admin" ng-click="delete(course.courseCode)">Delete</button>
