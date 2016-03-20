@@ -1,6 +1,6 @@
 div(ng-hide='success')
-	h1 {{errorMessage}}
-	button(ng-click='$location.path("/")') Return
+	h3 {{errorMessage}}
+	button(ng-click='$route.reload()') Return
 div(ng-show='success')
 	h1 Department List
 	table

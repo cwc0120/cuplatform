@@ -1,7 +1,7 @@
 
 <div ng-hide="success">
-  <h1>{{errorMessage}}</h1>
-  <button ng-click="$location.path(&quot;/&quot;)">Return</button>
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
 </div>
 <div ng-show="success">
   <h1>Department Detail</h1>

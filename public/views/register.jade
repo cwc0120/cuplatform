@@ -1,0 +1,16 @@
+h1 Register
+form
+	input(type='text' ng-model='newUser.uid' ng-change='checkUid()' placeholder='User ID')
+	span {{uidStatus}}
+	br
+	input(type='text' ng-model='newUser.email' ng-change='checkEmail()' placeholder='CUHK E-mail')
+	span {{emailStatus}}
+	br
+	input(type='password' ng-model='newUser.pwd1' ng-change='checkPwd1()' placeholder='Password')
+	span {{pwd1Status}}
+	br
+	input(type='password' ng-model='newUser.pwd2' ng-change='checkPwd2()' placeholder='Repeat password')
+	span {{pwd2Status}}
+	br
+	button(type='submit' ng-click='createUser()' ng-disabled='disable') Register
+	p {{message}}

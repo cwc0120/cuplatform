@@ -168,7 +168,6 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.edit = function(id) {
-			console.log($scope.editTask.content);
 			if ($scope.editTask.content === '') {
 				return true;
 			} else {
@@ -206,8 +205,9 @@ angular.module('CUPControllers', [])
 		};
 	})
 
-	.controller('deptListController', function($scope, $window, $location, Dept) {
+	.controller('deptListController', function($scope, $window, $location, $route, Dept) {
 		$scope.$location = $location;
+		$scope.$route = $route;
 		$scope.newDept = {};
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
@@ -246,8 +246,9 @@ angular.module('CUPControllers', [])
 		};
 	})
 
-	.controller('deptCourseListController', function($scope, $window, $location, $routeParams, Dept, Course) {
+	.controller('deptCourseListController', function($scope, $window, $location, $routeParams, $route, Dept, Course) {
 		$scope.$location = $location;
+		$scope.$route = $route;
 		$scope.editing = false;
 		$scope.adding = false;
 		$scope.edit = {};
@@ -349,8 +350,9 @@ angular.module('CUPControllers', [])
 		};
 	})
 
-	.controller('CourseInfoController', function($scope, $window, $location, $routeParams, Course) {
+	.controller('CourseInfoController', function($scope, $window, $location, $routeParams, $route, Course) {
 		$scope.$location = $location;
+		$scope.$route = $route;
 		$scope.editing = false;
 		$scope.adding = false;
 		$scope.edit = {};
@@ -370,19 +372,22 @@ angular.module('CUPControllers', [])
 		Course.getOne(courseCode).success(function(res) {
 			$scope.success = true;
 			$scope.course = res;
-			for (var i=0; i<res.schedule.length; i++) {
-				$scope.lessons.push({
-					day: {
-						index: res.schedule[i].day,
-						val: $scope.days[res.schedule[i].day-1].val
-					},
-					time: {
-						index: res.schedule[i].time,
-						val: $scope.times[res.schedule[i].time-1].val,
-					},
-					venue: res.schedule[i].venue
-				});
+			if (res.schedule !== null) {
+				for (var i=0; i<res.schedule.length; i++) {
+					$scope.lessons.push({
+						day: {
+							index: res.schedule[i].day,
+							val: $scope.days[res.schedule[i].day-1].val
+						},
+						time: {
+							index: res.schedule[i].time,
+							val: $scope.times[res.schedule[i].time-1].val,
+						},
+						venue: res.schedule[i].venue
+					});
+				}
 			}
+			
 			for (var i=0; i<$scope.course.info.length; i++) {
 				if ($scope.course.info[i].author === $window.localStorage['uid']) {
 					$scope.posted = true;

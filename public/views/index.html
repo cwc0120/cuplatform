@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="CUP">
   <head>
-    <title>CUP Todo List</title>
+    <title>CUP</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
@@ -10,27 +10,24 @@
     <script type="text/javascript" src="/javascripts/services.js"></script>
   </head>
   <body>
-
     <div ng-controller="topBarController">
       <div ng-hide="isLogged">
         <form>
-          <input type="text" ng-model="user.uid" placeholder="User ID"/>
-          <input type="password" ng-model="user.pwd" placeholder="Password"/>
+          <input type="text" ng-model="user.uid" placeholder="User ID">
+          <input type="password" ng-model="user.pwd" placeholder="Password">
           <button type="submit" ng-click="login()">Login</button>
-          <button ng-click="register()">Register</button>
-          {{message}}
+          <button ng-click="register()">Register</button><span>{{message}}</span>
         </form>
       </div>
       <div ng-show="isLogged">
-        <p> Logged as {{uid}}.
-        <button ng-click="logout()">Logout</button></p>
-        <span ng-click='$location.path("/task")'> Tasks </span>
-        <span ng-click='$location.path("/dept")'> Departments </span>
+        <p>Logged as {{uid}}.
+          <button ng-click="logout()">Logout</button>
+        </p>
+        <p><span ng-click="$location.path(&quot;/task&quot;)">Tasks </span><span ng-click="$location.path(&quot;/dept&quot;)">Departments </span></p>
       </div>
-    </div>
-
-    <div id="main">
-      <div ng-view></div>
+      <div id="main">
+        <div ng-view></div>
+      </div>
     </div>
   </body>
 </html>

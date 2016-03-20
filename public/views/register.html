@@ -1,9 +1,10 @@
+
 <h1>Register</h1>
 <form>
   <input type="text" ng-model="newUser.uid" ng-change="checkUid()" placeholder="User ID"/><span>{{uidStatus}}</span><br/>
-  <input type="text" ng-model="newUser.email" ng-change="checkEmail()" placeholder="E-mail"/><span>{{emailStatus}}</span><br/>
+  <input type="text" ng-model="newUser.email" ng-change="checkEmail()" placeholder="CUHK E-mail"/><span>{{emailStatus}}</span><br/>
   <input type="password" ng-model="newUser.pwd1" ng-change="checkPwd1()" placeholder="Password"/><span>{{pwd1Status}}</span><br/>
-  <input type="password" ng-model="newUser.pwd2" ng-change="checkPwd2()" placeholder="Type password again"/><span>{{pwd2Status}}</span><br/>
+  <input type="password" ng-model="newUser.pwd2" ng-change="checkPwd2()" placeholder="Repeat password"/><span>{{pwd2Status}}</span><br/>
   <button type="submit" ng-click="createUser()" ng-disabled="disable">Register</button>
   <p>{{message}}</p>
 </form>
