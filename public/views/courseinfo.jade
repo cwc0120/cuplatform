@@ -1,0 +1,94 @@
+div(ng-hide='success')
+	h3 {{errorMessage}}
+	button(ng-click='$route.reload()') Return
+div(ng-show='success')
+	h1 Course Detail
+	div(ng-hide='editing')
+		p Course Code: {{course.courseCode}}
+		p Course Name: {{course.courseName}}
+		p Instructor: {{course.prof}}
+		table
+				tr
+					th Day
+					th Time
+					th Venue
+				tr(ng-repeat='lesson in lessons')
+					td {{lesson.day.val}}
+					td {{lesson.time.val}}
+					td {{lesson.venue}}
+		p
+			button(ng-show='admin' ng-click='enableEdit()') Edit Course
+			button(ng-show='!adding && !posted' ng-click='enableAdd()') Add Info
+	div(ng-show='editing')
+		form 
+			p Course Code: {{course.courseCode}}
+			p Course Name: 
+				input(type='text' ng-model='edit.courseName')
+			p Instructor:
+				input(type='text' ng-model='edit.prof')
+			table
+					tr
+						th Day
+						th Time
+						th Venue
+						th
+					tr
+						td
+							select(ng-model='day' ng-options='d.val for d in days')
+								option(value='') --Choose Day--
+						td
+							select(ng-model='time' ng-options='t.val for t in times')
+								option(value='') --Choose Lesson--
+						td
+							input(type='text' ng-model='venue')
+						td
+							button(type='button' ng-click='addLesson()') Add Lesson
+					tr(ng-repeat='lesson in lessons')
+						td {{lesson.day.val}}
+						td {{lesson.time.val}}
+						td {{lesson.venue}}
+						td
+							button(type='button' ng-click='removeLesson($index)') Remove Lesson
+			p
+				button(type='submit' ng-show='admin' ng-click='editCourse()') Sumbit
+
+	div(ng-show='adding')
+		form
+			p Rating: 
+				select(ng-model='rating' ng-options='r.val for r in ratings')
+					option(value='') --Choose Rating--
+			p Outline:
+			p
+				textarea(rows='3' cols='50' ng-model='newInfo.outline' placeholder='At least 30 characters')
+			p Assessment Method:
+			p 
+				textarea(rows='3' cols='50' ng-model='newInfo.assessMethod' placeholder='At least 30 characters')
+			p Comment:
+			p 
+				textarea(rows='3' cols='50' ng-model='newInfo.comment' placeholder='At least 30 characters')
+			button(type='submit' ng-click='addInfo()') Confirm
+		
+	Strong {{course.info.length}} Info:
+	div(ng-repeat='info in course.info')
+		p
+			| Author: {{info.author}}
+			br
+			| Time: {{info.dateOfComment}}
+			br
+			| rating: {{info.rating}}
+			br
+			| Outline:
+			br
+			| {{info.outline}}
+			br
+			| Assessment Method:
+			br
+			| {{info.assessMethod}}
+			br
+			| Comment:
+			br
+			| {{info.comment}}
+			br
+			button(ng-show='admin' ng-click='deleteInfo(info._id)') Delete
+	p
+		button(ng-click='$location.path("/dept/" + course.deptCode)') Back

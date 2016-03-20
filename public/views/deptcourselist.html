@@ -1,0 +1,91 @@
+
+<div ng-hide="success">
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
+</div>
+<div ng-show="success">
+  <h1>Department Detail</h1>
+  <div ng-hide="editing">
+    <p>Deparment Code: {{dept.deptCode}}</p>
+    <p>Department Name: {{dept.deptName}}</p>
+    <p>
+      <button ng-show="admin" ng-click="enableEdit()">Edit Department</button>
+      <button ng-show="admin &amp;&amp; !adding" ng-click="enableAdd()">Add Course</button>
+    </p>
+  </div>
+  <div ng-show="editing">
+    <form> 
+      <p>Deparment Code: {{dept.deptCode}}</p>
+      <p>Department Name: 
+        <input type="text" ng-model="edit.deptName"/>
+      </p>
+      <p>
+        <button type="submit" ng-show="admin" ng-click="editDept()">Sumbit</button>
+      </p>
+    </form>
+  </div>
+  <div ng-show="adding">
+    <form>
+      <p>Course Code:
+        <input type="text" ng-model="newCourse.courseCode"/>
+      </p>
+      <p>Course Name:
+        <input type="text" ng-model="newCourse.courseName"/>
+      </p>
+      <p>Professor:
+        <input type="text" ng-model="newCourse.prof"/>
+      </p>
+      <p>Schedule:</p>
+      <table>
+        <tr>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Venue</th>
+          <th></th>
+        </tr>
+        <tr ng-show="admin">
+          <td>
+            <select ng-model="day" ng-options="d.val for d in days">
+              <option value="">--Choose Day--</option>
+            </select>
+          </td>
+          <td>
+            <select ng-model="time" ng-options="t.val for t in times">
+              <option value="">--Choose Lesson--</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" ng-model="venue"/>
+          </td>
+          <td>
+            <button type="button" ng-click="addLesson()">Add Lesson</button>
+          </td>
+        </tr>
+        <tr ng-repeat="lesson in lessons">
+          <td>{{lesson.day.val}}</td>
+          <td>{{lesson.time.val}}</td>
+          <td>{{lesson.venue}}</td>
+          <td>
+            <button type="button" ng-click="removeLesson($index)">Remove Lesson</button>
+          </td>
+        </tr>
+      </table><br/>
+      <button type="submit" ng-click="addCourse()">Confirm</button>
+    </form>
+  </div>
+  <table>
+    <tr>
+      <th>Course Code</th>
+      <th>Course Name</th>
+      <th></th>
+    </tr>
+    <tr ng-repeat="course in courses">
+      <td> <span ng-click="$location.path(&quot;/course/&quot; + course.courseCode)">{{course.courseCode}}</span></td>
+      <td>{{course.courseName}}</td>
+      <td>
+        <button ng-show="admin" ng-click="delete(course.courseCode)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <button ng-click="$location.path(&quot;/dept&quot;)">Back</button>
+</div>

@@ -19,7 +19,7 @@ router.route('/')
 		// add a dept
 		if (req.decoded.admin) {
 			Dept.create({
-				deptCode: req.body.deptCode,
+				deptCode: req.body.deptCode.toUpperCase(),
 				deptName: req.body.deptName,
 			}, function(err) {
 				if (err) {
@@ -96,19 +96,7 @@ function find(req, res, next) {
 			} else if (dept === null) {
 				res.status(400).json({error: "Department not found!"});
 			} else {
-				Course.find({deptCode: dept.deptCode})
-					.sort({courseCode: 1})
-					.select('courseCode courseName')
-					.exec(function(err, courses) {
-						if (err) {
-							return next(err);
-						} else {
-							res.status(200).json({
-								dept: dept,
-								courses: courses
-							});
-						}
-					});
+				res.status(200).json(dept);
 			}
 		}
 	);

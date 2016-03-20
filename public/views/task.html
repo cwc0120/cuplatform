@@ -1,5 +1,6 @@
 <div ng-hide="success">
-  <h1>{{errorMessage}}</h1>
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="return()">Return</button>
 </div>
 <div ng-show="success">
   <h1>I have <span>{{todos.length}} tasks.</span></h1>
@@ -12,7 +13,7 @@
     <tr ng-hide="todo.editing" ng-repeat-start="todo in todos">
       <td><span ng-click="todo.editing=enableEdit(todo)">{{todo.content}} </span><i>by {{todo.user}}</i></td>
       <td> 
-        <button ng-click="delete(todo._id)" ng-show="todo.user == uid || admin">delete</button>
+        <button ng-click="delete(todo._id)" ng-show="admin || todo.user === uid">delete</button>
       </td>
     </tr>
     <tr ng-show="todo.editing" ng-repeat-end="ng-repeat-end">
@@ -26,5 +27,4 @@
       </td>
     </tr>
   </table>
-  <button ng-click="logout()">Logout</button>
 </div>

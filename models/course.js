@@ -7,11 +7,10 @@ var Course = new Schema({
 	courseCode: {type: String, unique: true, required: true},
 	courseName: String,
 	deptCode: {type: String, ref: 'Dept', required: true},
-	term: String,
 	schedule: [{
 		day: Number,
-		lesson: Number,
-		venue: String 
+		time: Number,
+		venue: String
 	}],
 	prof: String,
 	info: [{
