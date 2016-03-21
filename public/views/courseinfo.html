@@ -24,6 +24,7 @@
     <p>
       <button ng-show="admin" ng-click="enableEdit()">Edit Course</button>
       <button ng-show="!adding &amp;&amp; !posted" ng-click="enableAdd()">Add Info</button>
+      <button ng-show="!adding" ng-click="$location.path(&quot;/resource/&quot; + course.courseCode)">Resources</button>
     </p>
   </div>
   <div ng-show="editing">
@@ -98,7 +99,13 @@
   </div>
   <Strong>{{course.info.length}} Info:</Strong>
   <div ng-repeat="info in course.info">
-    <p>Author: {{info.author}}<br/>Time: {{info.dateOfComment}}<br/>rating: {{info.rating}}<br/>Outline:<br/>{{info.outline}}<br/>Assessment Method:<br/>{{info.assessMethod}}<br/>Comment:<br/>{{info.comment}}<br/>
+    <p>Author: {{info.author}}</p>
+    <p>Time: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}</p>
+    <p>rating: {{info.rating}}</p>
+    <p>Outline:<br/>{{info.outline}}</p>
+    <p>Assessment Method:<br/>{{info.assessMethod}}</p>
+    <p>Comment:<br/>{{info.comment}}</p>
+    <p>
       <button ng-show="admin" ng-click="deleteInfo(info._id)">Delete</button>
     </p>
   </div>

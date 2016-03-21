@@ -32,6 +32,18 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 				requiredLogin: true
 			})
 
+			.when('/resource/:id', {
+				templateUrl: '/views/reslist.html',
+				controller: 'ResListController',
+				requiredLogin: true
+			})
+
+			.when('/resource/info/:id', {
+				templateUrl: '/views/resinfo.html',
+				controller: 'ResInfoController',
+				requiredLogin: true
+			})
+
 			.when('/task', {
 				templateUrl: '/views/task.html',
 				controller: 'taskController',
@@ -82,4 +94,20 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 				console.log('Magic');
 			}
 		});
+	})
+
+	.directive('fileModel', function ($parse) {
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				var model = $parse(attrs.fileModel);
+				var modelSetter = model.assign;
+
+				element.bind('change', function() {
+					scope.$apply(function(){
+						modelSetter(scope, element[0].files[0]);
+					});
+				});
+			}
+		};
 	});

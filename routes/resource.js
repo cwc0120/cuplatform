@@ -1,118 +1,77 @@
 "use strict";
 var express = require('express');
-var router = express.Router();
 var multer = require('multer');
+var fs = require('fs');
+var http = require('http');
+var router = express.Router();
 var Resource = require('../models/resource');
 var Course = require('../models/course');
-var Dept = require('../models/dept');
 var utils = require('../utils');
 
-var upload = multer({
-	dest: 'uploads/',
-	fileFilter: function(req, file, cb) {
-		if (file.mimetype == 'application/msword' ||
-			file.mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-			file.mimetype == 'application/vnd.ms-powerpoint' ||
-			file.mimetype == 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
-			file.mimetype == 'application/pdf') {
-			cb(null, true);
-		}
-		cb(new Error('File type not supported.'));
+var storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, './uploads/');
 	},
-	limits: {fileSize: 10485760},
-	rename: function(fieldname, filename) {
-		return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
-	},
-	onFileUploadStart: function(file) {
-		console.log(file.fieldname + ' is starting ...');
-	},
-	onFileUploadComplete: function(file) {
-		console.log(file.fieldname + ' uploaded to  ' + file.path);
+	filename: function (req, file, cb) {
+		var originalName = file.originalname;
+		var ext = originalName.split('.');
+		cb(null, ext[0] + '-' + Date.now() + '.' + ext[ext.length-1]);
 	}
+});
+
+var upload = multer({
+	storage: storage,
+	fileFilter: function(req, file, cb) {
+		if (file.mimetype === 'application/msword' ||
+			file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+			file.mimetype === 'application/vnd.ms-powerpoint' ||
+			file.mimetype === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+			file.mimetype === 'application/pdf') {
+			cb(null, true);
+		} else {
+			cb(new Error('File type not supported.'));
+		}	
+	},
+	limits: {fileSize: 10485760}
 });
 
 router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-router.route('/dept/:did')
-	.get(function(req, res, next) {
-		// see resources under dept
-		findDeptRes(req, res, next);
-	})
-
-	.post(function(req, res, next) {
-		var resFile = upload.single('resFile');
-		resFile(req, res, function(err) {
-			if (err) {
-				res.status(400).json({error: err});
-			} else if (!req.file) {
-				res.status(400).json({error: 'No file uploaded.'});
-			} else {
-				Dept.findOne({deptCode: req.body.deptCode}, function(err, dept) {
-					if (err) {
-						return next(err);
-					} else if (dept === null) {
-						res.status(400).json({error: 'Department not found!'});
-					} else {
-						Resource.create({
-							deptCode: req.body.deptCode,
-							name: req.body.name,
-							description: req.body.description,
-							uploader: req.decoded.uid,
-							link: req.file.filename,
-							dateOfUpload: Date.now(),
-						}, function(err) {
-							if (err) {
-								return next(err);
-							} else {
-								findDeptRes(req, res, next);
-							}
-						});
-					}
-				});		
-			}
-		});
-	});
-
-router.route('/course/:cid')
+router.route('/:id')
 	.get(function(req, res, next) {
 		// see resources under course
-		findCosRes(req, res, next);
+		findResList(req, res, next);
 	})
 
-	.post(function(req, res, next) {
-		var resFile = upload.single('resFile');
-		resFile(req, res, function(err) {
-			if (err) {
-				res.status(400).json({error: err});
-			} else if (!req.file) {
-				res.status(400).json({error: 'No file uploaded.'});
-			} else {
-				Course.findOne({courseCode: req.body.courseCode}, function(err, course) {
-					if (err) {
-						return next(err);
-					} else if (course === null) {
-						res.status(400).json({error: 'Course not found!'});
-					} else {
-						Resource.create({
-							courseCode: req.body.courseCode,
-							name: req.body.name,
-							description: req.body.description,
-							uploader: req.decoded.uid,
-							link: req.file.filename,
-							dateOfUpload: Date.now(),
-						}, function(err) {
-							if (err) {
-								return next(err);
-							} else {
-								findDeptRes(req, res, next);
-							}
-						});
-					}
-				});		
-			}
-		});
+	.post(upload.single('file'), function(req, res, next) {
+		if (!req.file) {
+			res.status(400).json({error: 'No file uploaded.'});
+		} else {
+			Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
+				if (err) {
+					return next(err);
+				} else if (course === null) {
+					res.status(400).json({error: 'Course not found!'});
+				} else {
+					Resource.create({
+						courseCode: req.params.id.toUpperCase(),
+						name: req.body.name,
+						description: req.body.description,
+						uploader: req.decoded.uid,
+						link: req.file.filename,
+						dateOfUpload: Date.now(),
+					}, function(err) {
+						if (err) {
+							return next(err);
+						} else {
+							findResList(req, res, next);
+						}
+					});
+				}
+			});		
+		}
 	});
 
 router.route('/info/:id')
@@ -177,25 +136,30 @@ router.route('/info/:id')
 	.delete(function(req, res, next) {
 		// delete resource
 		if (req.decoded.admin) {
-			Resource.remove({_id: req.params.id}, function(err) {
+			Resource.findOne({_id: req.params.id}, function(err, resource) {
 				if (err) {
 					return next(err);
 				} else {
-					Resource.find()
-						.sort({dateOfUpload: -1})
-						.select('name')
-						.exec(function(err, resources) {
-							if (err) {
-								return next(err);
-							} else {
-								res.status(200).json(resources);
-							}
-						});
+					req.params.id = resource.courseCode;
+					resource.remove();
+					findResList(req, res, next);
 				}
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a resource!"});
 		}	
+	});
+
+router.route('/file/:id')
+	.get(function(req, res, next) {
+		var file = './uploads/' + req.params.id;
+		res.download(file, function(err) {
+			if (err) {
+				return next(err);
+			} else {
+				console.log('success!');
+			}
+		});
 	});
 
 router.route('/info/:id/:cmid')
@@ -222,23 +186,10 @@ router.route('/info/:id/:cmid')
 		}	
 	});
 
-function findDeptRes(req, res, next) {
-	Resource.find({deptCode: req.params.did})
+function findResList(req, res, next) {
+	Resource.find({courseCode: req.params.id.toUpperCase()})
 		.sort({dateOfUpload: -1})
-		.select('name')
-		.exec(function(err, resources) {
-			if (err) {
-				return next(err);
-			} else {
-				res.status(200).json(resources);
-			}
-		});
-}
-
-function findCosRes(req, res, next) {
-	Resource.find({courseCode: req.params.cid})
-		.sort({dateOfUpload: -1})
-		.select('name')
+		.select('name dateOfUpload')
 		.exec(function(err, resources) {
 			if (err) {
 				return next(err);
@@ -255,7 +206,7 @@ function find(req, res, next) {
 		} else if (resource === null) {
 			res.status(400).json({error: "Resource not found!"});
 		} else {
-			res.status(200).json(Resource);
+			res.status(200).json(resource);
 		}
 	});
 }

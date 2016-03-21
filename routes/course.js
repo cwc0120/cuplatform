@@ -177,6 +177,7 @@ function find(req, res, next) {
 		} else if (course === null) {
 			res.status(400).json({error: "Course not found!"});
 		} else {
+			course.info.sort({dateOfComment: -1});
 			res.status(200).json(course);
 		}
 	});

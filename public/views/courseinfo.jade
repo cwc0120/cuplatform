@@ -19,6 +19,7 @@ div(ng-show='success')
 		p
 			button(ng-show='admin' ng-click='enableEdit()') Edit Course
 			button(ng-show='!adding && !posted' ng-click='enableAdd()') Add Info
+			button(ng-show='!adding' ng-click='$location.path("/resource/" + course.courseCode)') Resources
 	div(ng-show='editing')
 		form 
 			p Course Code: {{course.courseCode}}
@@ -72,23 +73,23 @@ div(ng-show='success')
 	div(ng-repeat='info in course.info')
 		p
 			| Author: {{info.author}}
-			br
-			| Time: {{info.dateOfComment}}
-			br
+		p
+			| Time: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}
+		p
 			| rating: {{info.rating}}
-			br
+		p
 			| Outline:
 			br
 			| {{info.outline}}
-			br
+		p
 			| Assessment Method:
 			br
 			| {{info.assessMethod}}
-			br
+		p
 			| Comment:
 			br
 			| {{info.comment}}
-			br
+		p
 			button(ng-show='admin' ng-click='deleteInfo(info._id)') Delete
 	p
 		button(ng-click='$location.path("/dept/" + course.deptCode)') Back
