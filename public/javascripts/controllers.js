@@ -567,7 +567,16 @@ angular.module('CUPControllers', [])
 		});
 
 		$scope.download = function() {
-			Resource.getRes($scope.resource.link);
+			var a = document.createElement("a");
+			document.body.appendChild(a);
+			a.style = "display: none";
+			Resource.getRes($scope.resource.link).then(function (result) {
+				var file = new Blob([result.data], {type: result.data.type});
+				var fileURL = window.URL.createObjectURL(file);
+				a.href = fileURL;
+				a.download = $scope.resource.link;
+				a.click();
+			});
 		};
 
 		$scope.enableEdit = function() {

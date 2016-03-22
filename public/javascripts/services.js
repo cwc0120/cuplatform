@@ -199,7 +199,7 @@ angular.module('CUPServices', [])
 				return $http.get('/api/resource/info/' + id);
 			},
 			getRes: function(id) {
-				return $http.get('/api/resource/file/' + id);
+				return $http.get('/api/resource/file/' + id, {responseType: 'blob'});
 			},
 			create: function(id, data) {
 				return $http.post('/api/resource/' + id, data, {
