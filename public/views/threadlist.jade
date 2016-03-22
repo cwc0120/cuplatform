@@ -1,0 +1,31 @@
+div(ng-hide='success')
+	h3 {{errorMessage}}
+	button(ng-click='$route.reload()') Return
+div(ng-show='success')
+	h1 {{code}} Discussion Forum
+	p
+		button(ng-show='!adding' ng-click='enableAdd()') New Thread
+
+	div(ng-show='adding')
+		form
+			p Topic: 
+				input(type='text' ng-model='newThread.topic')
+			p Content:
+			p
+				text-angular(ng-model='htmlVariable')
+			p Secret?
+				input(type='checkbox' ng-model='newThread.annoymous')
+			button(type='submit' ng-click='addThread()') Submit
+	table
+		tr(ng-repeat='thread in threads')
+			td(ng-click='$location.path("/thread/" + thread._id)')
+				p
+					strong {{thread.author}}: {{thread.topic}}	
+					br 
+					| {{thread.content | htmlToPlaintext}} 
+					br
+					i {{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}
+			td
+				button(ng-show='admin' ng-click='delete(thread._id)') Delete
+	p
+		button(ng-hide='code === "General"' ng-click='$location.path("/course/" + code)') Back

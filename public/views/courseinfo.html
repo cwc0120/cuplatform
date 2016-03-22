@@ -25,6 +25,7 @@
       <button ng-show="admin" ng-click="enableEdit()">Edit Course</button>
       <button ng-show="!adding &amp;&amp; !posted" ng-click="enableAdd()">Add Info</button>
       <button ng-show="!adding" ng-click="$location.path(&quot;/resource/&quot; + course.courseCode)">Resources</button>
+      <button ng-show="!adding" ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode)">Discussion</button>
     </p>
   </div>
   <div ng-show="editing">

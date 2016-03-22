@@ -2,6 +2,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Resource = require('./resource');
+var Thread = require('./thread');
 
 var Course = new Schema({
 	courseCode: {type: String, unique: true, required: true},
@@ -32,6 +33,13 @@ Course.pre('remove', function(next) {
 				resources[i].remove();
 			}
 			console.log("Relative resources deleted.");
+		}
+	});
+	Thread.remove({courseCode: this.courseCode}, function(err) {
+		if (err) {
+			return next(err);
+		} else {
+			console.log("Relative threads deleted.");
 		}
 	});
 	next();

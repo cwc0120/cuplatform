@@ -460,7 +460,7 @@ angular.module('CUPControllers', [])
 			$scope.newInfo.rating = $scope.rating.index;
 			if (!($scope.newInfo.rating === undefined || $scope.newInfo.rating === '' ||
 				$scope.newInfo.outline === undefined || $scope.newInfo.outline.length < 30 ||
-				$scope.newInfo.assessMethod === undefined || $scope.newInfo.assessMethod.length < 30 ||
+				$scope.newInfo.assessMethod === undefined || $scope.newInfo.assessMethod.length <30 ||
 				$scope.newInfo.comment === undefined || $scope.newInfo.comment.length < 30)) {
 
 				Course.postInfo(courseCode, $scope.newInfo).success(function(res) {
@@ -499,7 +499,7 @@ angular.module('CUPControllers', [])
 
 		$scope.courseCode = $routeParams.id;
 
-		Resource.get($scope.courseCode).success(function(res) {
+		Resource.get($scope.courseCode.toUpperCase()).success(function(res) {
 			$scope.success = true;
 			$scope.ress = res;
 		}).error(function(res) {
@@ -514,16 +514,18 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.addResource = function() {
-			if ($scope.name !== '' && $scope.description.length >= 30) {
+			$scope.description = $scope.htmlVariable;
+			if ($scope.name !== '' && $scope.description !== undefined && $scope.description !== '') {
 				var fd = new FormData();
 				fd.append('file', $scope.file);
 				fd.append('name', $scope.name);
 				fd.append('description', $scope.description);
-				Resource.create($scope.courseCode, fd).success(function(res){
+				Resource.create($scope.courseCode, fd).success(function(res) {
 					$scope.adding = false;
 					$scope.name = '';
 					$scope.file = {};
 					$scope.description = '';
+					$scope.htmlVariable = '';
 					$scope.ress = res;
 				}).error(function(res){
 					$scope.success = false;
@@ -586,11 +588,13 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.editResource = function() {
+			$scope.edit.description = $scope.htmlVariable;
 			if ($scope.edit.name !== '' && $scope.edit.description !== undefined && 
-				$scope.edit.description.length >= 30) {
+				$scope.edit.description !== '') {
 					Resource.edit(resID, $scope.edit).success(function(res) {
 						$scope.editing = false;
 						$scope.edit = {};
+						$scope.htmlVariable = '';
 						$scope.resource = res;
 					}).error(function(res) {
 						$scope.success = false;
@@ -607,7 +611,7 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.addComment = function() {
-			if ($scope.newComment.length >= 30) {
+			if ($scope.newComment !== '') {
 				Resource.postComment(resID, {content: $scope.newComment}).success(function(res) {
 					$scope.adding = false;
 					$scope.newComment = '';
@@ -622,6 +626,138 @@ angular.module('CUPControllers', [])
 		$scope.deleteComment = function(cmid) {
 			Resource.deleteComment(resID, cmid).success(function(res) {
 				$scope.resource = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+	})
+
+	.controller('ThreadListController', function($scope, $window, $location, $routeParams, $route, Thread) {
+		$scope.$location = $location;
+		$scope.$route = $route;
+		$scope.adding = false;
+		$scope.newThread = {};
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		if ($routeParams.id === 'GENERAL') {
+			$scope.code = 'General';
+		} else {
+			$scope.code = $routeParams.id;
+		}
+		
+		Thread.get($scope.code).success(function(res) {
+			$scope.success = true;
+			$scope.threads = res;
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.enableAdd = function() {
+			if (!$scope.adding) {
+				$scope.adding = true;
+			}
+		};
+
+		$scope.addThread = function() {
+			$scope.newThread.content = $scope.htmlVariable;
+			if ($scope.newThread.topic !== undefined && $scope.newThread.topic !== '' && 
+				$scope.newThread.content !== undefined && $scope.newThread.content !== '') {
+				Thread.create($scope.code, $scope.newThread).success(function(res) {
+					$scope.adding = false;
+					$scope.newThread = {};
+					$scope.htmlVariable = '';
+					$scope.threads = res;
+				}).error(function(res){
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}	
+		};
+
+		$scope.delete = function(id) {
+			Thread.delete(id).success(function(res) {
+				$scope.threads = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+	})
+
+	.controller('ThreadController', function($scope, $window, $location, $routeParams, $route, Thread) {
+		$scope.$location = $location;
+		$scope.$route = $route;
+		$scope.editing = false;
+		$scope.adding = false;
+		$scope.editContent = '';
+		$scope.newComment = '';
+		$scope.uid = $window.localStorage['uid'];
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		var threadID = $routeParams.id;
+
+		Thread.getOne(threadID).success(function(res) {
+			$scope.success = true;
+			$scope.thread = res;
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.enableEdit = function() {
+			if (!$scope.editing) {
+				$scope.editing = true;
+			}
+		};
+
+		$scope.editThread = function() {
+			$scope.editContent = $scope.htmlVariable;
+			if ($scope.editContent !== '') {
+				Thread.edit(threadID, {content: $scope.editContent}).success(function(res) {
+					$scope.editing = false;
+					$scope.editContent = '';
+					$scope.htmlVariable = '';
+					$scope.thread = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+			
+		};
+
+		$scope.enableAdd = function() {
+			if (!$scope.adding) {
+				$scope.adding = true;
+			}
+		};
+
+		$scope.addComment = function() {
+			if ($scope.newComment !== '') {
+				Thread.postComment(threadID, {content: $scope.newComment}).success(function(res) {
+					$scope.adding = false;
+					$scope.newComment = '';
+					$scope.thread = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+		};
+
+		$scope.deleteComment = function(cmid) {
+			Thread.deleteComment(threadID, cmid).success(function(res) {
+				$scope.thread = res;
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;

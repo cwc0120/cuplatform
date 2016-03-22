@@ -1,0 +1,39 @@
+
+<div ng-hide="success">
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
+</div>
+<div ng-show="success">
+  <h1>{{code}} Discussion Forum</h1>
+  <p>
+    <button ng-show="!adding" ng-click="enableAdd()">New Thread</button>
+  </p>
+  <div ng-show="adding">
+    <form>
+      <p>Topic: 
+        <input type="text" ng-model="newThread.topic"/>
+      </p>
+      <p>Content:</p>
+      <p>
+        <text-angular ng-model="htmlVariable"></text-angular>
+      </p>
+      <p>Secret?
+        <input type="checkbox" ng-model="newThread.annoymous"/>
+      </p>
+      <button type="submit" ng-click="addThread()">Submit</button>
+    </form>
+  </div>
+  <table>
+    <tr ng-repeat="thread in threads">
+      <td ng-click="$location.path(&quot;/thread/&quot; + thread._id)">
+        <p><strong>{{thread.author}}: {{thread.topic}}	</strong><br/>{{thread.content | htmlToPlaintext}} <br/><i>{{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}</i></p>
+      </td>
+      <td>
+        <button ng-show="admin" ng-click="delete(thread._id)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <p>
+    <button ng-hide="code === &quot;General&quot;" ng-click="$location.path(&quot;/course/&quot; + code)">Back</button>
+  </p>
+</div>

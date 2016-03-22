@@ -20,6 +20,7 @@ div(ng-show='success')
 			button(ng-show='admin' ng-click='enableEdit()') Edit Course
 			button(ng-show='!adding && !posted' ng-click='enableAdd()') Add Info
 			button(ng-show='!adding' ng-click='$location.path("/resource/" + course.courseCode)') Resources
+			button(ng-show='!adding' ng-click='$location.path("/discussion/" + course.courseCode)') Discussion
 	div(ng-show='editing')
 		form 
 			p Course Code: {{course.courseCode}}

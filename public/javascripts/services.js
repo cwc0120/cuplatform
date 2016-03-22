@@ -222,6 +222,32 @@ angular.module('CUPServices', [])
 		};
 	})
 
+	.factory('Thread', function($http) {
+		return {
+			get: function(id) {
+				return $http.get('/api/thread/' + id);
+			},
+			getOne: function(id) {
+				return $http.get('/api/thread/detail/' + id);
+			},
+			create: function(id, data) {
+				return $http.post('/api/thread/' + id, data);
+			},
+			postComment: function(id, data) {
+				return $http.post('/api/thread/detail/' + id, data);
+			},
+			edit: function(id, data) {
+				return $http.put('/api/thread/detail/' + id, data);
+			},
+			delete: function(id) {
+				return $http.delete('/api/thread/detail/' + id);
+			},
+			deleteComment: function(id, cmid) {
+				return $http.delete('/api/thread/detail/' + id + '/' + cmid);
+			}
+		};
+	})
+
 	.factory('Todos', function($http) {
 		return {
 			get: function() {
