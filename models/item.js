@@ -7,7 +7,7 @@ var Item = new Schema({
 	courseCode: {type: String, ref: 'Course'},
 	name: String,
 	description: String,
-	uploader: {type: Schema.Types.ObjectId, ref: 'User'},
+	uploader: {type: String, ref: 'User'},
 	link: Schema.Types.ObjectId,
 	date: Date,
 	price: Number,
