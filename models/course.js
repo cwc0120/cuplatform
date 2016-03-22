@@ -3,16 +3,16 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Resource = require('./resource');
 var Item = require ('./item');
+var Thread = require('./thread');
 
 var Course = new Schema({
 	courseCode: {type: String, unique: true, required: true},
 	courseName: String,
 	deptCode: {type: String, ref: 'Dept', required: true},
-	term: String,
 	schedule: [{
 		day: Number,
-		lesson: Number,
-		venue: String 
+		time: Number,
+		venue: String
 	}],
 	prof: String,
 	info: [{
@@ -26,10 +26,13 @@ var Course = new Schema({
 });
 
 Course.pre('remove', function(next) {
-	Resource.remove({courseCode: this.courseCode}, function(err) {
+	Resource.find({courseCode: this.courseCode}, function(err, resources) {
 		if (err) {
 			return next(err);
 		} else {
+			for (var i=0; i<resources.length; i++) {
+				resources[i].remove();
+			}
 			console.log("Relative resources deleted.");
 		}
 	});
@@ -38,6 +41,13 @@ Course.pre('remove', function(next) {
 			return next(err);
 		} else {
 			console.log("Relative items deleted.");
+		}
+	});
+	Thread.remove({courseCode: this.courseCode}, function(err) {
+		if (err) {
+			return next(err);
+		} else {
+			console.log("Relative threads deleted.");
 		}
 	});
 	next();

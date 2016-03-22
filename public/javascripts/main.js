@@ -1,5 +1,5 @@
 'use strict';
-angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
+angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'])
 	.config(function($routeProvider) {
 		$routeProvider
 			.when('/', {
@@ -12,6 +12,48 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 				templateUrl: '/views/register.html',
 				controller: 'registerController',
 				requiredLogin: false
+			})
+
+			.when('/dept', {
+				templateUrl: '/views/deptlist.html',
+				controller: 'deptListController',
+				requiredLogin: true
+			})
+
+			.when('/dept/:id', {
+				templateUrl: '/views/deptcourselist.html',
+				controller: 'deptCourseListController',
+				requiredLogin: true
+			})
+
+			.when('/course/:id', {
+				templateUrl: '/views/courseinfo.html',
+				controller: 'CourseInfoController',
+				requiredLogin: true
+			})
+
+			.when('/resource/:id', {
+				templateUrl: '/views/reslist.html',
+				controller: 'ResListController',
+				requiredLogin: true
+			})
+
+			.when('/resource/info/:id', {
+				templateUrl: '/views/resinfo.html',
+				controller: 'ResInfoController',
+				requiredLogin: true
+			})
+
+			.when('/discussion/:id', {
+				templateUrl: '/views/threadlist.html',
+				controller: 'ThreadListController',
+				requiredLogin: true
+			})
+
+			.when('/thread/:id', {
+				templateUrl: '/views/thread.html',
+				controller: 'ThreadController',
+				requiredLogin: true
 			})
 
 			.when('/task', {
@@ -35,12 +77,17 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 					}
 					return config;
 				},
+
+				response: function(response) {
+					return response;
+				},
+
 				responseError: function(rejection) {
-					if (rejection != undefined) {
-						$location.path('/');
+					if (rejection != undefined && rejection.status == 403) {
 						$window.localStorage.removeItem('uid');
-						$window.localStorage['uid'] = res.uid;
+						$window.localStorage.removeItem('admin');
 						$window.localStorage.removeItem('cupToken');
+						$location.path('/');
 					}
 					return $q.reject(rejection);
 				}
@@ -49,14 +96,36 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 	})
 
 	.run(function($rootScope, $location, $window, Auth) {
-		$rootScope.$on('$routeChangeStart', function(event, nextRoute, currentRoute) {
-			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.getToken()) {
+		$rootScope.$on('$routeChangeStart', function(event, nextRoute) {
+			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.isLogged) {
 				$location.path('/');
 				console.log('Please log in');
 			}
-			if (!nextRoute.requiredLogin && Auth.getToken()) {
+			if (!nextRoute.requiredLogin && Auth.isLogged) {
 				$location.path('/task');
 				console.log('Magic');
 			}
 		});
+	})
+
+	.directive('fileModel', function($parse) {
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				var model = $parse(attrs.fileModel);
+				var modelSetter = model.assign;
+
+				element.bind('change', function() {
+					scope.$apply(function(){
+						modelSetter(scope, element[0].files[0]);
+					});
+				});
+			}
+		};
+	})
+
+	.filter('htmlToPlaintext', function() {
+		return function(text) {
+			return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
+		};
 	});

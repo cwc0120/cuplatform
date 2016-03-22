@@ -1,0 +1,31 @@
+div(ng-hide='success')
+	h3 {{errorMessage}}
+	button(ng-click='$route.reload()') Return
+div(ng-show='success')
+	h1 Resources List for {{courseCode}}
+	p
+			button(ng-show='!adding' ng-click='enableAdd()') Add Resources
+
+	div(ng-show='adding')
+		form(enctype="multipart/form-data")
+			p Name: 
+				input(type='text' ng-model='name')
+			p File:
+				input(type='file' file-model='file')
+			p Description:
+			p
+				text-angular(ng-model='htmlVariable')
+			button(type='submit' ng-click='addResource()') Upload
+	table
+		tr
+			th Name
+			th Date of upload
+			th
+		tr(ng-repeat='res in ress')
+			td 
+				span(ng-click='$location.path("/resource/info/" + res._id)') {{res.name}}
+			td {{res.dateOfUpload | date:'d/M/yyyy'}}
+			td
+				button(ng-show='admin' ng-click='delete(res._id)') Delete
+	p
+		button(ng-click='$location.path("/course/" + courseCode)') Back

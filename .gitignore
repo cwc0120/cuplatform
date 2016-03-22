@@ -38,3 +38,10 @@ db
 # Update package script
 latestStablePackage
 startdb.sh
+
+# Dependencies
+public/font-awesome
+public/textAngular
+
+# Uploads
+Uploads

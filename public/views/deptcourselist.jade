@@ -1,0 +1,65 @@
+div(ng-hide='success')
+	h3 {{errorMessage}}
+	button(ng-click='$route.reload()') Return
+div(ng-show='success')
+	h1 Department Detail
+	div(ng-hide='editing')
+		p Deparment Code: {{dept.deptCode}}
+		p Department Name: {{dept.deptName}}
+		p
+			button(ng-show='admin' ng-click='enableEdit()') Edit Department
+			button(ng-show='admin && !adding' ng-click='enableAdd()') Add Course
+	div(ng-show='editing')
+		form 
+			p Deparment Code: {{dept.deptCode}}
+			p Department Name: 
+				input(type='text' ng-model='edit.deptName')
+			p
+				button(type='submit' ng-show='admin' ng-click='editDept()') Sumbit
+	div(ng-show='adding')
+		form
+			p Course Code:
+				input(type='text' ng-model='newCourse.courseCode')
+			p Course Name:
+				input(type='text' ng-model='newCourse.courseName')
+			p Instructor:
+				input(type='text' ng-model='newCourse.prof')
+			p Schedule:
+			table
+				tr
+					th Day
+					th Time
+					th Venue
+					th
+				tr(ng-show='admin')
+					td
+						select(ng-model='day' ng-options='d.val for d in days')
+							option(value='') --Choose Day--
+					td
+						select(ng-model='time' ng-options='t.val for t in times')
+							option(value='') --Choose Lesson--
+					td
+						input(type='text' ng-model='venue')
+					td
+						button(type='button' ng-click='addLesson()') Add Lesson
+				tr(ng-repeat='lesson in lessons')
+					td {{lesson.day.val}}
+					td {{lesson.time.val}}
+					td {{lesson.venue}}
+					td
+						button(type='button' ng-click='removeLesson($index)') Remove Lesson
+			br
+			button(type='submit' ng-click='addCourse()') Confirm
+		
+	table
+		tr
+			th Course Code
+			th Course Name
+			th
+		tr(ng-repeat='course in courses')
+			td 
+				span(ng-click='$location.path("/course/" + course.courseCode)') {{course.courseCode}}
+			td {{course.courseName}}
+			td
+				button(ng-show='admin' ng-click='delete(course.courseCode)') Delete
+	button(ng-click='$location.path("/dept")') Back

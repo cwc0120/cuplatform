@@ -1,0 +1,43 @@
+
+<div ng-hide="success">
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
+</div>
+<div ng-show="success">
+  <h1>Resources List for {{courseCode}}</h1>
+  <p>
+    <button ng-show="!adding" ng-click="enableAdd()">Add Resources</button>
+  </p>
+  <div ng-show="adding">
+    <form enctype="multipart/form-data">
+      <p>Name: 
+        <input type="text" ng-model="name"/>
+      </p>
+      <p>File:
+        <input type="file" file-model="file"/>
+      </p>
+      <p>Description:</p>
+      <p>
+        <text-angular ng-model="htmlVariable"></text-angular>
+      </p>
+      <button type="submit" ng-click="addResource()">Upload</button>
+    </form>
+  </div>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Date of upload</th>
+      <th></th>
+    </tr>
+    <tr ng-repeat="res in ress">
+      <td> <span ng-click="$location.path(&quot;/resource/info/&quot; + res._id)">{{res.name}}</span></td>
+      <td>{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
+      <td>
+        <button ng-show="admin" ng-click="delete(res._id)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <p>
+    <button ng-click="$location.path(&quot;/course/&quot; + courseCode)">Back</button>
+  </p>
+</div>
