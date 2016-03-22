@@ -2,6 +2,8 @@
 var express = require('express');
 var router = express.Router();
 var Item = require('../models/item');
+var Dept = require('../models/dept');
+var Course = require('../models/course');
 var utils = require('../utils');
 
 router.use(function(req, res, next) {
@@ -20,7 +22,7 @@ router.route('/myitems')
 	.get(function(req,res,next){
 		Item.find({uploader: req.decoded.uid})
 			.sort({date: 1})
-			.select ('deptCode courseCode Name Description price quantity date')
+			.select ('deptCode courseCode Name price date uploader')
 			.exec(function(err, items) {
 				if (err) {
 					return next(err);
@@ -31,6 +33,7 @@ router.route('/myitems')
 				}
 			});	
 	})
+
 	.post(function(req, res, next) {
 		Dept.findOne({deptCode: req.body.deptCode}, function(err, dept) {
 			if (err) {
@@ -38,7 +41,7 @@ router.route('/myitems')
 			} else if (dept === null) {
 				res.status(400).json({error: "Department not found!"});
 			} else {
-				Course.findOne({couseCode: req.body.courseCode}, function (err, course) {
+				Course.findOne({courseCode: req.body.courseCode}, function (err, course) {
 					if (err) {
 						return next(err);
 					} else if (course === null) {
@@ -56,12 +59,18 @@ router.route('/myitems')
 							if (err) {
 								return next(err);
 							} else {
-								find(req, res, next);
+								findList(req, res, next);
 							}
 						});
 					}})}
 				});
 			})
+
+router.route('/:deptid/:id')
+	.get(function(req,res,next){
+		find(req,res,next);	
+	})
+
 	.put(function(req, res, next) {
 		Item.update(
 			{_id: req.params.id, uploader: req.decoded.uid}, 
@@ -83,26 +92,30 @@ router.route('/myitems')
 		);
 	})
 	.delete(function(req, res, next) {
-		Item.remove({_id: req.params.id, uploader: req.decoded.uid}, function(err) {
+		Item.findOne({_id: req.params.id, uploader: req.decoded.uid}, function(err, item) {
 				if (err) {
 					return next(err);
+				} else if (item === null) {
+					res.status(400).json({error: "Item not found!"});
 				} else {
-					find(req, res, next);
+					item.remove();
+					findList(req, res, next);
 				}
-			});
+			}
+		);
 	})
 
 
-router.route('/:id')
+router.route('/:deptid')
 	.get(function(req,res,next){
-		Item.find({deptCode: req.params.id.toUpperCase()})
+		Item.find({deptCode: req.params.deptid})
+			.select ('deptCode courseCode Name price date uploader')
 			.sort({courseCode: 1})
-			.select ('courseCode Name Description price quantity date uploader')
 			.exec(function(err, items) {
 				if (err) {
 					return next(err);
 				} else if (items === null ) {
-					res.status(400).json({error: "Department not found!"});
+					res.status(400).json({error: "Items not found!"});
 				} else {
 					res.status(200).json(items);
 				}
@@ -112,7 +125,7 @@ router.route('/:id')
 function findList(req, res, next) {
 	Item.find()
 		.sort({deptCode: 1})
-		.select ('deptCode courseCode Name Description price quantity date uploader')
+		.select ('deptCode courseCode Name price date uploader')
 		.exec(function(err, items) {
 			if (err) {
 				return next(err);
@@ -123,11 +136,14 @@ function findList(req, res, next) {
 }
 
 function find(req, res, next) {
-	Item.find().sort({deptCode: 1}).exec(function (err, items) {
-		if (err) {
-			return next(err);
-		} else {
-			res.status(200).json(items);
+	Item.findOne({_id: req.params.id, deptCode: req.params.deptid},
+		function (err, item) {
+			if (err) {
+				return next(err);
+			} else if (item === null){
+				res.status(400).json({error: "Item not found!"});
+			} else {
+				res.status(200).json(item);
 		}
 	});	
 }
