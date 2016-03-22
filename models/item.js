@@ -11,7 +11,7 @@ var Item = new Schema({
 	buyers: [{type: String, ref: 'User'}],
 	date: Date,
 	price: Number,
-	priceflexible: Boolean,
+	priceFlexible: Boolean,
 	sold: Boolean
 });
 

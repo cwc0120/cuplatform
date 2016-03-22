@@ -28,9 +28,10 @@ html(ng-app='CUP')
 				p Logged as {{uid}}.
 					button(ng-click='logout()') Logout
 				p
-					span(ng-click='$location.path("/task")') Tasks 
-					span(ng-click='$location.path("/dept")') Departments 
-					span(ng-click='$location.path("/discussion/GENERAL")') Discussion
+					a(ng-click='$location.path("/task")') Tasks 
+					a(ng-click='$location.path("/dept")') Departments 
+					a(ng-click='$location.path("/discussion/GENERAL")') Discussion 
+					a(ng-click='$location.path("/barter")') Barter
 
 			div(id='main')
 				div(ng-view)
