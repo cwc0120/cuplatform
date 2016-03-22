@@ -151,7 +151,7 @@ angular.module('CUPControllers', [])
 			$scope.todos = data;
 		}).error(function(data) {
 			$scope.success = false;
-			$scope.errorMessage = data.message;
+			$scope.errorMessage = data.error;
 		});
 
 		$scope.create = function() {
@@ -163,7 +163,7 @@ angular.module('CUPControllers', [])
 				$scope.todos = data;
 			}).error(function(data) {
 				$scope.success = false;
-				$scope.errorMessage = data.message;
+				$scope.errorMessage = data.error;
 			});
 		};
 
@@ -178,7 +178,7 @@ angular.module('CUPControllers', [])
 					return false;
 				}).error(function(data) {
 					$scope.success = false;
-					$scope.errorMessage = data.message;
+					$scope.errorMessage = data.error;
 				});
 			}
 		};
@@ -189,7 +189,7 @@ angular.module('CUPControllers', [])
 				$scope.todos = data;
 			}).error(function(data) {
 				$scope.success = false;
-				$scope.errorMessage = data.message;
+				$scope.errorMessage = data.error;
 			});
 		};
 
@@ -478,6 +478,150 @@ angular.module('CUPControllers', [])
 		$scope.deleteInfo = function(cmid) {
 			Course.deleteInfo(courseCode, cmid).success(function(res) {
 				$scope.course = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+	})
+
+	.controller('ResListController', function($scope, $window, $location, $routeParams, $route, Resource) {
+		$scope.$location = $location;
+		$scope.$route = $route;
+		$scope.adding = false;
+		$scope.name = '';
+		$scope.description = '';
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		$scope.courseCode = $routeParams.id;
+
+		Resource.get($scope.courseCode).success(function(res) {
+			$scope.success = true;
+			$scope.ress = res;
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.enableAdd = function() {
+			if (!$scope.adding) {
+				$scope.adding = true;
+			}
+		};
+
+		$scope.addResource = function() {
+			if ($scope.name !== '' && $scope.description.length >= 30) {
+				var fd = new FormData();
+				fd.append('file', $scope.file);
+				fd.append('name', $scope.name);
+				fd.append('description', $scope.description);
+				Resource.create($scope.courseCode, fd).success(function(res){
+					$scope.adding = false;
+					$scope.name = '';
+					$scope.file = {};
+					$scope.description = '';
+					$scope.ress = res;
+				}).error(function(res){
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}	
+		};
+
+		$scope.delete = function(id) {
+			Resource.delete(id).success(function(res) {
+				$scope.ress = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		};
+	})
+
+	.controller('ResInfoController', function($scope, $window, $location, $routeParams, $route, Resource) {
+		$scope.$location = $location;
+		$scope.$route = $route;
+		$scope.editing = false;
+		$scope.adding = false;
+		$scope.edit = {};
+		$scope.newComment = '';
+		$scope.uid = $window.localStorage['uid'];
+		if ($window.localStorage['admin'] === 'true') {
+			$scope.admin = true;
+		} else {
+			$scope.admin = false;
+		}
+
+		var resID = $routeParams.id;
+
+		Resource.getOne(resID).success(function(res) {
+			$scope.success = true;
+			$scope.resource = res;
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+
+		$scope.download = function() {
+			var a = document.createElement("a");
+			document.body.appendChild(a);
+			a.style = "display: none";
+			Resource.getRes($scope.resource.link).then(function (result) {
+				var file = new Blob([result.data], {type: result.data.type});
+				var fileURL = window.URL.createObjectURL(file);
+				a.href = fileURL;
+				a.download = $scope.resource.link;
+				a.click();
+			});
+		};
+
+		$scope.enableEdit = function() {
+			if (!$scope.editing) {
+				$scope.editing = true;
+			}
+		};
+
+		$scope.editResource = function() {
+			if ($scope.edit.name !== '' && $scope.edit.description !== undefined && 
+				$scope.edit.description.length >= 30) {
+					Resource.edit(resID, $scope.edit).success(function(res) {
+						$scope.editing = false;
+						$scope.edit = {};
+						$scope.resource = res;
+					}).error(function(res) {
+						$scope.success = false;
+						$scope.errorMessage = res.error;
+					});
+			}
+			
+		};
+
+		$scope.enableAdd = function() {
+			if (!$scope.adding) {
+				$scope.adding = true;
+			}
+		};
+
+		$scope.addComment = function() {
+			if ($scope.newComment.length >= 30) {
+				Resource.postComment(resID, {content: $scope.newComment}).success(function(res) {
+					$scope.adding = false;
+					$scope.newComment = '';
+					$scope.resource = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+		};
+
+		$scope.deleteComment = function(cmid) {
+			Resource.deleteComment(resID, cmid).success(function(res) {
+				$scope.resource = res;
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;

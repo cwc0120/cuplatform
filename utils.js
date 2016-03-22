@@ -8,7 +8,7 @@ module.exports = {
 		if (token) {
 			jwt.verify(token, req.app.get('secret'), function(err, decoded) {
 				if (err) {
-					return res.status(400).json({message: err.name + ': ' + err.message});
+					return res.status(400).json({error: err.name + ': ' + err.message});
 				} else {
 					req.decoded = decoded;
 					console.log("The following user has been verified:");
@@ -17,7 +17,7 @@ module.exports = {
 				}
 			});
 		} else {
-			return res.status(403).json({message: 'No token provided.'});
+			return res.status(403).json({error: 'No token provided.'});
 		}
 	},
 
@@ -28,7 +28,7 @@ module.exports = {
 		if (token) {
 			jwt.verify(token, req.app.get('secret'), function(err, decoded) {
 				if (err) {
-					return res.status(400).json({message: err.name + ': ' + err.message});
+					return res.status(400).json({error: err.name + ': ' + err.message});
 				} else {
 					req.decoded = decoded;
 					next();

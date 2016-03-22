@@ -24,10 +24,13 @@ var Course = new Schema({
 });
 
 Course.pre('remove', function(next) {
-	Resource.remove({courseCode: this.courseCode}, function(err) {
+	Resource.find({courseCode: this.courseCode}, function(err, resources) {
 		if (err) {
 			return next(err);
 		} else {
+			for (var i=0; i<resources.length; i++) {
+				resources[i].remove();
+			}
 			console.log("Relative resources deleted.");
 		}
 	});

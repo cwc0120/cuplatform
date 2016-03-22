@@ -190,6 +190,38 @@ angular.module('CUPServices', [])
 		return Course;
 	})
 
+	.factory('Resource', function($http) {
+		return {
+			get: function(id) {
+				return $http.get('/api/resource/' + id);
+			},
+			getOne: function(id) {
+				return $http.get('/api/resource/info/' + id);
+			},
+			getRes: function(id) {
+				return $http.get('/api/resource/file/' + id, {responseType: 'blob'});
+			},
+			create: function(id, data) {
+				return $http.post('/api/resource/' + id, data, {
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				});
+			},
+			postComment: function(id, data) {
+				return $http.post('/api/resource/info/' + id, data);
+			},
+			edit: function(id, data) {
+				return $http.put('/api/resource/info/' + id, data);
+			},
+			delete: function(id) {
+				return $http.delete('/api/resource/info/' + id);
+			},
+			deleteComment: function(id, cmid) {
+				return $http.delete('/api/resource/info/' + id + '/' + cmid);
+			},
+		};
+	})
+
 	.factory('Todos', function($http) {
 		return {
 			get: function() {
