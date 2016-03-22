@@ -10,11 +10,11 @@
     <p>Uploader: {{resource.uploader}}</p>
     <p>
        
-      Description:<br/>{{resource.description}}
+      Description:<br/><span ng-bind-html="resource.description"></span>
     </p>
     <p>Date of upload: {{resource.dateOfUpload | date:'d/M/yyyy'}}</p>
     <p>
-      <button ng-show="admin || uid === resource.uploader" ng-click="enableEdit()">Edit Resource</button>
+      <button ng-show="uid === resource.uploader" ng-click="enableEdit()">Edit Resource</button>
       <button ng-show="!adding" ng-click="enableAdd()">Add Comment</button>
       <button ng-click="download()">Download</button>
     </p>
@@ -27,7 +27,7 @@
       <p>Uploader: {{resource.uploader}} </p>
       <p>Description:</p>
       <p>
-        <textarea rows="3" cols="50" ng-model="edit.description" placeholder="At least 30 characters"></textarea>
+        <text-angular ng-model="htmlVariable"></text-angular>
       </p>
       <p>Date of upload: {{resource.dateOfUpload | date:'d/M/yyyy'}}</p>
       <p>
@@ -39,7 +39,7 @@
     <form>
       <p>Comment:</p>
       <p> 
-        <textarea rows="3" cols="50" ng-model="newComment" placeholder="At least 30 characters"></textarea>
+        <textarea rows="3" cols="50" ng-model="newComment"></textarea>
       </p>
       <button type="submit" ng-click="addComment()">Confirm</button>
     </form>

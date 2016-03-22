@@ -1,5 +1,5 @@
 'use strict';
-angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
+angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'])
 	.config(function($routeProvider) {
 		$routeProvider
 			.when('/', {
@@ -41,6 +41,18 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 			.when('/resource/info/:id', {
 				templateUrl: '/views/resinfo.html',
 				controller: 'ResInfoController',
+				requiredLogin: true
+			})
+
+			.when('/discussion/:id', {
+				templateUrl: '/views/threadlist.html',
+				controller: 'ThreadListController',
+				requiredLogin: true
+			})
+
+			.when('/thread/:id', {
+				templateUrl: '/views/thread.html',
+				controller: 'ThreadController',
 				requiredLogin: true
 			})
 
@@ -96,7 +108,7 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 		});
 	})
 
-	.directive('fileModel', function ($parse) {
+	.directive('fileModel', function($parse) {
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -109,5 +121,11 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers'])
 					});
 				});
 			}
+		};
+	})
+
+	.filter('htmlToPlaintext', function() {
+		return function(text) {
+			return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
 		};
 	});

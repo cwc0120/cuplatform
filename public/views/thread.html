@@ -1,0 +1,50 @@
+
+<div ng-hide="success">
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
+</div>
+<div ng-show="success">
+  <h1>{{thread.topic}}</h1>
+  <p>Author: {{thread.author}}</p>
+  <p ng-bind-html="thread.content"></p>
+  <p>Date: {{thread.dateOfThread | date:'d/M/yyyy h:mma'}}</p>
+  <p>
+    <button ng-show="uid === thread.author" ng-click="enableEdit()">Edit Content</button>
+  </p>
+  <div ng-show="editing">
+    <form> 
+      <p>Content:</p>
+      <p>
+        <text-angular ng-model="htmlVariable"></text-angular>
+      </p>
+      <p>
+        <button type="submit" ng-click="editThread()">Sumbit</button>
+      </p>
+    </form>
+  </div>
+  <table>
+    <tr ng-repeat="cm in thread.comment">
+      <td>
+        <p><strong>{{cm.author}}:</strong><br/>{{cm.content}} <br/><i>{{cm.dateOfComment | date:'d/M/yyyy h:mma'}}</i></p>
+      </td>
+      <td>
+        <button ng-show="admin" ng-click="deleteComment(cm._id)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <p>
+    <button ng-show="!adding" ng-click="enableAdd()">Add Comment</button>
+  </p>
+  <div ng-show="adding">
+    <form>
+      <p>Comment:</p>
+      <p> 
+        <textarea rows="3" cols="50" ng-model="newComment"></textarea>
+      </p>
+      <button type="submit" ng-click="addComment()">Confirm</button>
+    </form>
+  </div>
+  <p>
+    <button ng-click="$location.path(&quot;/discussion/&quot; + thread.courseCode)">Back</button>
+  </p>
+</div>

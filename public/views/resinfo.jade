@@ -9,10 +9,10 @@ div(ng-show='success')
 		p 
 			| Description:
 			br
-			| {{resource.description}}
+			span(ng-bind-html='resource.description')
 		p Date of upload: {{resource.dateOfUpload | date:'d/M/yyyy'}}
 		p
-			button(ng-show='admin || uid === resource.uploader' ng-click='enableEdit()') Edit Resource
+			button(ng-show='uid === resource.uploader' ng-click='enableEdit()') Edit Resource
 			button(ng-show='!adding' ng-click='enableAdd()') Add Comment
 			button(ng-click = 'download()') Download
 	div(ng-show='editing')
@@ -22,7 +22,7 @@ div(ng-show='success')
 			p Uploader: {{resource.uploader}} 
 			p Description:
 			p
-				textarea(rows='3' cols='50' ng-model='edit.description' placeholder='At least 30 characters')
+				text-angular(ng-model='htmlVariable')
 			p Date of upload: {{resource.dateOfUpload | date:'d/M/yyyy'}}
 			p
 				button(type='submit' ng-click='editResource()') Sumbit
@@ -31,7 +31,7 @@ div(ng-show='success')
 		form
 			p Comment:
 			p 
-				textarea(rows='3' cols='50' ng-model='newComment' placeholder='At least 30 characters')
+				textarea(rows='3' cols='50' ng-model='newComment')
 			button(type='submit' ng-click='addComment()') Confirm
 		
 	Strong {{resource.comment.length}} Comments:

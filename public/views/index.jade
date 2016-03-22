@@ -3,8 +3,13 @@ html(ng-app='CUP')
 	head
 		title CUP
 		link(rel='stylesheet' href='/stylesheets/style.css')
+		link(rel='stylesheet' href='/textAngular/dist/textAngular.css')
+		link(rel='stylesheet' href='/font-awesome/css/font-awesome.min.css')
 		script(type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js')
 		script(type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js')
+		script(type='text/javascript' src='/textAngular/dist/textAngular-rangy.min.js')
+		script(type='text/javascript' src='/textAngular/dist/textAngular-sanitize.min.js')
+		script(type='text/javascript' src='/textAngular/dist/textAngular.min.js')
 		script(type='text/javascript' src='/javascripts/main.js')
 		script(type='text/javascript' src='/javascripts/controllers.js')
 		script(type='text/javascript' src='/javascripts/services.js')
@@ -25,6 +30,7 @@ html(ng-app='CUP')
 				p
 					span(ng-click='$location.path("/task")') Tasks 
 					span(ng-click='$location.path("/dept")') Departments 
+					span(ng-click='$location.path("/discussion/GENERAL")') Discussion
 
 			div(id='main')
 				div(ng-view)

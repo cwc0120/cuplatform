@@ -14,7 +14,7 @@ div(ng-show='success')
 				input(type='file' file-model='file')
 			p Description:
 			p
-				textarea(rows='3' cols='50' ng-model='description' placeholder='At least 30 characters')
+				text-angular(ng-model='htmlVariable')
 			button(type='submit' ng-click='addResource()') Upload
 	table
 		tr
