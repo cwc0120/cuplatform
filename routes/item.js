@@ -108,8 +108,22 @@ router.route('/:id')
 				}
 			});
 	});
+
+function findList(req, res, next) {
+	Item.find()
+		.sort({deptCode: 1})
+		.select ('deptCode courseCode Name Description price quantity date uploader')
+		.exec(function(err, items) {
+			if (err) {
+				return next(err);
+			} else {
+				res.status(200).json(items);
+			}
+		});
+}
+
 function find(req, res, next) {
-	Item.find().sort({deptCode: 1}).exec(function (err, todos) {
+	Item.find().sort({deptCode: 1}).exec(function (err, items) {
 		if (err) {
 			return next(err);
 		} else {

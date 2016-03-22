@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Course = require('./course');
 var Resource = require('./resource');
+var Item = require ('./item');
 
 var Dept = new Schema({
 	deptCode: {type: String, unique: true, required: true},
@@ -22,6 +23,13 @@ Dept.pre('remove', function(next) {
 			return next(err);
 		} else {
 			console.log("Relative resources deleted.");
+		}
+	});
+	Item.remove({deptCode: this.deptCode}, function(err) {
+		if (err) {
+			return next(err);
+		} else {
+			console.log("Relative items deleted.");
 		}
 	});
 	next();
