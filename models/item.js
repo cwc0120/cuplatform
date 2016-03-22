@@ -7,11 +7,12 @@ var Item = new Schema({
 	courseCode: {type: String, ref: 'Course'},
 	name: String,
 	description: String,
-	seller: {type: Schema.Types.ObjectId, ref: 'User'},
+	seller: {type: String, ref: 'User'},
+	buyers: [{type: String, ref: 'User'}],
 	date: Date,
 	price: Number,
 	priceflexible: Boolean,
-	quantity: Number
+	sold: Boolean
 });
 
 module.exports = mongoose.model('Item', Item);
