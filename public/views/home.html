@@ -1,2 +1,8 @@
 
-<h1>Welcome to CUPlatform</h1>
+<div ng-hide="isLogged">
+  <h1>Welcome to CUPlatform</h1>
+  <p>Please Log in</p>
+</div>
+<div ng-show="isLogged">
+  <h1>Hello, {{uid}}.</h1>
+</div>

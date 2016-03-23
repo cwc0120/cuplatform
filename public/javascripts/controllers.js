@@ -43,9 +43,22 @@ angular.module('CUPControllers', [])
 		};
 	})
 
-	.controller('homeController', function($scope) {
-		$scope.user = {};
+	.controller('homeController', function($scope, Auth) {
+		$scope.$watch(function() {
+			return Auth.isLogged;
+		}, function(newVal, oldVal) {
+			if(typeof newVal !== 'undefined') {
+				$scope.isLogged = Auth.isLogged;
+			}
+		});
 
+		$scope.$watch(function() {
+			return Auth.uid;
+		}, function(newVal, oldVal) {
+			if(typeof newVal !== 'undefined') {
+				$scope.uid = Auth.uid;
+			}
+		});
 	})
 
 	.controller('registerController', function($scope, $location, Auth) {
@@ -133,76 +146,6 @@ angular.module('CUPControllers', [])
 				return true;
 			}
 		}
-	})
-
-	.controller('taskController', function($scope, $window, $location, Todos, Auth) {
-		$scope.newTask = {};
-		$scope.editTask = {};
-		$scope.editing = false;
-		$scope.uid = $window.localStorage['uid'];
-		if ($window.localStorage['admin'] === 'true') {
-			$scope.admin = true;
-		} else {
-			$scope.admin = false;
-		}
-
-		Todos.get().success(function(data){
-			$scope.success = true;
-			$scope.todos = data;
-		}).error(function(data) {
-			$scope.success = false;
-			$scope.errorMessage = data.error;
-		});
-
-		$scope.create = function() {
-			if ($scope.newTask.content === undefined) {
-				return;
-			}
-			Todos.create($scope.newTask).success(function(data) {
-				$scope.newTask = {};
-				$scope.todos = data;
-			}).error(function(data) {
-				$scope.success = false;
-				$scope.errorMessage = data.error;
-			});
-		};
-
-		$scope.edit = function(id) {
-			if ($scope.editTask.content === '') {
-				return true;
-			} else {
-				Todos.edit(id, $scope.editTask).success(function(data) {
-					$scope.editing = false;
-					$scope.editTask = {};
-					$scope.todos = data;
-					return false;
-				}).error(function(data) {
-					$scope.success = false;
-					$scope.errorMessage = data.error;
-				});
-			}
-		};
-
-		$scope.delete = function(id) {
-			Todos.delete(id).success(function(data) {
-				$scope.editing = false;
-				$scope.todos = data;
-			}).error(function(data) {
-				$scope.success = false;
-				$scope.errorMessage = data.error;
-			});
-		};
-
-		$scope.enableEdit = function(data) {
-			if (!$scope.editing && data.user === $scope.uid) {
-				$scope.editing = true;
-				return true;
-			}
-		};
-
-		$scope.return = function() {
-			$location.path('/');
-		};
 	})
 
 	.controller('deptListController', function($scope, $window, $location, $route, Dept) {
