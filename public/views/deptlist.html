@@ -25,7 +25,7 @@
       </form>
     </tr>
     <tr ng-repeat="dept in depts">
-      <td> <span ng-click="$location.path(&quot;/dept/&quot; + dept.deptCode)">{{dept.deptCode}}</span></td>
+      <td> <a ng-href="#/dept/{{dept.deptCode}}">{{dept.deptCode}}</a></td>
       <td>{{dept.deptName}}</td>
       <td>
         <button ng-show="admin" ng-click="delete(dept.deptCode)">Delete</button>

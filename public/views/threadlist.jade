@@ -1,3 +1,4 @@
+
 div(ng-hide='success')
 	h3 {{errorMessage}}
 	button(ng-click='$route.reload()') Return
@@ -18,9 +19,10 @@ div(ng-show='success')
 			button(type='submit' ng-click='addThread()') Submit
 	table
 		tr(ng-repeat='thread in threads')
-			td(ng-click='$location.path("/thread/" + thread._id)')
+			td
 				p
-					strong {{thread.author}}: {{thread.topic}}	
+					a(ng-href='#/thread/{{thread._id}}')
+						strong {{thread.author}}: {{thread.topic}}
 					br 
 					| {{thread.content | htmlToPlaintext}} 
 					br

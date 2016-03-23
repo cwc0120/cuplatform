@@ -248,6 +248,32 @@ angular.module('CUPServices', [])
 		};
 	})
 
+	.factory('Item', function($http) {
+		return {
+			get: function() {
+				return $http.get('/api/item');
+			},
+			getOne: function(id) {
+				return $http.get('/api/item/info/' + id);
+			},
+			create: function(data) {
+				return $http.post('/api/item', data);
+			},
+			edit: function(id, data) {
+				return $http.put('/api/item/info/' + id, data);
+			},
+			delete: function(id) {
+				return $http.delete('/api/item/info/' + id);
+			},
+			buy: function(id) {
+				return $http.get('/api/item/buyrequest/' + id);
+			},
+			transact: function(id) {
+				return $http.get('/api/item/transactrequest/' +id);
+			}
+		};
+	})
+
 	.factory('Todos', function($http) {
 		return {
 			get: function() {

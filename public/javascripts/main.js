@@ -56,6 +56,18 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'
 				requiredLogin: true
 			})
 
+			.when('/barter', {
+				templateUrl: '/views/itemlist.html',
+				controller: 'ItemListController',
+				requiredLogin: true
+			})
+
+			.when('/item/:id', {
+				templateUrl: '/views/iteminfo.html',
+				controller: 'ItemInfoController',
+				requiredLogin: true
+			})
+
 			.when('/task', {
 				templateUrl: '/views/task.html',
 				controller: 'taskController',

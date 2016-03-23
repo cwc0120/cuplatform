@@ -1,0 +1,58 @@
+
+<div ng-hide="success">
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
+</div>
+<div ng-show="success">
+  <h1>Item Detail</h1>
+  <div ng-hide="editing">
+    <p>Item name: {{item.name}}</p>
+    <p>Seller: {{item.seller}}</p>
+    <p>Department: {{item.deptCode}}</p>
+    <p>Course: {{item.courseCode}}</p>
+    <p>Price: {{item.price | currency}} <span ng-show="item.priceFlexible">(flexible)</span></p>
+    <p>
+       
+      Description:<br/><span ng-bind-html="item.description"></span>
+    </p>
+    <p>Date: {{item.date | date:'d/M/yyyy'}}</p>
+    <p>
+      <button ng-show="uid === item.seller" ng-click="enableEdit()">Edit Item</button>
+      <button ng-show="uid === item.seller" ng-disabled="item.sold" ng-click="transact()"> Sold</button>
+      <button ng-show="uid !== item.seller" ng-disabled="item.sold || bought" ng-click="buy()"> Buy</button>
+    </p>
+  </div>
+  <div ng-show="editing">
+    <form> 
+      <p>Item name: 
+        <input type="text" ng-model="edit.name"/>
+      </p>
+      <p>Seller: {{item.seller}}</p>
+      <p>Department: {{item.deptCode}}</p>
+      <p>Course: {{item.courseCode}}</p>
+      <p>Price:
+        <input type="number" ng-model="edit.price"/> Flexible price?
+        <input type="checkbox" ng-model="edit.priceFlexible"/>
+      </p>
+      <p>Description:</p>
+      <p>
+        <text-angular ng-model="htmlVariable"></text-angular>
+      </p>
+      <p>Date: {{item.date | date:'d/M/yyyy'}}</p>
+      <p>
+        <button type="submit" ng-click="editItem()">Sumbit</button>
+      </p>
+    </form>
+  </div>
+  <div ng-show="uid === item.seller">
+    <p><strong>Buyer list</strong></p>
+    <table>
+      <tr ng-repeat="buyer in item.buyers">
+        <td>{{buyer}}</td>
+      </tr>
+    </table>
+  </div>
+  <p>
+    <button ng-click="$location.path(&quot;/barter&quot;)">Back</button>
+  </p>
+</div>

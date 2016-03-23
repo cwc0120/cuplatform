@@ -1,0 +1,68 @@
+div(ng-hide='success')
+	h3 {{errorMessage}}
+	button(ng-click='$route.reload()') Return
+div(ng-show='success')
+	h1 Barter
+	p
+		button(ng-show='!adding' ng-click='enableAdd()') New Item
+
+	div(ng-show='adding')
+		form
+			p Item name: 
+				input(type='text' ng-model='newItem.name')
+			p Department code (optional):
+				input(type='text' ng-model='newItem.deptCode')
+			p Course code (optional):
+				input(type='text' ng-model='newItem.courseCode')
+			p Price:
+				input(type='number' ng-model='newItem.price')
+			p Flexible price?
+				input(type='checkbox' ng-model='newThread.priceFlexible')
+			p Description:
+			p
+				text-angular(ng-model='htmlVariable')
+			button(type='submit' ng-click='addItem()') Submit
+
+	div
+		p Search: 
+			input(type='text' ng-model='searchItem')
+
+	table(border='1')
+		tr
+			th 
+				a(ng-click='sortType = "deptCode"; sortReverse = !sortReverse')
+					| Category
+					span(ng-show='sortType == "deptCode" && !sortReverse') Down
+					span(ng-show='sortType == "deptCode" && sortReverse') Up
+			th 
+				a(ng-click='sortType = "courseCode"; sortReverse = !sortReverse')
+					| Course code
+					span(ng-show='sortType == "courseCode" && !sortReverse') Down
+					span(ng-show='sortType == "courseCode" && sortReverse') Up
+			th
+				a(ng-click='sortType = "name"; sortReverse = !sortReverse')
+					| Item name
+					span(ng-show='sortType == "name" && !sortReverse') Down
+					span(ng-show='sortType == "name" && sortReverse') Up
+			th 
+				a(ng-click='sortType = "price"; sortReverse = !sortReverse')
+					| Price
+					span(ng-show='sortType == "price" && !sortReverse') Down
+					span(ng-show='sortType == "price" && sortReverse') Up
+			th Seller
+			th 
+				a(ng-click='sortType = "date"; sortReverse = !sortReverse')
+					| Date
+					span(ng-show='sortType == "date" && !sortReverse') Down
+					span(ng-show='sortType == "date" && sortReverse') Up
+			th
+		tr(ng-repeat='item in items | orderBy:sortType:sortReverse | filter: searchItem')
+			td {{item.deptCode}}
+			td {{item.courseCode}}
+			td 
+				a(ng-href='#/item/{{item._id}}') {{item.name}}
+			td {{item.price | currency}}
+			td {{item.seller}}
+			td {{item.date | date:'d/M/yyyy h:mma'}}
+			td
+				button(ng-show='admin' ng-click='delete(item._id)') delete
