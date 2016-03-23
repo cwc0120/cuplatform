@@ -272,21 +272,4 @@ angular.module('CUPServices', [])
 				return $http.get('/api/item/transactrequest/' +id);
 			}
 		};
-	})
-
-	.factory('Todos', function($http) {
-		return {
-			get: function() {
-				return $http.get('/api/todo');
-			},
-			create: function(data) {
-				return $http.post('/api/todo', data);
-			},
-			edit: function(id, data) {
-				return $http.put('/api/todo/' + id, data);
-			},
-			delete: function(id) {
-				return $http.delete('/api/todo/' + id);
-			}
-		};
 	});

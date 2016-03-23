@@ -1,1 +1,6 @@
-h1 Welcome to CUPlatform
+div(ng-hide='isLogged')
+	h1 Welcome to CUPlatform
+	p Please Log in
+
+div(ng-show='isLogged')
+	h1 Hello, {{uid}}.

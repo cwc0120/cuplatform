@@ -68,11 +68,6 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'
 				requiredLogin: true
 			})
 
-			.when('/task', {
-				templateUrl: '/views/task.html',
-				controller: 'taskController',
-				requiredLogin: true
-			})
 			.otherwise({
 				redirectTo: '/'
 			});
@@ -111,11 +106,9 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'
 		$rootScope.$on('$routeChangeStart', function(event, nextRoute) {
 			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.isLogged) {
 				$location.path('/');
-				console.log('Please log in');
 			}
 			if (!nextRoute.requiredLogin && Auth.isLogged) {
-				$location.path('/task');
-				console.log('Magic');
+				$location.path('/');
 			}
 		});
 	})
