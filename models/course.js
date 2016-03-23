@@ -2,6 +2,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Resource = require('./resource');
+var Item = require ('./item');
 var Thread = require('./thread');
 
 var Course = new Schema({
@@ -33,6 +34,13 @@ Course.pre('remove', function(next) {
 				resources[i].remove();
 			}
 			console.log("Relative resources deleted.");
+		}
+	});
+	Item.remove({courseCode: this.courseCode}, function(err) {
+		if (err) {
+			return next(err);
+		} else {
+			console.log("Relative items deleted.");
 		}
 	});
 	Thread.remove({courseCode: this.courseCode}, function(err) {

@@ -80,7 +80,7 @@
       <th></th>
     </tr>
     <tr ng-repeat="course in courses">
-      <td> <span ng-click="$location.path(&quot;/course/&quot; + course.courseCode)">{{course.courseCode}}</span></td>
+      <td> <a ng-href="#/course/{{course.courseCode}}">{{course.courseCode}}</a></td>
       <td>{{course.courseName}}</td>
       <td>
         <button ng-show="admin" ng-click="delete(course.courseCode)">Delete</button>

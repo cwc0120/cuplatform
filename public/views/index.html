@@ -28,7 +28,14 @@
         <p>Logged as {{uid}}.
           <button ng-click="logout()">Logout</button>
         </p>
-        <p><span ng-click="$location.path(&quot;/task&quot;)">Tasks </span><span ng-click="$location.path(&quot;/dept&quot;)">Departments </span><span ng-click="$location.path(&quot;/discussion/GENERAL&quot;)">Discussion</span></p>
+        <table>
+          <tr>
+            <td><a ng-href="#/task">Tasks </a></td>
+            <td><a ng-href="#/dept">Departments </a></td>
+            <td><a ng-href="#/discussion/GENERAL">Discussion </a></td>
+            <td><a ng-href="#/barter">Barter </a></td>
+          </tr>
+        </table>
       </div>
       <div id="main">
         <div ng-view></div>

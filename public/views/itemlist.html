@@ -1,0 +1,62 @@
+
+<div ng-hide="success">
+  <h3>{{errorMessage}}</h3>
+  <button ng-click="$route.reload()">Return</button>
+</div>
+<div ng-show="success">
+  <h1>Barter</h1>
+  <p>
+    <button ng-show="!adding" ng-click="enableAdd()">New Item</button>
+  </p>
+  <div ng-show="adding">
+    <form>
+      <p>Item name: 
+        <input type="text" ng-model="newItem.name"/>
+      </p>
+      <p>Department code (optional):
+        <input type="text" ng-model="newItem.deptCode"/>
+      </p>
+      <p>Course code (optional):
+        <input type="text" ng-model="newItem.courseCode"/>
+      </p>
+      <p>Price:
+        <input type="number" ng-model="newItem.price"/>
+      </p>
+      <p>Flexible price?
+        <input type="checkbox" ng-model="newThread.priceFlexible"/>
+      </p>
+      <p>Description:</p>
+      <p>
+        <text-angular ng-model="htmlVariable"></text-angular>
+      </p>
+      <button type="submit" ng-click="addItem()">Submit</button>
+    </form>
+  </div>
+  <div>
+    <p>Search: 
+      <input type="text" ng-model="searchItem"/>
+    </p>
+  </div>
+  <table border="1">
+    <tr>
+      <th> <a ng-click="sortType = &quot;deptCode&quot;; sortReverse = !sortReverse">Category<span ng-show="sortType == &quot;deptCode&quot; &amp;&amp; !sortReverse">Down</span><span ng-show="sortType == &quot;deptCode&quot; &amp;&amp; sortReverse">Up</span></a></th>
+      <th> <a ng-click="sortType = &quot;courseCode&quot;; sortReverse = !sortReverse">Course code<span ng-show="sortType == &quot;courseCode&quot; &amp;&amp; !sortReverse">Down</span><span ng-show="sortType == &quot;courseCode&quot; &amp;&amp; sortReverse">Up</span></a></th>
+      <th><a ng-click="sortType = &quot;name&quot;; sortReverse = !sortReverse">Item name<span ng-show="sortType == &quot;name&quot; &amp;&amp; !sortReverse">Down</span><span ng-show="sortType == &quot;name&quot; &amp;&amp; sortReverse">Up</span></a></th>
+      <th> <a ng-click="sortType = &quot;price&quot;; sortReverse = !sortReverse">Price<span ng-show="sortType == &quot;price&quot; &amp;&amp; !sortReverse">Down</span><span ng-show="sortType == &quot;price&quot; &amp;&amp; sortReverse">Up</span></a></th>
+      <th>Seller</th>
+      <th> <a ng-click="sortType = &quot;date&quot;; sortReverse = !sortReverse">Date<span ng-show="sortType == &quot;date&quot; &amp;&amp; !sortReverse">Down</span><span ng-show="sortType == &quot;date&quot; &amp;&amp; sortReverse">Up</span></a></th>
+      <th></th>
+    </tr>
+    <tr ng-repeat="item in items | orderBy:sortType:sortReverse | filter: searchItem">
+      <td>{{item.deptCode}}</td>
+      <td>{{item.courseCode}}</td>
+      <td> <a ng-href="#/item/{{item._id}}">{{item.name}}</a></td>
+      <td>{{item.price | currency}}</td>
+      <td>{{item.seller}}</td>
+      <td>{{item.date | date:'d/M/yyyy h:mma'}}</td>
+      <td>
+        <button ng-show="admin" ng-click="delete(item._id)">delete</button>
+      </td>
+    </tr>
+  </table>
+</div>

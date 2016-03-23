@@ -23,7 +23,7 @@ div(ng-show='success')
 			th
 		tr(ng-repeat='res in ress')
 			td 
-				span(ng-click='$location.path("/resource/info/" + res._id)') {{res.name}}
+				a(ng-href='#/resource/info/{{res._id}}') {{res.name}}
 			td {{res.dateOfUpload | date:'d/M/yyyy'}}
 			td
 				button(ng-show='admin' ng-click='delete(res._id)') Delete
