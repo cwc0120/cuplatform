@@ -59,7 +59,8 @@ div(ng-show='success')
 		tr(ng-repeat='item in items | orderBy:sortType:sortReverse | filter: searchItem')
 			td {{item.deptCode}}
 			td {{item.courseCode}}
-			td {{item.name}}
+			td 
+				a(ng-href='#/item/{{item._id}}') {{item.name}}
 			td {{item.price | currency}}
 			td {{item.seller}}
 			td {{item.date | date:'d/M/yyyy h:mma'}}

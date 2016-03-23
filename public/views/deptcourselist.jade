@@ -58,7 +58,7 @@ div(ng-show='success')
 			th
 		tr(ng-repeat='course in courses')
 			td 
-				span(ng-click='$location.path("/course/" + course.courseCode)') {{course.courseCode}}
+				a(ng-href='#/course/{{course.courseCode}}') {{course.courseCode}}
 			td {{course.courseName}}
 			td
 				button(ng-show='admin' ng-click='delete(course.courseCode)') Delete

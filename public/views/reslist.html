@@ -30,7 +30,7 @@
       <th></th>
     </tr>
     <tr ng-repeat="res in ress">
-      <td> <span ng-click="$location.path(&quot;/resource/info/&quot; + res._id)">{{res.name}}</span></td>
+      <td> <a ng-href="#/resource/info/{{res._id}}">{{res.name}}</a></td>
       <td>{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
       <td>
         <button ng-show="admin" ng-click="delete(res._id)">Delete</button>

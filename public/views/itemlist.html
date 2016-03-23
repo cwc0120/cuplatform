@@ -50,7 +50,7 @@
     <tr ng-repeat="item in items | orderBy:sortType:sortReverse | filter: searchItem">
       <td>{{item.deptCode}}</td>
       <td>{{item.courseCode}}</td>
-      <td>{{item.name}}</td>
+      <td> <a ng-href="#/item/{{item._id}}">{{item.name}}</a></td>
       <td>{{item.price | currency}}</td>
       <td>{{item.seller}}</td>
       <td>{{item.date | date:'d/M/yyyy h:mma'}}</td>

@@ -18,7 +18,7 @@ div(ng-show='success')
 					button(type='submit' ng-show='admin' ng-click='add()') Add
 		tr(ng-repeat='dept in depts')
 			td 
-				span(ng-click='$location.path("/dept/" + dept.deptCode)') {{dept.deptCode}}
+				a(ng-href='#/dept/{{dept.deptCode}}') {{dept.deptCode}}
 			td {{dept.deptName}}
 			td
 				button(ng-show='admin' ng-click='delete(dept.deptCode)') Delete

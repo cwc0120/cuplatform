@@ -11,12 +11,12 @@ router.use(function(req, res, next) {
 
 router.route('/')
 	.get(function(req, res, next) {
-		// see unsold the items under a dept
+		// see unsold the items
 		findUnsoldList(req, res, next);
 	})
 
 	.post(function(req, res, next) {
-		// post a new item under a dept
+		// post a new item
 		req.body.deptCode = req.body.deptCode || '';
 		req.body.courseCode = req.body.courseCode || '';
 		var deptCode = '';
@@ -188,63 +188,6 @@ router.get('/transactrequest/:id', function(req, res, next) {
 // 					}})}
 // 				});
 // 			})
-
-// router.route('/:deptid/:id')
-// 	.get(function(req,res,next){
-// 		find(req,res,next);	
-// 	})
-
-// 	.put(function(req, res, next) {
-// 		Item.update(
-// 			{_id: req.params.id, uploader: req.decoded.uid}, 
-// 			{$set: {
-// 				name: req.body.name,
-// 				deptCode: req.body.deptCode,
-// 				courseCode: req.body.courseCode,
-// 				description: req.body.description,
-// 				price: req.body.price,
-// 				quantity: req.body.quantity
-// 			}}, 
-// 			function (err) {
-// 				if (err) {
-// 					return next(err);
-// 				} else {
-// 					find(req, res, next);
-// 				}
-// 			}
-// 		);
-// 	})
-// 	.delete(function(req, res, next) {
-// 		Item.findOne({_id: req.params.id, uploader: req.decoded.uid}, function(err, item) {
-// 				if (err) {
-// 					return next(err);
-// 				} else if (item === null) {
-// 					res.status(400).json({error: "Item not found!"});
-// 				} else {
-// 					item.remove();
-// 					findList(req, res, next);
-// 				}
-// 			}
-// 		);
-// 	})
-
-
-// router.route('/:deptid')
-// 	.get(function(req,res,next){
-// 		Item.find({deptCode: req.params.deptid})
-// 			.select ('deptCode courseCode Name price date uploader')
-// 			.sort({courseCode: 1})
-// 			.exec(function(err, items) {
-// 				if (err) {
-// 					return next(err);
-// 				} else if (items === null ) {
-// 					res.status(400).json({error: "Items not found!"});
-// 				} else {
-// 					res.status(200).json(items);
-// 				}
-// 			});
-// 	});
-
 function findUnsoldList(req, res, next) {
 	Item.find({sold: false})
 		.sort({date: -1})

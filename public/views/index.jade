@@ -27,11 +27,16 @@ html(ng-app='CUP')
 			div(ng-show='isLogged')
 				p Logged as {{uid}}.
 					button(ng-click='logout()') Logout
-				p
-					a(ng-click='$location.path("/task")') Tasks 
-					a(ng-click='$location.path("/dept")') Departments 
-					a(ng-click='$location.path("/discussion/GENERAL")') Discussion 
-					a(ng-click='$location.path("/barter")') Barter
+				table
+					tr
+						td
+							a(ng-href='#/task') Tasks 
+						td
+							a(ng-href='#/dept') Departments 
+						td
+							a(ng-href='#/discussion/GENERAL') Discussion 
+						td
+							a(ng-href='#/barter') Barter 
 
 			div(id='main')
 				div(ng-view)

@@ -25,8 +25,8 @@
   </div>
   <table>
     <tr ng-repeat="thread in threads">
-      <td ng-click="$location.path(&quot;/thread/&quot; + thread._id)">
-        <p><strong>{{thread.author}}: {{thread.topic}}	</strong><br/>{{thread.content | htmlToPlaintext}} <br/><i>{{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}</i></p>
+      <td>
+        <p><a ng-href="#/thread/{{thread._id}}"><strong>{{thread.author}}: {{thread.topic}}</strong></a><br/>{{thread.content | htmlToPlaintext}} <br/><i>{{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}</i></p>
       </td>
       <td>
         <button ng-show="admin" ng-click="delete(thread._id)">Delete</button>
