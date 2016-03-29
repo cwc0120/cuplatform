@@ -34,8 +34,8 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 			})
 
 			.when('/resource/:id', {
-				templateUrl: '/views/reslist.html',
-				controller: 'ResListController',
+				templateUrl: '/views/res.html',
+				controller: 'ResController',
 				requiredLogin: true
 			})
 

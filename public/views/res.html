@@ -1,0 +1,107 @@
+
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="90" flex-gt-md="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success">
+        <md-card>
+          <md-toolbar ng-hide="selected.length || search" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools"><span>Resources List for {{courseCode}}</span><span flex="flex"></span>
+              <md-button ng-click="addResDialog($event)" aria-label="Add" class="md-icon-button">
+                <md-icon class="material-icons">add</md-icon>
+              </md-button>
+              <md-button ng-click="search = !search" aria-label="Search" class="md-icon-button">
+                <md-icon class="material-icons">search</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="search &amp;&amp; !selected.length" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+              <md-input-container flex="flex" md-no-float="md-no-float">
+                <md-icon class="material-icons">search</md-icon>
+                <input type="text" ng-model="searchRes" placeholder="Search Resources"/>
+              </md-input-container>
+              <md-button ng-click="search = !search" aria-label="Back" class="md-icon-button">
+                <md-icon class="material-icons">clear</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="selected.length" class="md-table-toolbar md-accent md-hue-1">
+            <div class="md-toolbar-tools"><span>{{selected.length}} Resource(s) selected</span><span flex="flex"></span>
+              <md-button ng-click="delete()" aria-label="Delete" class="md-icon-button">
+                <md-icon class="material-icons">delete</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-table-container>
+            <table md-table="md-table" md-row-select="admin" ng-model="selected">
+              <thead md-head="md-head" md-order="order">
+                <tr md-row="md-row">
+                  <th md-column="md-column" md-order-by="name">Resource</th>
+                  <th md-column="md-column" md-order-by="uploader" hide-xs="hide-xs">Uploader</th>
+                  <th md-column="md-column" md-order-by="dateOfUpload" hide-xs="hide-xs">Date of Upload</th>
+                </tr>
+              </thead>
+              <tbody md-body="md-body">
+                <tr md-row="md-row" ng-repeat="res in ress | filter: searchRes | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="res">
+                  <td md-cell="md-cell"><a ng-click="check(res._id)" class="link">{{res.name}}</a></td>
+                  <td md-cell="md-cell" hide-xs="hide-xs">{{res.uploader}}</td>
+                  <td md-cell="md-cell" hide-xs="hide-xs">{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </md-table-container>
+          <md-table-pagination md-limit="limit" md-page="page" md-total="{{ress.length}}"></md-table-pagination>
+        </md-card>
+        <md-card ng-show="resource &amp;&amp; !selected.length">
+          <md-card-header>
+            <md-card-header-text><span class="md-title">{{resource.uploader}}</span><span class="md-subhead">{{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
+            <md-button ng-show="uid === resource.uploader" ng-click="editResDialog($event)" aria-label="Edit resource" class="md-icon-button">
+              <md-icon class="material-icons">mode_edit</md-icon>
+            </md-button>
+          </md-card-header>
+          <md-card-content>
+            <p>Resource name: {{resource.name}}</p>
+            <p> </p><span>Description:</span>
+            <section layout-wrap="layout-wrap" ng-bind-html="resource.description"></section>
+          </md-card-content>
+          <md-toolbar class="md-table-toolbar md-default">
+            <form>
+              <div layout="row" layout-align="end center" class="md-toolbar-tools">
+                <md-input-container flex="flex" md-no-float="md-no-float">
+                  <input flex="flex" type="text" ng-model="newComment" placeholder="New Comment"/>
+                </md-input-container>
+                <md-button type="submit" ng-click="addComment()" aria-label="Comment" class="md-icon-button">
+                  <md-icon class="material-icons">comment</md-icon>
+                </md-button>
+                <md-button ng-click="download()" aria-label="Download" class="md-icon-button">
+                  <md-icon class="material-icons">file_download</md-icon>
+                </md-button>
+              </div>
+            </form>
+          </md-toolbar>
+        </md-card>
+        <md-card ng-show="resource &amp;&amp; !selected.length">
+          <md-list flex="flex">
+            <md-subheader>{{resource.comment.length}} comment(s)</md-subheader>
+            <md-divider></md-divider>
+            <md-list-item ng-repeat="cm in resource.comment" class="md-3-line">
+              <div class="md-list-item-text">
+                <h3>{{cm.author}}</h3>
+                <h4>{{cm.dateOfComment | date:'dd/MM/yyyy'}}</h4>
+                <p>{{cm.content}}</p>
+              </div>
+              <md-button ng-show="admin" ng-click="deleteComment(cm._id)" aria-label="Delete Comment" class="md-secondary md-icon-button">
+                <md-icon class="material-icons">delete</md-icon>
+              </md-button>
+              <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+          </md-list>
+        </md-card>
+      </div>
+    </div>
+  </div>
+</div>
