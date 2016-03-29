@@ -28,6 +28,7 @@ node_modules
 
 # Database
 db
+data
 
 # Optional npm cache directory
 .npm
