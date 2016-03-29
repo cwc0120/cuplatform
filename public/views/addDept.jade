@@ -1,0 +1,23 @@
+md-dialog(aria-label='Add Department' ng-cloak)
+	form(name='addDeptForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Add department
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='row' layout-xs='column')
+				md-input-container(flex-gt-xs='30')
+					label Code
+					input(type='text' name='deptCode' ng-model='newDept.deptCode' required md-maxlength='4' ng-pattern="/^[A-Z]{4}$/")
+					div(ng-messages='addDeptForm.deptCode.$error')
+						div(ng-message='required') Code missing.
+						div(ng-message-exp="['maxlength', 'pattern']") Invalid code.
+				md-input-container(flex-gt-xs='70')
+					label Name
+					input(type='text' name='deptName' ng-model='newDept.deptName' required)
+					div(ng-messages='addDeptForm.deptName.$error')
+						div(ng-message='required') Name missing.
+		md-dialog-actions
+			md-button(type='submit' ng-click='add()' ng-disabled='addDeptForm.$invalid') Add dept	

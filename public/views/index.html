@@ -2,44 +2,74 @@
 <html ng-app="CUP">
   <head>
     <title>CUP</title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/node/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/node/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="/node/angular-material-data-table/dist/md-data-table.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/textAngular/dist/textAngular.css">
-    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body ng-controller="topController" ng-cloak layout="row">
+    <!-- Angular and Angular Material-->
+    <script type="text/javascript" src="/node/angular/angular.min.js"></script>
+    <script type="text/javascript" src="/node/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="/node/angular-aria/angular-aria.min.js"></script>
+    <script type="text/javascript" src="/node/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="/node/angular-material/angular-material.min.js"></script>
+    <script type="text/javascript" src="/node/angular-messages/angular-messages.min.js"></script>
+    <script type="text/javascript" src="/node/angular-material-data-table/dist/md-data-table.min.js"></script>
+    <!-- TextAngular-->
     <script type="text/javascript" src="/textAngular/dist/textAngular-rangy.min.js"></script>
     <script type="text/javascript" src="/textAngular/dist/textAngular-sanitize.min.js"></script>
     <script type="text/javascript" src="/textAngular/dist/textAngular.min.js"></script>
+    <!-- Async-->
+    <script type="text/javascript" src="/node/async/dist/async.js"></script>
+    <!-- Main app-->
     <script type="text/javascript" src="/javascripts/main.js"></script>
     <script type="text/javascript" src="/javascripts/controllers.js"></script>
     <script type="text/javascript" src="/javascripts/services.js"></script>
-  </head>
-  <body>
-    <div ng-controller="topBarController">
-      <div ng-hide="isLogged">
-        <form>
-          <input type="text" ng-model="user.uid" placeholder="User ID">
-          <input type="password" ng-model="user.pwd" placeholder="Password">
-          <button type="submit" ng-click="login()">Login</button>
-          <button ng-click="register()">Register</button><span>{{message}}</span>
-        </form>
+    <!-- content-->
+    <md-sidenav md-component-id="menu" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4" class="md-sidenav-left">
+      <md-toolbar md-whiteframe="4" layout-padding class="md-tall md-accent md-hue-2"><span flex></span>
+        <div ng-hide="isLogged" class="md-toolbar-tools md-toolbar-tools-bottom"><span>Visitor</span></div>
+        <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset">
+          <div>{{uid}}</div>
+          <div>hihi</div>
+        </div>
+      </md-toolbar>
+      <div ng-hide="isLogged" layout-padding>
+        <p>Please Log in</p>
       </div>
       <div ng-show="isLogged">
-        <p>Logged as {{uid}}.
-          <button ng-click="logout()">Logout</button>
-        </p>
-        <table>
-          <tr>
-            <td><a ng-href="#/">Home </a></td>
-            <td><a ng-href="#/dept">Departments </a></td>
-            <td><a ng-href="#/discussion/GENERAL">Discussion </a></td>
-            <td><a ng-href="#/barter">Barter </a></td>
-          </tr>
-        </table>
+        <md-list>
+          <md-list-item md-ink-ripple layout="row" ng-click="$location.path(item.link);toggleMenu()" ng-repeat="item in menu">
+            <div class="inset">
+              <md-icon class="material-icons">{{item.icon}}</md-icon>
+            </div>
+            <div class="inset">{{item.title}}</div>
+          </md-list-item>
+        </md-list>
       </div>
-      <div id="main">
+    </md-sidenav>
+    <div layout="column" layout-fill>
+      <md-toolbar md-whiteframe="4">
+        <div ng-hide="isLogged" class="md-toolbar-tools">
+          <md-button ng-click="toggleMenu()" aria-label="Menu" class="md-icon-button">
+            <md-icon class="material-icons">menu</md-icon>
+          </md-button><strong>CUPlatform</strong>
+        </div>
+        <div ng-show="isLogged" class="md-toolbar-tools">
+          <md-button ng-click="toggleMenu()" aria-label="Menu" class="md-icon-button">
+            <md-icon class="material-icons">menu	</md-icon>
+          </md-button><strong>CUPlatform</strong><span flex></span><span>{{uid}}</span>
+          <md-button ng-click="logout()" aria-label="Log out" class="md-icon-button">
+            <md-icon class="material-icons">exit_to_app</md-icon>
+          </md-button>
+        </div>
+      </md-toolbar>
+      <md-content flex layout-padding class="md-default-theme">
         <div ng-view></div>
-      </div>
+      </md-content>
     </div>
   </body>
 </html>

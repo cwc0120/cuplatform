@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var Item = require('../models/item');
 var Course = require('../models/course');
+var User = require('../models/user');
 var utils = require('../utils');
 
 router.use(function(req, res, next) {
@@ -55,14 +56,14 @@ router.route('/')
 		});
 	});
 
-router.route('/info/:id')
+router.route('/:itemid')
 	.get(function(req, res, next) {
 		find(req, res, next);
 	})
 
 	.put(function(req, res, next) {
 		// edit an item
-		Item.findOne({_id:req.params.id}, function(err, item) {
+		Item.findOne({_id: req.params.itemid}, function(err, item) {
 			if (err) {
 				return next(err);
 			} else if (item === null) {
@@ -89,10 +90,11 @@ router.route('/info/:id')
 	})
 
 	.delete(function(req, res, next) {
-		// delete item
+		// delete item: find all transaction records -> set status cancelled -> delete item record
 		if (req.decoded.admin) {
-			Item.remove({_id: req.params.id}, function(err) {
+			Item.remove({_id: req.params.itemid}, function(err) {
 				if (err) {
+					// remove item ID from User.buyList
 					return next(err);
 				} else {
 					findUnsoldList(req, res, next);
@@ -103,32 +105,45 @@ router.route('/info/:id')
 		}
 	});
 
-router.get('/buyrequest/:id', function(req, res, next) {
-	Item.findOne({_id:req.params.id}, function(err, item) {
-		if (err) {
-			return next(err);
-		} else if (item === null) {
-			res.status(400).json({error: "Item not found!"});
-		} else {
-			item.update({$push: {buyers: req.decoded.uid}}, 
+router.route('/buyrequest/:itemid')
+	// interest in item: add new record -> set status interested
+	.get(function(req, res, next) {
+		Item.findOneAndUpdate({_id:req.params.itemid},
+			{$push: {buyers: req.decoded.uid}}, 
 			function(err) {
 				if (err) {
 					return next(err);
-				} else {
-					find(req, res, next);
+				} else { 
+					User.findOneAndUpdate({uid: req.decoded.uid}, 
+						{$push: {buyList: req.params.itemid}}, 
+						function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next);
+							}
+						}
+					);
 				}
-			});
-		}
-	});
-});
+			}
+		);
+	})
 
-router.get('/transactrequest/:id', function(req, res, next) {
-	Item.findOne({_id:req.params.id}, function(err, item) {
+	// uninterest item: delete the record 
+	.delete(function(req, res, next) {
+
+	});
+
+// transacted: find all related transactions -> set target success, set others failed
+router.get('/transactrequest/:itemid/:uid', function(req, res, next) {
+/*	Item.findOne({_id:itemID}, function(err, item) {
 		if (err) {
 			return next(err);
 		} else if (item === null) {
 			res.status(400).json({error: "Item not found!"});
 		} else {
+			// remove item ID from User.buyList
+			for (var i = 0; i < item.buyer)
 			item.update({$set: {sold: true}}, 
 			function(err) {
 				if (err) {
@@ -138,56 +153,19 @@ router.get('/transactrequest/:id', function(req, res, next) {
 				}
 			});
 		}
-	});
+	});*/
 });
 
-// router.route('/myitems')
-// 	// show my items
-// 	.get(function(req, res, next){
-// 		Item.find({seller: req.decoded.uid})
-// 			.select ('deptCode courseCode name price priceFlexible date sold')
-// 			.exec(function(err, items) {
-// 				if (err) {
-// 					return next(err);
-// 				} else if (items === null ) {
-// 					res.status(400).json({error: "No item!"});
-// 				} else {
-// 					res.status(200).json(items);
-// 				}
-// 			});	
-// 	})
+// return a list of items by searching items by seller's id
+router.get('/selllist/:uid', function(req, res, next) {
+	//if (req.params.uid === req.decoded.uid || req.decoded.admin)
+});
 
-// 	.post(function(req, res, next) {
-// 		Dept.findOne({deptCode: req.body.deptCode}, function(err, dept) {
-// 			if (err) {
-// 				return next(err);
-// 			} else if (dept === null) {
-// 				res.status(400).json({error: "Department not found!"});
-// 			} else {
-// 				Course.findOne({courseCode: req.body.courseCode}, function (err, course) {
-// 					if (err) {
-// 						return next(err);
-// 					} else if (course === null) {
-// 						res.status(400).json({error: "Course not found!"});
-// 					} else {
-// 						Item.create({
-// 							uploader: req.decoded.uid,
-// 							name: req.body.name,
-// 							deptCode: req.body.deptCode,
-// 							courseCode: req.body.courseCode,
-// 							description: req.body.description,
-// 							price: req.body.price,
-// 							quantity: req.body.quantity
-// 						}, function(err) {
-// 							if (err) {
-// 								return next(err);
-// 							} else {
-// 								findList(req, res, next);
-// 							}
-// 						});
-// 					}})}
-// 				});
-// 			})
+// return a list of items by searching item records by buyer's id
+router.get('/buylist/:uid', function(req, res, next) {
+
+});
+
 function findUnsoldList(req, res, next) {
 	Item.find({sold: false})
 		.sort({date: -1})
@@ -202,7 +180,7 @@ function findUnsoldList(req, res, next) {
 }
 
 function find(req, res, next) {
-	Item.findOne({_id: req.params.id}, function(err, item) {
+	Item.findOne({_id: req.params.itemid}, function(err, item) {
 		if (err) {
 			next(err);
 		} else if (item === null) {

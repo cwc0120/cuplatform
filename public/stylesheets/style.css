@@ -1,8 +1,35 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+md-content.md-default-theme {
+  background-color: #fafafa;
+}
+
+span.error {
+	color: red;
+}
+
+input {
+	border: none;
+}
+
+input:focus {
+	outline: none;
+}
+
+md-input-container .md-errors-spacer {
+    min-height: 0;
+}
+
+section {
+	background: #f7f7f7;
+	border-radius: 3px;
+	position: relative;
+	padding: 10px;
+}
+
+h1.rating {
+	text-align: center;
 }
 
 a {
-  color: #00B7FF;
+	color: purple;
+	text-decoration: underline;
 }

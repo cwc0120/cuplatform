@@ -1,8 +1,75 @@
 
-<div ng-hide="isLogged">
-  <h1>Welcome to CUPlatform</h1>
-  <p>Please Log in</p>
+<div ng-hide="isLogged" layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="90" flex-gt-sm="80">
+      <div layout="column" layout-align="start center" layout-gt-xs="row">
+        <div flex="50">
+          <div>
+            <h1>Welcome to CUPlatform!</h1>
+          </div>
+        </div>
+        <div flex-gt-sm="20">
+          <md-card>
+            <md-card-title><span class="md-headline">Log in</span></md-card-title>
+            <md-card-content>
+              <form name="loginForm"><span class="error">{{loginMessage}}</span>
+                <md-input-container class="md-block">
+                  <label>User ID</label>
+                  <input type="text" name="userID" ng-model="user.uid" required="required"/>
+                  <div ng-messages="loginForm.userID.$error">
+                    <div ng-message="required">User ID missing.</div>
+                  </div>
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label>Password</label>
+                  <input type="password" name="password" ng-model="user.pwd" required="required"/>
+                  <div ng-messages="loginForm.password.$error">
+                    <div ng-message="required">Password missing.</div>
+                  </div>
+                </md-input-container>
+                <md-card-actions layout="row" layout-align="end center">
+                  <md-button ng-click="registerDialog($event)">Register</md-button>
+                  <md-button type="submit" ng-click="login()" ng-disabled="loginForm.$invalid">Log in</md-button>
+                </md-card-actions>
+              </form>
+            </md-card-content>
+          </md-card>
+        </div>
+      </div>
+      <div>
+        <h1>CUplatform</h1>
+        <p>CUPlatform aims at providing an all-in-one platform including a comprehensive databank and discussion forum for CUHK students’ school life and learning purpose.</p>
+        <h1>Structure</h1>
+        <h2>Registration</h2>
+        <p>Visitor can apply for an account with user ID, CUHK email and password. Registration component will check validity of their personal information. Then, the password will be encrypted on the client side and transferred to a user record created in the database along with user ID and email. After that, it will notify the visitor that an account has been created.</p>
+        <h2>Authentication</h2>
+        <p>When a login request is received, Authentication component will check the user ID and password input with the corresponding user record. If the input matches with the user record, it will bring the user to homepage.</p>
+        <p>If a user has made too many failed login requests, the user account will be locked temporarily. At this stage, the user may send a request to recover the password with the user’s email.</p>
+        <h2>User Profile Management</h2>
+        <p>It allows user to change nickname and password, upload user icon and edit personal information. User Profile Management component will update the user record and notify the user that above changes have been made.</p>
+        <h2>Timetable</h2>
+        <p>access course’s information and resources, user must add the course to timetable. User can also arrange the courses and synchronize with Google Calendar using its API. In mobile version, the system can also automatically mute user’s phone during class.</p>
+        <h2>Course Information</h2>
+        <p>can rate the course, provide course summary and assessment method. User can also comment on course arrangement and teaching style of lecturer. When such requests are received, Course Information component will append them to the course information record and show them in reverse chronological order. Furthermore, the component can help users upload and retrieve past lecture notes and resources from resources list in the database.</p>
+        <h2>Trading Platform</h2>
+        <p>Trading Platform component shows all available items according to their types and courses that the items are related to.</p>
+        <p>When a sell request is received, provided with desired price and item details, the component will create a new item record in the database and the item will be shown on the platform.</p>
+        <p>When a buy request is received, the component will arrange a chat room for negotiation. When both sides agree, the seller can send a sold request to put the item off the platform. The component will mark the item and will not be shown in future.</p>
+        <h2>Discussion </h2>
+        <p>Discussion component shows all topics in reverse chronological order. User can only see the topics related to the user’s courses.</p>
+        <p>User can write a new topic about academic matters or other relevant topics. The component will create a discussion record in database. </p>
+        <p>User can also reply to the topics. The component will append replies to the discussion record and show them to users.</p>
+        <h2>Messenger</h2>
+        <p>User can send messages and receive messages from other users using DataChannel.js.</p>
+      </div>
+    </div>
+  </div>
 </div>
-<div ng-show="isLogged">
-  <h1>Hello, {{uid}}.</h1>
+<div ng-show="isLogged" layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="90" flex-gt-md="80">
+      <h1>Log in successful!</h1>
+      <p>Hello, {{uid}}.</p>
+    </div>
+  </div>
 </div>

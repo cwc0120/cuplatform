@@ -22,6 +22,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/node', express.static(path.join(__dirname, '/node_modules')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('secret', config.secret);
 

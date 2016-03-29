@@ -1,0 +1,90 @@
+
+<md-dialog aria-label="Add Course" ng-cloak="ng-cloak" flex="60">
+  <form name="addCourseForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add course</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <h3>Basic information</h3>
+        <div layout="row" layout-xs="column">
+          <md-input-container flex-gt-xs="30">
+            <label>Code</label>
+            <input type="text" name="courseCode" ng-model="newCourse.courseCode" required="required" md-maxlength="10" ng-pattern="/^[A-Z]{4}[0-9]{4}/"/>
+            <div ng-messages="addCourseForm.courseCode.$error">
+              <div ng-message="required">Code missing.</div>
+              <div ng-message-exp="['maxlength', 'pattern']">Invalid code.</div>
+            </div>
+          </md-input-container>
+          <md-input-container flex-gt-xs="70">
+            <label>Instructor</label>
+            <input type="text" name="prof" ng-model="newCourse.prof"/>
+          </md-input-container>
+        </div>
+        <div>
+          <md-input-container class="md-block">
+            <label>Name</label>
+            <input type="text" name="courseName" ng-model="newCourse.courseName" required="required"/>
+            <div ng-messages="addCourseForm.courseName.$error">
+              <div ng-message="required">Name missing.</div>
+            </div>
+          </md-input-container>
+        </div>
+        <h3>Schedule</h3>
+        <div layout="row">
+          <div flex="20">
+            <md-input-container class="md-block">
+              <label>Day</label>
+              <md-select ng-model="day">
+                <md-option ng-repeat="d in days" value="{{d.index}}">{{d.val}}</md-option>
+              </md-select>
+            </md-input-container>
+          </div>
+          <div flex="45">
+            <md-input-container class="md-block">
+              <label>Time</label>
+              <md-select ng-model="time">
+                <md-option ng-repeat="t in times" value="{{t.index}}">{{t.val}}</md-option>
+              </md-select>
+            </md-input-container>
+          </div>
+          <div flex="25">
+            <md-input-container class="md-block">
+              <label>Venue</label>
+              <input type="text" ng-model="venue"/>
+            </md-input-container>
+          </div>
+          <div layout="row" layout-align="center center">
+            <md-button ng-click="addLesson()" class="md-icon-button">
+              <md-icon class="material-icons">add</md-icon>
+            </md-button>
+          </div>
+        </div>
+        <div layout="row" ng-repeat="lesson in lessons">
+          <div flex="20"> 
+            <p>{{days[lesson.day-1].val}}</p>
+          </div>
+          <div flex="45">
+            <p>{{times[lesson.time-1].val}}</p>
+          </div>
+          <div flex="25">
+            <p>{{lesson.venue}}</p>
+          </div>
+          <div layout="row" layout-align="center center">
+            <md-button ng-click="removeLesson()" class="md-icon-button">
+              <md-icon class="material-icons">clear</md-icon>
+            </md-button>
+          </div>
+        </div>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="add()" ng-disabled="addCourseForm.$invalid">Add course</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

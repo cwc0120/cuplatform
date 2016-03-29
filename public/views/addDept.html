@@ -1,0 +1,35 @@
+
+<md-dialog aria-label="Add Department" ng-cloak="ng-cloak">
+  <form name="addDeptForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add department</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="row" layout-xs="column" class="md-dialog-content">
+        <md-input-container flex-gt-xs="30">
+          <label>Code</label>
+          <input type="text" name="deptCode" ng-model="newDept.deptCode" required="required" md-maxlength="4" ng-pattern="/^[A-Z]{4}$/"/>
+          <div ng-messages="addDeptForm.deptCode.$error">
+            <div ng-message="required">Code missing.</div>
+            <div ng-message-exp="['maxlength', 'pattern']">Invalid code.</div>
+          </div>
+        </md-input-container>
+        <md-input-container flex-gt-xs="70">
+          <label>Name</label>
+          <input type="text" name="deptName" ng-model="newDept.deptName" required="required"/>
+          <div ng-messages="addDeptForm.deptName.$error">
+            <div ng-message="required">Name missing.</div>
+          </div>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="add()" ng-disabled="addDeptForm.$invalid">Add dept	</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

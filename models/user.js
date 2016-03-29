@@ -7,11 +7,13 @@ var User = new Schema({
 	email: {type: String, required: true},
 	salt: {type: String, required: true},
 	hash: {type: String, required: true},
-	icon: Schema.Types.ObjectId,
+	iconLink: String,
 	gender: String,
 	major: String,
 	intro: String,
 	points: Number,
+	coursesTaken: [{type: String, ref: 'Course'}],
+	//buyList: [{type: Schema.Types.ObjectId, ref: 'Item'}],
 	admin: Boolean
 });
 

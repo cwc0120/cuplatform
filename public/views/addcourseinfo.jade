@@ -1,0 +1,35 @@
+md-dialog(aria-label='Add Course Information' ng-cloak flex='60')
+	form(name='addCourseInfoForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Add Course Information
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				p Rating
+				md-slider-container(layout='row' layout-align='start center')
+					span(layout-padding) Worst
+					md-slider(flex min='1' max='5' ng-model='newInfo.rating' aria-label='rating')
+					span(layout-padding) Best
+				md-input-container.md-block
+					label Outline
+					textarea(rows='3' columns='50' name='outline' ng-model='newInfo.outline' minlength='30' required)
+					div(ng-messages='addCourseInfoForm.outline.$error')
+						div(ng-message='required') Outline missing.
+						div(ng-message='minlength') At least 30 characters.
+				md-input-container.md-block
+					label Assessment Method
+					textarea(rows='3' name='assessMethod' ng-model='newInfo.assessMethod' minlength='30' required)
+					div(ng-messages='addCourseInfoForm.assessMethod.$error')
+						div(ng-message='required') Assessment method missing.
+						div(ng-message='minlength') At least 30 characters.
+				md-input-container.md-block
+					label Comment
+					textarea(rows='3' name='comment' ng-model='newInfo.comment' minlength='30' required)
+					div(ng-messages='addCourseInfoForm.comment.$error')
+						div(ng-message='required') Comment missing.
+						div(ng-message='minlength') At least 30 characters.
+		md-dialog-actions
+			md-button(type='submit' ng-click='addCourseInfo()' ng-disabled='addCourseInfoForm.$invalid') Add Information

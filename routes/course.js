@@ -9,7 +9,7 @@ router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-router.route('/:id')
+router.route('/:did')
 	.get(function(req, res, next) {
 		// see course list under a dept
 		findList(req, res, next);
@@ -18,7 +18,7 @@ router.route('/:id')
 	.post(function(req, res, next) {
 		// add new course under a dept
 		if (req.decoded.admin) {
-			Dept.findOne({deptCode: req.params.id.toUpperCase()}, function(err, dept) {
+			Dept.findOne({deptCode: req.params.did.toUpperCase()}, function(err, dept) {
 				if (err) {
 					return next(err);
 				} else if (dept === null) {
@@ -27,7 +27,7 @@ router.route('/:id')
 					Course.create({
 						courseCode: req.body.courseCode.toUpperCase(),
 						courseName: req.body.courseName,
-						deptCode: req.params.id,
+						deptCode: req.params.did,
 						schedule: req.body.schedule,
 						prof: req.body.prof
 					}, function(err) {
@@ -44,7 +44,7 @@ router.route('/:id')
 		}
 	});
 
-router.route('/info/:id')
+router.route('/info/:cid')
 	.get(function(req, res, next) {
 		// check course info
 		find(req, res, next);
@@ -60,7 +60,7 @@ router.route('/info/:id')
 			comment: req.body.comment,
 			dateOfComment: Date.now()
 		};
-		Course.findOne({courseCode: req.params.id.toUpperCase()}, 
+		Course.findOne({courseCode: req.params.cid.toUpperCase()}, 
 			function(err, course) {
 				if (err) {
 					return next(err);
@@ -94,7 +94,7 @@ router.route('/info/:id')
 	.put(function(req, res, next) {
 		// edit course info
 		if (req.decoded.admin) {
-			Course.update({courseCode: req.params.id.toUpperCase()},
+			Course.update({courseCode: req.params.cid.toUpperCase()},
 				{$set: {
 					courseName: req.body.courseName,
 					schedule: req.body.schedule,
@@ -115,13 +115,13 @@ router.route('/info/:id')
 	.delete(function(req, res, next) {
 		// delete course
 		if (req.decoded.admin) {
-			Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
+			Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 				if (err) {
 					return next(err);
 				} else if (course === null) {
 					res.status(400).json({error: "Course not found!"});
 				} else {
-					req.params.id = course.deptCode;
+					req.params.did = course.deptCode;
 					course.remove();
 					findList(req, res, next);
 				}
@@ -131,11 +131,11 @@ router.route('/info/:id')
 		}	
 	});
 
-router.route('/info/:id/:cmid')
+router.route('/info/:cid/:cmid')
 	.delete(function(req, res, next) {
 		// delete comment
 		if (req.decoded.admin) {
-			Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
+			Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 				if (err) {
 					return next(err);
 				} else if (course === null) {
@@ -156,8 +156,7 @@ router.route('/info/:id/:cmid')
 	});
 
 function findList(req, res, next) {
-	Course.find({deptCode: req.params.id.toUpperCase()})
-		.sort({courseCode: 1})
+	Course.find({deptCode: req.params.did.toUpperCase()})
 		.select('courseCode courseName')
 		.exec(function(err, courses) {
 			if (err) {
@@ -171,7 +170,7 @@ function findList(req, res, next) {
 }
 
 function find(req, res, next) {
-	Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
+	Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 		if (err) {
 			next(err);
 		} else if (course === null) {

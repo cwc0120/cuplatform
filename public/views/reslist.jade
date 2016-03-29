@@ -1,31 +1,83 @@
-div(ng-hide='success')
-	h3 {{errorMessage}}
-	button(ng-click='$route.reload()') Return
-div(ng-show='success')
-	h1 Resources List for {{courseCode}}
-	p
-			button(ng-show='!adding' ng-click='enableAdd()') Add Resources
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='90' flex-gt-md='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				md-card
+					md-toolbar.md-table-toolbar.md-default(ng-hide='selected.length || search')
+						div.md-toolbar-tools
+							span Resources List for {{courseCode}}
+							span(flex)
+							md-button.md-icon-button(ng-click='addResDialog($event)' aria-label='Add')
+								md-icon.material-icons add
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
+								md-icon.material-icons search
 
-	div(ng-show='adding')
-		form(enctype="multipart/form-data")
-			p Name: 
-				input(type='text' ng-model='name')
-			p File:
-				input(type='file' file-model='file')
-			p Description:
-			p
-				text-angular(ng-model='htmlVariable')
-			button(type='submit' ng-click='addResource()') Upload
-	table
-		tr
-			th Name
-			th Date of upload
-			th
-		tr(ng-repeat='res in ress')
-			td 
-				a(ng-href='#/resource/info/{{res._id}}') {{res.name}}
-			td {{res.dateOfUpload | date:'d/M/yyyy'}}
-			td
-				button(ng-show='admin' ng-click='delete(res._id)') Delete
-	p
-		button(ng-click='$location.path("/course/" + courseCode)') Back
+					md-toolbar.md-table-toolbar.md-default(ng-show='search && !selected.length')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchRes' placeholder='Search Resources')
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
+								md-icon.material-icons clear
+
+					md-toolbar.md-table-toolbar.md-accent.md-hue-1(ng-show='selected.length')
+						div.md-toolbar-tools
+							span {{selected.length}} Resource(s) selected
+							span(flex)
+							md-button.md-icon-button(ng-click='delete()' aria-label='Delete')
+								md-icon.material-icons delete
+							
+					md-table-container
+						table(md-table md-row-select='admin' ng-model='selected')
+							thead(md-head md-order='order')
+								tr(md-row)
+									th(md-column md-order-by='name') Resource
+									th(md-column md-order-by='uploader' hide-xs) Uploader
+									th(md-column md-order-by='dateOfUpload' hide-xs) Date of Upload
+							tbody(md-body)
+								tr(md-row ng-repeat='res in ress | filter: searchRes | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='res')
+									td(md-cell)
+										a.link(ng-click='check(res._id)') {{res.name}}
+									td(md-cell hide-xs) {{res.uploader}}
+									td(md-cell hide-xs) {{res.dateOfUpload | date:'d/M/yyyy'}}
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{ress.length}}')
+
+				md-card(ng-show='resource && !selected.length')
+					md-card-header
+						md-card-header-text
+							span.md-title {{resource.uploader}}
+							span.md-subhead {{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}
+						span(flex)
+						md-button.md-icon-button(ng-show='uid === resource.uploader' ng-click='editResDialog($event)' aria-label='Edit resource')
+							md-icon.material-icons mode_edit
+					md-card-content
+						p Resource name: {{resource.name}}
+						p 
+						span Description:
+						section(layout-wrap ng-bind-html='resource.description')
+					
+					md-toolbar.md-table-toolbar.md-default
+						form
+							div.md-toolbar-tools(layout='row' layout-align='end center')
+								md-input-container(flex md-no-float)
+									input(flex type='text' ng-model='newComment' placeholder='New Comment')
+								md-button.md-icon-button(type='submit' ng-click='addComment()' aria-label='Comment')
+									md-icon.material-icons comment
+								md-button.md-icon-button(ng-click = 'download()' aria-label='Download')
+									md-icon.material-icons file_download
+
+				md-card(ng-show='resource && !selected.length')
+					md-list(flex)
+						md-subheader {{resource.comment.length}} comment(s)
+						md-divider
+						md-list-item.md-3-line(ng-repeat='cm in resource.comment')
+							div.md-list-item-text
+								h3 {{cm.author}}
+								h4 {{cm.dateOfComment | date:'dd/MM/yyyy'}}
+								p {{cm.content}}
+							md-button.md-secondary.md-icon-button(ng-show='admin' ng-click='deleteComment(cm._id)' aria-label='Delete Comment')
+								md-icon.material-icons delete
+							md-divider(ng-if='!$last')

@@ -1,0 +1,28 @@
+
+<md-dialog aria-label="Edit Resource" ng-cloak="ng-cloak" flex="60">
+  <form name="editResForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Edit Resource</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <md-input-container class="md-block">
+          <label>Resource name</label>
+          <input type="text" name="name" ng-model="edit.name" required="required"/>
+          <div ng-messages="addResForm.name.$error">
+            <div ng-message="required">Name missing.</div>
+          </div>
+        </md-input-container>
+        <text-angular ng-model="htmlVariable" placeholder="Click to type description"></text-angular>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="editResource()" ng-disabled="editResForm.$invalid">Submit</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

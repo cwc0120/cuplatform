@@ -1,10 +1,50 @@
 
-<h1>Register</h1>
-<form>
-  <input type="text" ng-model="newUser.uid" ng-change="checkUid()" placeholder="User ID"/><span>{{uidStatus}}</span><br/>
-  <input type="text" ng-model="newUser.email" ng-change="checkEmail()" placeholder="CUHK E-mail"/><span>{{emailStatus}}</span><br/>
-  <input type="password" ng-model="newUser.pwd1" ng-change="checkPwd1()" placeholder="Password"/><span>{{pwd1Status}}</span><br/>
-  <input type="password" ng-model="newUser.pwd2" ng-change="checkPwd2()" placeholder="Repeat password"/><span>{{pwd2Status}}</span><br/>
-  <button type="submit" ng-click="createUser()" ng-disabled="disable">Register</button>
-  <p>{{message}}</p>
-</form>
+<md-dialog aria-label="Registration" ng-cloak="ng-cloak" flex="40">
+  <form name="registerForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Register</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content"><span class="error">{{registerMessage}}</span>
+        <md-input-container class="md-block">
+          <label>User ID</label>
+          <input type="text" name="userID" ng-model="newUser.uid" required="required" ng-pattern="/^[a-zA-Z0-9]*$/"/>
+          <div ng-messages="registerForm.userID.$error">
+            <div ng-message="required">User ID required.</div>
+            <div ng-message="pattern">User ID should be alphanumeric.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>CUHK e-mail</label>
+          <input type="text" name="email" ng-model="newUser.email" required="required" ng-pattern="/@link.cuhk.edu.hk$/"/>
+          <div ng-messages="registerForm.email.$error">
+            <div ng-message-exp="['required', 'pattern']">CUHK e-mail required.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>Password</label>
+          <input type="password" name="pwd1" ng-model="newUser.pwd1" required="required" minlength="7"/>
+          <div ng-messages="registerForm.pwd1.$error">
+            <div ng-message="required">Password required.</div>
+            <div ng-message="minlength">Your password must be at least 7 characters long.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>Password confirmation</label>
+          <input type="password" name="pwd2" ng-model="newUser.pwd2" compare-to="newUser.pwd1"/>
+          <div ng-messages="registerForm.pwd2.$error">
+            <div ng-message="compareTo">Password not matched</div>
+          </div>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="createUser()" ng-disabled="registerForm.$invalid">Register</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

@@ -22,7 +22,8 @@ var Course = new Schema({
 		assessMethod: String,
 		comment: String,
 		dateOfComment: Date
-	}]
+	}],
+	students: [{type: String, ref: 'User'}]
 });
 
 Course.pre('remove', function(next) {

@@ -1,0 +1,23 @@
+md-dialog(aria-label='Add Resource' ng-cloak flex='60')
+	form(name='addResForm' enctype="multipart/form-data")
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Add Resource
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				md-input-container.md-block
+					label Name
+					input(type='text' name='name' ng-model='name' required)
+					div(ng-messages='addResForm.name.$error')
+						div(ng-message='required') Name missing.
+				md-input-container.md-block.md-input-has-placeholder
+					label File
+					input(type='file' name='file' file-model='file' required)
+					div(ng-messages='addResForm.file.$error')
+						div(ng-message='required') File missing.
+				text-angular(ng-model='htmlVariable' placeholder='Click to type description')
+		md-dialog-actions
+			md-button(type='submit' ng-click='addResource()' ng-disabled='addResForm.$invalid') Upload

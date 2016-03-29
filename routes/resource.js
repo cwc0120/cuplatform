@@ -1,8 +1,6 @@
 "use strict";
 var express = require('express');
 var multer = require('multer');
-var fs = require('fs');
-var http = require('http');
 var router = express.Router();
 var Resource = require('../models/resource');
 var Course = require('../models/course');
@@ -39,7 +37,7 @@ router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-router.route('/:id')
+router.route('/:cid')
 	.get(function(req, res, next) {
 		// see resources under course
 		findResList(req, res, next);
@@ -49,14 +47,14 @@ router.route('/:id')
 		if (!req.file) {
 			res.status(400).json({error: 'No file uploaded.'});
 		} else {
-			Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
+			Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 				if (err) {
 					return next(err);
 				} else if (course === null) {
 					res.status(400).json({error: 'Course not found!'});
 				} else {
 					Resource.create({
-						courseCode: req.params.id.toUpperCase(),
+						courseCode: req.params.cid.toUpperCase(),
 						name: req.body.name,
 						description: req.body.description,
 						uploader: req.decoded.uid,
@@ -74,7 +72,7 @@ router.route('/:id')
 		}
 	});
 
-router.route('/info/:id')
+router.route('/info/:resid')
 	.get(function(req, res, next) {
 		// check resource info
 		find(req, res, next);
@@ -87,7 +85,7 @@ router.route('/info/:id')
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
-		Resource.findOne({_id: req.params.id}, 
+		Resource.findOne({_id: req.params.resid}, 
 			function(err, resource) {
 				if (err) {
 					return next(err);
@@ -109,7 +107,7 @@ router.route('/info/:id')
 
 	.put(function(req, res, next) {
 		// edit resource info
-		Resource.findOne({_id:req.params.id}, function(err, resource) {
+		Resource.findOne({_id:req.params.resid}, function(err, resource) {
 			if (err) {
 				return next(err);
 			} else if (resource === null) {
@@ -136,11 +134,11 @@ router.route('/info/:id')
 	.delete(function(req, res, next) {
 		// delete resource
 		if (req.decoded.admin) {
-			Resource.findOne({_id: req.params.id}, function(err, resource) {
+			Resource.findOne({_id: req.params.resid}, function(err, resource) {
 				if (err) {
 					return next(err);
 				} else {
-					req.params.id = resource.courseCode;
+					req.params.cid = resource.courseCode;
 					resource.remove();
 					findResList(req, res, next);
 				}
@@ -150,9 +148,9 @@ router.route('/info/:id')
 		}	
 	});
 
-router.route('/file/:id')
+router.route('/file/:resid')
 	.get(function(req, res, next) {
-		var file = './uploads/' + req.params.id;
+		var file = './uploads/' + req.params.resid;
 		res.download(file, function(err) {
 			if (err) {
 				return next(err);
@@ -162,11 +160,11 @@ router.route('/file/:id')
 		});
 	});
 
-router.route('/info/:id/:cmid')
+router.route('/info/:resid/:cmid')
 	.delete(function(req, res, next) {
 		// delete comment
 		if (req.decoded.admin) {
-			Resource.findOne({_id: req.params.id}, function(err, resource) {
+			Resource.findOne({_id: req.params.resid}, function(err, resource) {
 				if (err) {
 					return next(err);
 				} else if (resource === null) {
@@ -187,9 +185,9 @@ router.route('/info/:id/:cmid')
 	});
 
 function findResList(req, res, next) {
-	Resource.find({courseCode: req.params.id.toUpperCase()})
+	Resource.find({courseCode: req.params.cid.toUpperCase()})
 		.sort({dateOfUpload: -1})
-		.select('name dateOfUpload')
+		.select('name dateOfUpload uploader')
 		.exec(function(err, resources) {
 			if (err) {
 				return next(err);
@@ -200,7 +198,7 @@ function findResList(req, res, next) {
 }
 
 function find(req, res, next) {
-	Resource.findOne({_id: req.params.id}, function(err, resource) {
+	Resource.findOne({_id: req.params.resid}, function(err, resource) {
 		if (err) {
 			next(err);
 		} else if (resource === null) {
