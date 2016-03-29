@@ -12,11 +12,11 @@ angular.module('CUPServices', [])
 		}
 		
 		Auth.register = function(req) {
-			return $http.post('/api/register', req)
+			return $http.post('/api/register', req);
 		};
 
 		Auth.login = function(req) {
-			return $http.post('/api/auth', req)
+			return $http.post('/api/auth', req);
 		};
 
 		Auth.logout = function() {
@@ -46,17 +46,17 @@ angular.module('CUPServices', [])
 			get: function() {
 				return $http.get('/api/dept');
 			},
-			getOne: function(id) {
-				return $http.get('/api/dept/' + id);
-			},
 			create: function(data) {
 				return $http.post('/api/dept', data);
 			},
-			edit: function(id, data) {
-				return $http.put('/api/dept/' + id, data);
+			getOne: function(did) {
+				return $http.get('/api/dept/' + did);
 			},
-			delete: function(id) {
-				return $http.delete('/api/dept/' + id);
+			edit: function(did, data) {
+				return $http.put('/api/dept/' + did, data);
+			},
+			delete: function(did) {
+				return $http.delete('/api/dept/' + did);
 			}
 		};
 	})
@@ -138,53 +138,32 @@ angular.module('CUPServices', [])
 			val: '20:30 - 21:15'
 		}];
 
-		Course.ratings = [{
-			index: 1,
-			val: '1 (Worst)'
-		},
-		{
-			index: 2,
-			val: '2'
-		},
-		{
-			index: 3,
-			val: '3'
-		},
-		{
-			index: 4,
-			val: '4'
-		},
-		{
-			index: 5,
-			val: '5 (Best)'
-		}];
-
-		Course.get = function(id) {
-			return $http.get('/api/course/' + id);
+		Course.get = function(did) {
+			return $http.get('/api/course/' + did);
 		};
 			
-		Course.create = function(id, data) {
-			return $http.post('/api/course/' + id, data);
+		Course.create = function(did, data) {
+			return $http.post('/api/course/' + did, data);
 		};
 
-		Course.getOne = function(id) {
-			return $http.get('/api/course/info/' + id);
+		Course.getOne = function(cid) {
+			return $http.get('/api/course/info/' + cid);
 		};
 
-		Course.postInfo = function(id, data) {
-			return $http.post('/api/course/info/' + id, data);
+		Course.postInfo = function(cid, data) {
+			return $http.post('/api/course/info/' + cid, data);
 		};
 
-		Course.edit = function(id, data) {
-			return $http.put('/api/course/info/' + id, data);
+		Course.edit = function(cid, data) {
+			return $http.put('/api/course/info/' + cid, data);
 		};
 
-		Course.delete = function(id) {
-			return $http.delete('/api/course/info/' + id);
+		Course.delete = function(cid) {
+			return $http.delete('/api/course/info/' + cid);
 		};
 
-		Course.deleteInfo = function(id, cmid) {
-			return $http.delete('/api/course/info/' + id + '/' + cmid);
+		Course.deleteInfo = function(cid, cmid) {
+			return $http.delete('/api/course/info/' + cid + '/' + cmid);
 		};
 
 		return Course;
@@ -192,58 +171,59 @@ angular.module('CUPServices', [])
 
 	.factory('Resource', function($http) {
 		return {
-			get: function(id) {
-				return $http.get('/api/resource/' + id);
+			get: function(cid) {
+				return $http.get('/api/resource/' + cid);
 			},
-			getOne: function(id) {
-				return $http.get('/api/resource/info/' + id);
-			},
-			getRes: function(id) {
-				return $http.get('/api/resource/file/' + id, {responseType: 'blob'});
-			},
-			create: function(id, data) {
-				return $http.post('/api/resource/' + id, data, {
+			create: function(cid, data) {
+				return $http.post('/api/resource/' + cid, data, {
 					transformRequest: angular.identity,
 					headers: {'Content-Type': undefined}
 				});
 			},
-			postComment: function(id, data) {
-				return $http.post('/api/resource/info/' + id, data);
+			getOne: function(resid) {
+				return $http.get('/api/resource/info/' + resid);
 			},
-			edit: function(id, data) {
-				return $http.put('/api/resource/info/' + id, data);
+			getRes: function(resid) {
+				return $http.get('/api/resource/file/' + resid, {responseType: 'blob'});
 			},
-			delete: function(id) {
-				return $http.delete('/api/resource/info/' + id);
+			
+			postComment: function(resid, data) {
+				return $http.post('/api/resource/info/' + resid, data);
 			},
-			deleteComment: function(id, cmid) {
-				return $http.delete('/api/resource/info/' + id + '/' + cmid);
+			edit: function(resid, data) {
+				return $http.put('/api/resource/info/' + resid, data);
+			},
+			delete: function(resid) {
+				return $http.delete('/api/resource/info/' + resid);
+			},
+			deleteComment: function(resid, cmid) {
+				return $http.delete('/api/resource/info/' + resid + '/' + cmid);
 			},
 		};
 	})
 
 	.factory('Thread', function($http) {
 		return {
-			get: function(id) {
-				return $http.get('/api/thread/' + id);
+			get: function(cid) {
+				return $http.get('/api/thread/' + cid);
+			},	
+			create: function(cid, data) {
+				return $http.post('/api/thread/' + cid, data);
 			},
-			getOne: function(id) {
-				return $http.get('/api/thread/detail/' + id);
+			getOne: function(tid) {
+				return $http.get('/api/thread/detail/' + tid);
 			},
-			create: function(id, data) {
-				return $http.post('/api/thread/' + id, data);
+			postComment: function(tid, data) {
+				return $http.post('/api/thread/detail/' + tid, data);
 			},
-			postComment: function(id, data) {
-				return $http.post('/api/thread/detail/' + id, data);
+			edit: function(tid, data) {
+				return $http.put('/api/thread/detail/' + tid, data);
 			},
-			edit: function(id, data) {
-				return $http.put('/api/thread/detail/' + id, data);
+			delete: function(tid) {
+				return $http.delete('/api/thread/detail/' + tid);
 			},
-			delete: function(id) {
-				return $http.delete('/api/thread/detail/' + id);
-			},
-			deleteComment: function(id, cmid) {
-				return $http.delete('/api/thread/detail/' + id + '/' + cmid);
+			deleteComment: function(tid, cmid) {
+				return $http.delete('/api/thread/detail/' + tid + '/' + cmid);
 			}
 		};
 	})
@@ -253,23 +233,23 @@ angular.module('CUPServices', [])
 			get: function() {
 				return $http.get('/api/item');
 			},
-			getOne: function(id) {
-				return $http.get('/api/item/info/' + id);
-			},
 			create: function(data) {
 				return $http.post('/api/item', data);
 			},
-			edit: function(id, data) {
-				return $http.put('/api/item/info/' + id, data);
+			getOne: function(itemid) {
+				return $http.get('/api/item/' + itemid);
 			},
-			delete: function(id) {
-				return $http.delete('/api/item/info/' + id);
+			edit: function(itemid, data) {
+				return $http.put('/api/item/' + itemid, data);
 			},
-			buy: function(id) {
-				return $http.get('/api/item/buyrequest/' + id);
+			delete: function(itemid) {
+				return $http.delete('/api/item/' + itemid);
 			},
-			transact: function(id) {
-				return $http.get('/api/item/transactrequest/' +id);
+			buy: function(itemid) {
+				return $http.get('/api/item/buyrequest/' + itemid);
+			},
+			transact: function(itemid, uid) {
+				return $http.get('api/item/transactrequest/' + itemid + '/' + uid);
 			}
 		};
 	});

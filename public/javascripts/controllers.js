@@ -1,7 +1,60 @@
 'use strict';
 angular.module('CUPControllers', [])
-	.controller('topBarController', function($scope, $location, $window, Auth) {
+	.controller('topController', function($scope, $location, $window, $mdSidenav, Auth) {
 		$scope.user = {};
+		$scope.$location = $location;
+
+		$scope.menu = [{
+			link: '/',
+			title: 'Home',
+			icon: 'home'
+		},
+		{
+			link: '/dept',
+			title: 'Courses',
+			icon: 'library_books'
+		},
+		{
+			link: '/discussion/GENERAL',
+			title: 'Discussion',
+			icon: 'chat'
+		},
+		{
+			link: '/barter',
+			title: 'Barter',
+			icon: 'shopping_basket'
+		}];
+
+		$scope.$watch(function() {
+			return Auth.isLogged;
+		}, function(newVal, oldVal) {
+			if(typeof newVal !== 'undefined') {
+				$scope.isLogged = Auth.isLogged;
+			}
+		});
+
+		$scope.$watch(function() {
+			return Auth.uid;
+		}, function(newVal, oldVal) {
+			if(typeof newVal !== 'undefined') {
+				$scope.uid = Auth.uid;
+			}
+		});
+
+		$scope.logout = function() {
+			Auth.logout();
+		};
+
+		$scope.toggleMenu = function() {
+			$mdSidenav('menu').toggle();
+		};
+
+		
+	})
+
+	.controller('homeController', function($scope, $location, $mdDialog, Auth) {
+		$scope.user = {};
+		$scope.disable = true;
 		$scope.$location = $location;
 
 		$scope.$watch(function() {
@@ -29,134 +82,61 @@ angular.module('CUPControllers', [])
 					Auth.setToken(res);
 					$location.path('/task');
 				}).error(function(err) {
-					$scope.message = err.error;
+					$scope.loginMessage = err.error;
 				});
 			}
 		};
 
-		$scope.register = function() {
-			$location.path('/register');
-		};
-
-		$scope.logout = function() {
-			Auth.logout();
-		};
-	})
-
-	.controller('homeController', function($scope, Auth) {
-		$scope.$watch(function() {
-			return Auth.isLogged;
-		}, function(newVal, oldVal) {
-			if(typeof newVal !== 'undefined') {
-				$scope.isLogged = Auth.isLogged;
-			}
-		});
-
-		$scope.$watch(function() {
-			return Auth.uid;
-		}, function(newVal, oldVal) {
-			if(typeof newVal !== 'undefined') {
-				$scope.uid = Auth.uid;
-			}
-		});
-	})
-
-	.controller('registerController', function($scope, $location, Auth) {
-		$scope.newUser = {};
-		$scope.disable = true;
-
-		var alphanum = new RegExp('^[a-zA-Z0-9]*$');
-		var cuemail = new RegExp('@link.cuhk.edu.hk');
-		var uidChecked = false;
-		var emailChecked = false;
-		var pwd1Checked = false;
-		var pwd2Checked = false;
-
-		$scope.checkUid = function() {
-			if (!alphanum.test($scope.newUser.uid)) {
-				$scope.uidStatus = 'User ID should be alphanumeric.';
-				uidChecked = false;
-				$scope.disable = setDisable();
-			} else {
-				$scope.uidStatus = '';
-				uidChecked = true;
-				$scope.disable = setDisable();
-			}
-		};
-
-		$scope.checkEmail = function() {
-			if (!cuemail.test($scope.newUser.email)) {
-				$scope.emailStatus = 'CUHK email should be provided.';
-				emailChecked = false;
-				$scope.disable = setDisable();
-			} else {
-				$scope.emailStatus = '';
-				emailChecked = true;
-				$scope.disable = setDisable();
-			}
-		};
-
-		$scope.checkPwd1 = function() {
-			if (!alphanum.test($scope.newUser.pwd1)) {
-				$scope.pwd1Status = 'Password should be alphanumeric.';
-				pwd1Checked = false;
-				$scope.disable = setDisable;
-			} else if ($scope.newUser.pwd1.length < 8) {
-				$scope.pwd1Status = 'Password should be longer than 7 characters';
-				pwd1Checked = false;
-				$scope.disable = setDisable();
-			} else {
-				$scope.pwd1Status = '';
-				pwd1Checked = true;
-				$scope.disable = setDisable();
-			}
-		};
-
-		$scope.checkPwd2 = function() {
-			if ($scope.newUser.pwd1 !== $scope.newUser.pwd2) {
-				$scope.pwd2Status = 'Password not matched';
-				pwd2Checked = false;
-				$scope.disable = setDisable();
-			} else {
-				$scope.pwd2Status = '';
-				pwd2Checked = true;
-				$scope.disable = setDisable();
-			}
-		};
-
-		$scope.createUser = function() {
-			Auth.register($scope.newUser).success(function(result) {
-				Auth.login({uid: $scope.newUser.uid, pwd: $scope.newUser.pwd1}).success(function(res) {
+		$scope.registerDialog = function(event) {
+			$mdDialog.show({
+				controller: RegisterController,
+				templateUrl: '/views/register.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true
+			})
+			.then(function(newUser) {
+				Auth.login({uid: newUser.uid, pwd: newUser.pwd1}).success(function(res) {
 					Auth.uid = res.uid;
-					Auth.isLogged = true;	
+					Auth.isLogged = true;
 					Auth.setToken(res);
 					$location.path('/task');
-				}).error(function(err) {
-					$scope.message = err.error;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
 				});
-			}).error(function(err) {
-				$scope.message = err.error;
 			});
 		};
 
-		function setDisable() {
-			if (uidChecked && emailChecked && pwd1Checked && pwd2Checked) {
-				return false;
-			} else {
-				return true;
-			}
+		function RegisterController($scope, $mdDialog, Auth) {
+			$scope.newUser = {};
+
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+
+			$scope.createUser = function() {
+				Auth.register($scope.newUser).success(function(result) {
+					$mdDialog.hide($scope.newUser);
+				}).error(function(err) {
+					$scope.registerMessage = err.error;
+				});
+			};
 		}
 	})
 
-	.controller('deptListController', function($scope, $window, $location, $route, Dept) {
+	.controller('deptListController', function($scope, $window, $location, $mdDialog, $mdMedia, $mdEditDialog, Dept) {
 		$scope.$location = $location;
-		$scope.$route = $route;
-		$scope.newDept = {};
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
 		} else {
 			$scope.admin = false;
 		}
+
+		$scope.order = 'deptCode';
+		$scope.limit = 10;
+		$scope.page = 1;
+		$scope.selected = [];
 
 		Dept.get().success(function(res){
 			$scope.success = true;
@@ -166,44 +146,97 @@ angular.module('CUPControllers', [])
 			$scope.errorMessage = res.error;
 		});
 
-		$scope.add = function() {
-			if (!($scope.newDept.deptCode === undefined || $scope.newDept.deptCode === '')) {
-				Dept.create($scope.newDept).success(function(res) {
-					$scope.newDept = {};
+		$scope.back = function() {
+			window.history.back();
+		};
+
+		$scope.addDialog = function(event) {
+			$mdDialog.show({
+				controller: AddDeptController,
+				templateUrl: '/views/adddept.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true
+			})
+			.then(function(newDept) {
+				Dept.create(newDept).success(function(res) {
 					$scope.depts = res;
 				}).error(function(res) {
 					$scope.success = false;
 					$scope.errorMessage = res.error;
 				});
-			}
-			
-		};
-
-		$scope.delete = function(deptCode) {
-			Dept.delete(deptCode).success(function(res) {
-				$scope.depts = res;
-			}).error(function(res) {
-				$scope.success = false;
-				$scope.errorMessage = res.error;
 			});
 		};
+
+		function AddDeptController($scope, $mdDialog) {
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+
+			$scope.add = function() {
+				$mdDialog.hide($scope.newDept);
+			};
+		}
+
+		$scope.editDeptName = function(event, dept) {
+			if ($scope.admin) {
+				event.stopPropagation();
+				$mdEditDialog.large({
+					title: 'Edit department name',
+					modelValue: dept.deptName,
+					save: function(input) {
+						console.log(input.$modelValue);
+						Dept.edit(dept.deptCode, {deptName: input.$modelValue}).success(function(res) {
+							$scope.depts = res;
+						}).error(function(res) {
+							$scope.success = false;
+							$scope.errorMessage = res.error;
+						});
+					},
+					targetEvent: event,
+					validators: {'required': true}
+				});
+			}
+		};
+
+		$scope.delete = function() {
+			async.each($scope.selected, deleteDept, function(err) {
+				if (err) {
+					$scope.success = false;
+					$scope.errorMessage = err;
+				} else {
+					$scope.selected = [];
+					Dept.get().success(function(res){
+						$scope.depts = res;
+					}).error(function(res) {
+						$scope.success = false;
+						$scope.errorMessage = res.error;
+					});	
+				}
+			});
+		};
+
+		function deleteDept(e, cb) {
+			Dept.delete(e.deptCode).success(function(res) {
+				cb();
+			}).error(function(res) {
+				cb(res.error);
+			});
+		}
 	})
 
-	.controller('deptCourseListController', function($scope, $window, $location, $routeParams, $route, Dept, Course) {
+	.controller('deptCourseListController', function($scope, $window, $location, $routeParams, $mdDialog, Dept, Course) {
 		$scope.$location = $location;
-		$scope.$route = $route;
-		$scope.editing = false;
-		$scope.adding = false;
-		$scope.edit = {};
-		$scope.newCourse = {};
-		$scope.days = Course.days;
-		$scope.times = Course.times;
-		$scope.lessons = [];
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
 		} else {
 			$scope.admin = false;
 		}
+
+		$scope.order = 'courseCode';
+		$scope.limit = 10;
+		$scope.page = 1;
+		$scope.selected = [];
 
 		var deptCode = $routeParams.id;
 
@@ -221,89 +254,85 @@ angular.module('CUPControllers', [])
 			$scope.errorMessage = res.error;
 		});
 
-		$scope.enableEdit = function() {
-			if (!$scope.editing) {
-				$scope.editing = true;
-			}
+		$scope.back = function() {
+			window.history.back();
 		};
 
-		$scope.editDept = function() {
-			if ($scope.edit.deptName === undefined || $scope.edit.deptName === '') {
-				$scope.editing = true;
-			} else {
-				Dept.edit(deptCode, $scope.edit).success(function(res) {
-					$scope.editing = false;
-					$scope.dept = res;
-				}).error(function(res) {
-					$scope.success = false;
-					$scope.errorMessage = res.error;
-				});
-			}
-			
-		};
-
-		$scope.enableAdd = function() {
-			if (!$scope.adding) {
-				$scope.adding = true;
-			}
-		};
-
-		$scope.addLesson = function() {
-			var lesson = {
-				day: $scope.day,
-				time: $scope.time,
-				venue: $scope.venue
-			};
-			$scope.lessons.push(lesson);
-		};
-
-		$scope.removeLesson = function(index) {
-			$scope.lessons.splice(index, 1);
-		};
-
-		$scope.addCourse = function() {
-			if (!($scope.newCourse.courseCode === undefined || $scope.newCourse.courseCode === '')) {
-				$scope.newCourse.schedule = [];
-				for (var i=0; i < $scope.lessons.length; i++) {
-					$scope.newCourse.schedule.push({			
-						day: $scope.lessons[i].day.index,
-						time: $scope.lessons[i].time.index,
-						venue: $scope.lessons[i].venue
-					});
-				}
-				Course.create(deptCode, $scope.newCourse).success(function(res) {
-					$scope.adding = false;
-					$scope.newCourse = {};
-					$scope.lessons = [];
+		$scope.addDialog = function(event) {
+			$mdDialog.show({
+				controller: AddCourseController,
+				templateUrl: '/views/addcourse.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true
+			})
+			.then(function(newCourse) {
+				Course.create(deptCode, newCourse).success(function(res) {
 					$scope.courses = res;
 				}).error(function(res) {
 					$scope.success = false;
 					$scope.errorMessage = res.error;
 				});
-			}
-		};
-
-		$scope.delete = function(courseCode) {
-			Course.delete(courseCode).success(function(res) {
-				$scope.courses = res;
-			}).error(function(res) {
-				$scope.success = false;
-				$scope.errorMessage = res.error;
 			});
 		};
+
+		function AddCourseController($scope, $mdDialog, Course) {
+			$scope.days = Course.days;
+			$scope.times = Course.times;
+			$scope.lessons = [];
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+
+			$scope.addLesson = function() {
+				var newlesson = {
+					day: $scope.day,
+					time: $scope.time,
+					venue: $scope.venue
+				};
+				$scope.lessons.push(newlesson);
+			};
+
+			$scope.removeLesson = function(index) {
+				$scope.lessons.splice(index, 1);
+			};
+
+			$scope.add = function() {
+				$scope.newCourse.schedule = $scope.lessons;
+				$mdDialog.hide($scope.newCourse);
+			};
+		}
+
+		$scope.delete = function() {
+			async.each($scope.selected, deleteCourse, function(err) {
+				if (err) {
+					$scope.success = false;
+					$scope.errorMessage = err;
+				} else {
+					$scope.selected = [];
+					Course.get(deptCode).success(function(res) {
+						$scope.courses = res;
+					}).error(function(res) {
+						$scope.success = false;
+						$scope.errorMessage = res.error;
+					});
+				}
+			});
+		};
+
+		function deleteCourse(e, cb) {
+			Course.delete(e.courseCode).success(function(res) {
+				cb();
+			}).error(function(res) {
+				cb(res.error);
+			});
+		}
 	})
 
-	.controller('CourseInfoController', function($scope, $window, $location, $routeParams, $route, Course) {
+	.controller('CourseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Course) {
 		$scope.$location = $location;
-		$scope.$route = $route;
-		$scope.editing = false;
-		$scope.adding = false;
-		$scope.edit = {};
-		$scope.newInfo = {};
-		$scope.lessons = [];
 		$scope.days = Course.days;
 		$scope.times = Course.times;
-		$scope.ratings = Course.ratings;
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
 		} else {
@@ -312,111 +341,112 @@ angular.module('CUPControllers', [])
 
 		var courseCode = $routeParams.id;
 
+		// Initialization
 		Course.getOne(courseCode).success(function(res) {
 			$scope.success = true;
 			$scope.course = res;
-			if (res.schedule !== null) {
-				for (var i=0; i<res.schedule.length; i++) {
-					$scope.lessons.push({
-						day: {
-							index: res.schedule[i].day,
-							val: $scope.days[res.schedule[i].day-1].val
-						},
-						time: {
-							index: res.schedule[i].time,
-							val: $scope.times[res.schedule[i].time-1].val,
-						},
-						venue: res.schedule[i].venue
-					});
-				}
-			}
-			
+			$scope.lessons = res.schedule;
+			$scope.avgRating = 0;
 			for (var i=0; i<$scope.course.info.length; i++) {
+				$scope.avgRating += $scope.course.info[i].rating;
 				if ($scope.course.info[i].author === $window.localStorage['uid']) {
 					$scope.posted = true;
 				}
 			}
+			$scope.avgRating /= $scope.course.info.length;
+			$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;
 		});
 
-		$scope.enableEdit = function() {
-			if (!$scope.editing) {
-				$scope.editing = true;
-			}
+		// error return
+		$scope.back = function() {
+			window.history.back();
 		};
 
-		$scope.editCourse = function() {
-			$scope.edit.schedule = [];
-				for (var i=0; i < $scope.lessons.length; i++) {
-					$scope.edit.schedule.push({			
-						day: $scope.lessons[i].day.index,
-						time: $scope.lessons[i].time.index,
-						venue: $scope.lessons[i].venue
-					});
+		// Course basic module -----------------------------------------------
+		$scope.editCourseDialog = function(event) {
+			$mdDialog.show({
+				controller: EditCourseController,
+				templateUrl: '/views/editcourse.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true,
+				locals: {
+					course: $scope.course
 				}
-			Course.edit(courseCode, $scope.edit).success(function(res) {
-				$scope.editing = false;
-				$scope.edit = {};
-				$scope.lessons = [];
-				$scope.course = res;
-				for (var i=0; i<res.schedule.length; i++) {
-				$scope.lessons.push({
-					day: {
-						index: res.schedule[i].day,
-						val: $scope.days[res.schedule[i].day-1].val
-					},
-					time: {
-						index: res.schedule[i].time,
-						val: $scope.times[res.schedule[i].time-1].val,
-					},
-					venue: res.schedule[i].venue
+			})
+			.then(function(edit) {
+				Course.edit(courseCode, edit).success(function(res) {
+					$scope.course = res;
+					$scope.lessons = res.schedule;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
 				});
-			}
-			}).error(function(res) {
-				$scope.success = false;
-				$scope.errorMessage = res.error;
 			});
 		};
 
-		$scope.addLesson = function() {
-			var lesson = {
-				day: $scope.day,
-				time: $scope.time,
-				venue: $scope.venue
+		function EditCourseController($scope, $mdDialog, Course, course) {
+			$scope.days = Course.days;
+			$scope.times = Course.times;
+			$scope.edit = course;
+			$scope.editLessons = course.schedule || [];
+
+			$scope.cancel = function() {
+				$mdDialog.cancel();
 			};
-			$scope.lessons.push(lesson);
-		};
 
-		$scope.removeLesson = function(index) {
-			$scope.lessons.splice(index, 1);
-		};
+			$scope.addLesson = function() {
+				var newlesson = {
+					day: $scope.day,
+					time: $scope.time,
+					venue: $scope.venue
+				};
+				$scope.editLessons.push(newlesson);
+			};
 
-		$scope.enableAdd = function() {
-			if (!$scope.adding) {
-				$scope.adding = true;
-			}
-		};
+			$scope.removeLesson = function(index) {
+				$scope.editLessons.splice(index, 1);
+			};
 
-		$scope.addInfo = function() {
-			$scope.newInfo.rating = $scope.rating.index;
-			if (!($scope.newInfo.rating === undefined || $scope.newInfo.rating === '' ||
-				$scope.newInfo.outline === undefined || $scope.newInfo.outline.length < 30 ||
-				$scope.newInfo.assessMethod === undefined || $scope.newInfo.assessMethod.length <30 ||
-				$scope.newInfo.comment === undefined || $scope.newInfo.comment.length < 30)) {
+			$scope.editCourse = function() {
+				$scope.edit.schedule = $scope.editLessons;
+				console.log($scope.edit);
+				$mdDialog.hide($scope.edit);
+			};
+		}
 
-				Course.postInfo(courseCode, $scope.newInfo).success(function(res) {
-					$scope.adding = false;
+		// Course info module -----------------------------------------------
+		$scope.addInfoDialog = function(event) {
+			$mdDialog.show({
+				controller: AddCourseInfoController,
+				templateUrl: '/views/addcourseinfo.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true,
+			})
+			.then(function(newInfo) {
+				Course.postInfo(courseCode, newInfo).success(function(res) {
 					$scope.posted = true;
-					$scope.newInfo = {};
 					$scope.course = res;
 				}).error(function(res) {
 					$scope.success = false;
 					$scope.errorMessage = res.error;
 				});
-			}
+			});
 		};
+
+		function AddCourseInfoController($scope, $mdDialog) {
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+
+			$scope.addCourseInfo= function() {
+				$mdDialog.hide($scope.newInfo);
+			};
+		}
 
 		$scope.deleteInfo = function(cmid) {
 			Course.deleteInfo(courseCode, cmid).success(function(res) {
@@ -428,21 +458,22 @@ angular.module('CUPControllers', [])
 		};
 	})
 
-	.controller('ResListController', function($scope, $window, $location, $routeParams, $route, Resource) {
+	.controller('ResListController', function($scope, $window, $location, $routeParams, $route, $mdDialog, Resource) {
 		$scope.$location = $location;
 		$scope.$route = $route;
-		$scope.adding = false;
-		$scope.name = '';
-		$scope.description = '';
 		if ($window.localStorage['admin'] === 'true') {
 			$scope.admin = true;
 		} else {
 			$scope.admin = false;
 		}
 
-		$scope.courseCode = $routeParams.id;
+		$scope.courseCode = $routeParams.id.toUpperCase();
+		$scope.order = 'name';
+		$scope.limit = 5;
+		$scope.page = 1;
+		$scope.selected = [];
 
-		Resource.get($scope.courseCode.toUpperCase()).success(function(res) {
+		Resource.get($scope.courseCode).success(function(res) {
 			$scope.success = true;
 			$scope.ress = res;
 		}).error(function(res) {
@@ -450,66 +481,112 @@ angular.module('CUPControllers', [])
 			$scope.errorMessage = res.error;
 		});
 
-		$scope.enableAdd = function() {
-			if (!$scope.adding) {
-				$scope.adding = true;
-			}
+		$scope.back = function() {
+			window.history.back();
 		};
 
-		$scope.addResource = function() {
-			$scope.description = $scope.htmlVariable;
-			if ($scope.name !== '' && $scope.description !== undefined && $scope.description !== '') {
-				var fd = new FormData();
-				fd.append('file', $scope.file);
-				fd.append('name', $scope.name);
-				fd.append('description', $scope.description);
+		$scope.addResDialog = function(event) {
+			$mdDialog.show({
+				controller: AddResController,
+				templateUrl: '/views/addres.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true
+			})
+			.then(function(fd) {
 				Resource.create($scope.courseCode, fd).success(function(res) {
-					$scope.adding = false;
-					$scope.name = '';
-					$scope.file = {};
-					$scope.description = '';
-					$scope.htmlVariable = '';
 					$scope.ress = res;
 				}).error(function(res){
 					$scope.success = false;
 					$scope.errorMessage = res.error;
 				});
-			}	
+			});
 		};
 
-		$scope.delete = function(id) {
-			Resource.delete(id).success(function(res) {
-				$scope.ress = res;
+		function AddResController($scope, $mdDialog) {
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+
+			$scope.addResource = function() {
+				var fd = new FormData();
+				$scope.description = $scope.htmlVariable;
+				fd.append('file', $scope.file);
+				fd.append('name', $scope.name);
+				fd.append('description', $scope.description);
+				$mdDialog.hide(fd);
+			};
+		}
+
+		$scope.check = function(id) {
+			Resource.getOne(id).success(function(res) {
+				$scope.success = true;
+				$scope.resource = res;
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
 			});
 		};
-	})
 
-	.controller('ResInfoController', function($scope, $window, $location, $routeParams, $route, Resource) {
-		$scope.$location = $location;
-		$scope.$route = $route;
-		$scope.editing = false;
-		$scope.adding = false;
-		$scope.edit = {};
-		$scope.newComment = '';
-		$scope.uid = $window.localStorage['uid'];
-		if ($window.localStorage['admin'] === 'true') {
-			$scope.admin = true;
-		} else {
-			$scope.admin = false;
+		$scope.delete = function() {
+			async.each($scope.selected, deleteRes, function(err) {
+				if (err) {
+					$scope.success = false;
+					$scope.errorMessage = err;
+				} else {
+					$scope.selected = [];
+					Resource.get($scope.courseCode).success(function(res) {
+						$scope.ress = res;
+					}).error(function(res) {
+						$scope.success = false;
+						$scope.errorMessage = res.error;
+					});
+				}
+			});
+		};
+
+		function deleteRes(e, cb) {
+			Resource.delete(e._id).success(function(res) {
+				cb();
+			}).error(function(res) {
+				cb(res.error);
+			});
 		}
 
-		var resID = $routeParams.id;
+		$scope.editResDialog = function(event) {
+			$mdDialog.show({
+				controller: EditResController,
+				templateUrl: '/views/editres.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true,
+			})
+			.then(function(edit) {
+				Resource.edit($scope.resource._id, edit).success(function(res) {
+					$scope.resource = res;
+					Resource.get($scope.courseCode).success(function(res1) {
+						$scope.ress = res1;
+					}).error(function(res) {
+						$scope.success = false;
+						$scope.errorMessage = res.error;
+					});
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			});
+		};
 
-		Resource.getOne(resID).success(function(res) {
-			$scope.success = true;
-			$scope.resource = res;
-		}).error(function(res) {
-			$scope.success = false;
-			$scope.errorMessage = res.error;
-		});
+		function EditResController($scope, $mdDialog) {
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			};
+
+			$scope.editResource = function() {
+				$scope.edit.description = $scope.htmlVariable;
+				$mdDialog.hide($scope.edit);
+			};
+		}
 
 		$scope.download = function() {
 			var a = document.createElement("a");
@@ -524,39 +601,9 @@ angular.module('CUPControllers', [])
 			});
 		};
 
-		$scope.enableEdit = function() {
-			if (!$scope.editing) {
-				$scope.editing = true;
-			}
-		};
-
-		$scope.editResource = function() {
-			$scope.edit.description = $scope.htmlVariable;
-			if ($scope.edit.name !== '' && $scope.edit.description !== undefined && 
-				$scope.edit.description !== '') {
-					Resource.edit(resID, $scope.edit).success(function(res) {
-						$scope.editing = false;
-						$scope.edit = {};
-						$scope.htmlVariable = '';
-						$scope.resource = res;
-					}).error(function(res) {
-						$scope.success = false;
-						$scope.errorMessage = res.error;
-					});
-			}
-			
-		};
-
-		$scope.enableAdd = function() {
-			if (!$scope.adding) {
-				$scope.adding = true;
-			}
-		};
-
 		$scope.addComment = function() {
 			if ($scope.newComment !== '') {
-				Resource.postComment(resID, {content: $scope.newComment}).success(function(res) {
-					$scope.adding = false;
+				Resource.postComment($scope.resource._id, {content: $scope.newComment}).success(function(res) {
 					$scope.newComment = '';
 					$scope.resource = res;
 				}).error(function(res) {
@@ -567,7 +614,7 @@ angular.module('CUPControllers', [])
 		};
 
 		$scope.deleteComment = function(cmid) {
-			Resource.deleteComment(resID, cmid).success(function(res) {
+			Resource.deleteComment($scope.resource._id, cmid).success(function(res) {
 				$scope.resource = res;
 			}).error(function(res) {
 				$scope.success = false;

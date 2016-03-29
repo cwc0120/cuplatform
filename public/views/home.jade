@@ -1,6 +1,66 @@
-div(ng-hide='isLogged')
-	h1 Welcome to CUPlatform
-	p Please Log in
+div(ng-hide='isLogged' layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='90' flex-gt-sm='80')
+			div(layout='column' layout-align='start center' layout-gt-xs='row')
+				div(flex=50)
+					div
+						h1 Welcome to CUPlatform!
+				div(flex-gt-sm=20)
+					md-card
+						md-card-title
+							span.md-headline Log in
+						md-card-content
+							form(name='loginForm')
+								span.error {{loginMessage}}
+								md-input-container.md-block
+									label User ID
+									input(type='text' name='userID' ng-model='user.uid' required)
+									div(ng-messages='loginForm.userID.$error')
+										div(ng-message='required') User ID missing.
+								md-input-container.md-block
+									label Password
+									input(type='password' name='password' ng-model='user.pwd' required)
+									div(ng-messages='loginForm.password.$error')
+										div(ng-message='required') Password missing.
+								md-card-actions(layout='row' layout-align='end center')
+									md-button(ng-click='registerDialog($event)') Register
+									md-button(type='submit' ng-click='login()' ng-disabled='loginForm.$invalid') Log in
+			div
+				h1 CUplatform
+				p CUPlatform aims at providing an all-in-one platform including a comprehensive databank and discussion forum for CUHK students’ school life and learning purpose.
 
-div(ng-show='isLogged')
-	h1 Hello, {{uid}}.
+				h1 Structure
+				h2 Registration
+				p Visitor can apply for an account with user ID, CUHK email and password. Registration component will check validity of their personal information. Then, the password will be encrypted on the client side and transferred to a user record created in the database along with user ID and email. After that, it will notify the visitor that an account has been created.
+
+				h2 Authentication
+				p When a login request is received, Authentication component will check the user ID and password input with the corresponding user record. If the input matches with the user record, it will bring the user to homepage.
+				p If a user has made too many failed login requests, the user account will be locked temporarily. At this stage, the user may send a request to recover the password with the user’s email.
+
+				h2 User Profile Management
+				p It allows user to change nickname and password, upload user icon and edit personal information. User Profile Management component will update the user record and notify the user that above changes have been made.
+
+				h2 Timetable
+				p access course’s information and resources, user must add the course to timetable. User can also arrange the courses and synchronize with Google Calendar using its API. In mobile version, the system can also automatically mute user’s phone during class.
+
+				h2 Course Information
+				p can rate the course, provide course summary and assessment method. User can also comment on course arrangement and teaching style of lecturer. When such requests are received, Course Information component will append them to the course information record and show them in reverse chronological order. Furthermore, the component can help users upload and retrieve past lecture notes and resources from resources list in the database.
+
+				h2 Trading Platform
+				p Trading Platform component shows all available items according to their types and courses that the items are related to.
+				p When a sell request is received, provided with desired price and item details, the component will create a new item record in the database and the item will be shown on the platform.
+				p When a buy request is received, the component will arrange a chat room for negotiation. When both sides agree, the seller can send a sold request to put the item off the platform. The component will mark the item and will not be shown in future.
+
+				h2 Discussion 
+				p Discussion component shows all topics in reverse chronological order. User can only see the topics related to the user’s courses.
+				p User can write a new topic about academic matters or other relevant topics. The component will create a discussion record in database. 
+				p User can also reply to the topics. The component will append replies to the discussion record and show them to users.
+
+				h2 Messenger
+				p User can send messages and receive messages from other users using DataChannel.js.
+
+div(ng-show='isLogged' layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='90' flex-gt-md='80')
+			h1 Log in successful!
+			p Hello, {{uid}}.

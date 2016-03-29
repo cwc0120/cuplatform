@@ -33,7 +33,7 @@ router.route('/')
 		}
 	});
 
-router.route('/:id')
+router.route('/:did')
 	.get(function(req, res, next) {
 		// check dept info
 		find(req, res, next);
@@ -42,13 +42,13 @@ router.route('/:id')
 	.put(function(req, res, next) {
 		// edit dept name
 		if (req.decoded.admin) {
-			Dept.update({deptCode: req.params.id.toUpperCase()}, 
+			Dept.update({deptCode: req.params.did.toUpperCase()}, 
 				{$set: {deptName: req.body.deptName}},
 				function (err) {
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next);
+						findList(req, res, next);
 					}
 				}
 			);
@@ -59,8 +59,8 @@ router.route('/:id')
 
 	.delete(function(req, res, next) {
 		// delete dept
-		if (req.decoded.admin){
-			Dept.findOne({deptCode: req.params.id.toUpperCase()}, function(err, dept) {
+		if (req.decoded.admin) {
+			Dept.findOne({deptCode: req.params.did.toUpperCase()}, function(err, dept) {
 				if (err) {
 					return next(err);
 				} else if (dept === null) {
@@ -77,7 +77,6 @@ router.route('/:id')
 
 function findList(req, res, next) {
 	Dept.find()
-		.sort({deptCode: 1})
 		.select('deptCode deptName')
 		.exec(function(err, depts) {
 			if (err) {
@@ -89,7 +88,7 @@ function findList(req, res, next) {
 }
 
 function find(req, res, next) {
-	Dept.findOne({deptCode: req.params.id.toUpperCase()},
+	Dept.findOne({deptCode: req.params.did.toUpperCase()},
 		function(err, dept) {
 			if (err) {
 				return next(err);

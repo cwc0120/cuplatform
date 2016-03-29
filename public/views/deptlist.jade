@@ -1,24 +1,53 @@
-div(ng-hide='success')
-	h3 {{errorMessage}}
-	button(ng-click='$route.reload()') Return
-div(ng-show='success')
-	h1 Department List
-	table
-		tr
-			th Department Code
-			th Department Name
-			th
-		tr(ng-show='admin')
-			form
-				td
-					input(type='text' ng-model='newDept.deptCode' placeholder='New Department Code')
-				td
-					input(type='text' ng-model='newDept.deptName' placeholder='New Department Name')
-				td
-					button(type='submit' ng-show='admin' ng-click='add()') Add
-		tr(ng-repeat='dept in depts')
-			td 
-				a(ng-href='#/dept/{{dept.deptCode}}') {{dept.deptCode}}
-			td {{dept.deptName}}
-			td
-				button(ng-show='admin' ng-click='delete(dept.deptCode)') Delete
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='90' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				md-card
+					form(ng-submit='$location.path("/course/" + searchCourse)')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchCourse' placeholder='Enter course code here')
+
+				md-card
+					md-toolbar.md-table-toolbar.md-default(ng-hide='selected.length || search')
+						div.md-toolbar-tools
+							span Department List
+							span(flex)
+							md-button.md-icon-button(ng-show='admin' ng-click='addDialog($event)' aria-label='Add')
+								md-icon.material-icons add
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
+								md-icon.material-icons search
+
+					md-toolbar.md-table-toolbar.md-default(ng-show='search && !selected.length')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchDept' placeholder='Search Department')
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
+								md-icon.material-icons clear
+
+					md-toolbar.md-table-toolbar.md-accent.md-hue-1(ng-show='selected.length')
+						div.md-toolbar-tools
+							span {{selected.length}} department(s) selected
+							span(flex)
+							md-button.md-icon-button(ng-click='delete()' aria-label='Delete')
+								md-icon.material-icons delete
+							
+					md-table-container
+						table(md-table md-row-select='admin' ng-model='selected')
+							thead(md-head md-order='order')
+								tr(md-row)
+									th(md-column md-order-by='deptCode') Department Code
+									th(md-column md-order-by='deptName' hide-xs) Department Name
+										md-icon.material-icons(ng-show='admin') mode_edit
+							tbody(md-body)
+								tr(md-row ng-repeat='dept in depts | filter: searchDept | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='dept')
+									td(md-cell)
+										a(ng-href='#/dept/{{dept.deptCode}}') {{dept.deptCode}}
+									td(md-cell hide-xs ng-hide='admin') {{dept.deptName}}
+									td(md-cell hide-xs ng-show='admin' ng-click='editDeptName($event, dept)') {{dept.deptName}}
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{depts.length}}')

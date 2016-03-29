@@ -1,0 +1,48 @@
+
+<md-dialog aria-label="Add Course Information" ng-cloak="ng-cloak" flex="60">
+  <form name="addCourseInfoForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add Course Information</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <p>Rating</p>
+        <md-slider-container layout="row" layout-align="start center"><span layout-padding="layout-padding">Worst</span>
+          <md-slider flex="flex" min="1" max="5" ng-model="newInfo.rating" aria-label="rating"></md-slider><span layout-padding="layout-padding">Best</span>
+        </md-slider-container>
+        <md-input-container class="md-block">
+          <label>Outline</label>
+          <textarea rows="3" columns="50" name="outline" ng-model="newInfo.outline" minlength="30" required="required"></textarea>
+          <div ng-messages="addCourseInfoForm.outline.$error">
+            <div ng-message="required">Outline missing.</div>
+            <div ng-message="minlength">At least 30 characters.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>Assessment Method</label>
+          <textarea rows="3" name="assessMethod" ng-model="newInfo.assessMethod" minlength="30" required="required"></textarea>
+          <div ng-messages="addCourseInfoForm.assessMethod.$error">
+            <div ng-message="required">Assessment method missing.</div>
+            <div ng-message="minlength">At least 30 characters.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>Comment</label>
+          <textarea rows="3" name="comment" ng-model="newInfo.comment" minlength="30" required="required"></textarea>
+          <div ng-messages="addCourseInfoForm.comment.$error">
+            <div ng-message="required">Comment missing.</div>
+            <div ng-message="minlength">At least 30 characters.</div>
+          </div>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="addCourseInfo()" ng-disabled="addCourseInfoForm.$invalid">Add Information</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

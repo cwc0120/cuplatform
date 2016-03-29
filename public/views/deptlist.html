@@ -1,35 +1,73 @@
 
-<div ng-hide="success">
-  <h3>{{errorMessage}}</h3>
-  <button ng-click="$route.reload()">Return</button>
-</div>
-<div ng-show="success">
-  <h1>Department List</h1>
-  <table>
-    <tr>
-      <th>Department Code</th>
-      <th>Department Name</th>
-      <th></th>
-    </tr>
-    <tr ng-show="admin">
-      <form>
-        <td>
-          <input type="text" ng-model="newDept.deptCode" placeholder="New Department Code"/>
-        </td>
-        <td>
-          <input type="text" ng-model="newDept.deptName" placeholder="New Department Name"/>
-        </td>
-        <td>
-          <button type="submit" ng-show="admin" ng-click="add()">Add</button>
-        </td>
-      </form>
-    </tr>
-    <tr ng-repeat="dept in depts">
-      <td> <a ng-href="#/dept/{{dept.deptCode}}">{{dept.deptCode}}</a></td>
-      <td>{{dept.deptName}}</td>
-      <td>
-        <button ng-show="admin" ng-click="delete(dept.deptCode)">Delete</button>
-      </td>
-    </tr>
-  </table>
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="90" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success">
+        <md-card>
+          <form ng-submit="$location.path(&quot;/course/&quot; + searchCourse)">
+            <div class="md-toolbar-tools">
+              <md-input-container flex="flex" md-no-float="md-no-float">
+                <md-icon class="material-icons">search</md-icon>
+                <input type="text" ng-model="searchCourse" placeholder="Enter course code here"/>
+              </md-input-container>
+            </div>
+          </form>
+        </md-card>
+        <md-card>
+          <md-toolbar ng-hide="selected.length || search" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools"><span>Department List</span><span flex="flex"></span>
+              <md-button ng-show="admin" ng-click="addDialog($event)" aria-label="Add" class="md-icon-button">
+                <md-icon class="material-icons">add</md-icon>
+              </md-button>
+              <md-button ng-click="search = !search" aria-label="Search" class="md-icon-button">
+                <md-icon class="material-icons">search</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="search &amp;&amp; !selected.length" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+              <md-input-container flex="flex" md-no-float="md-no-float">
+                <md-icon class="material-icons">search</md-icon>
+                <input type="text" ng-model="searchDept" placeholder="Search Department"/>
+              </md-input-container>
+              <md-button ng-click="search = !search" aria-label="Back" class="md-icon-button">
+                <md-icon class="material-icons">clear</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="selected.length" class="md-table-toolbar md-accent md-hue-1">
+            <div class="md-toolbar-tools"><span>{{selected.length}} department(s) selected</span><span flex="flex"></span>
+              <md-button ng-click="delete()" aria-label="Delete" class="md-icon-button">
+                <md-icon class="material-icons">delete</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-table-container>
+            <table md-table="md-table" md-row-select="admin" ng-model="selected">
+              <thead md-head="md-head" md-order="order">
+                <tr md-row="md-row">
+                  <th md-column="md-column" md-order-by="deptCode">Department Code</th>
+                  <th md-column="md-column" md-order-by="deptName" hide-xs="hide-xs">Department Name
+                    <md-icon ng-show="admin" class="material-icons">mode_edit</md-icon>
+                  </th>
+                </tr>
+              </thead>
+              <tbody md-body="md-body">
+                <tr md-row="md-row" ng-repeat="dept in depts | filter: searchDept | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="dept">
+                  <td md-cell="md-cell"><a ng-href="#/dept/{{dept.deptCode}}">{{dept.deptCode}}</a></td>
+                  <td md-cell="md-cell" hide-xs="hide-xs" ng-hide="admin">{{dept.deptName}}</td>
+                  <td md-cell="md-cell" hide-xs="hide-xs" ng-show="admin" ng-click="editDeptName($event, dept)">{{dept.deptName}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </md-table-container>
+          <md-table-pagination md-limit="limit" md-page="page" md-total="{{depts.length}}"></md-table-pagination>
+        </md-card>
+      </div>
+    </div>
+  </div>
 </div>

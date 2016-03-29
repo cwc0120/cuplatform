@@ -1,116 +1,89 @@
 
-<div ng-hide="success">
-  <h3>{{errorMessage}}</h3>
-  <button ng-click="$route.reload()">Return</button>
-</div>
-<div ng-show="success">
-  <h1>Course Detail</h1>
-  <div ng-hide="editing">
-    <p>Course Code: {{course.courseCode}}</p>
-    <p>Course Name: {{course.courseName}}</p>
-    <p>Instructor: {{course.prof}}</p>
-    <table>
-      <tr>
-        <th>Day</th>
-        <th>Time</th>
-        <th>Venue</th>
-      </tr>
-      <tr ng-repeat="lesson in lessons">
-        <td>{{lesson.day.val}}</td>
-        <td>{{lesson.time.val}}</td>
-        <td>{{lesson.venue}}</td>
-      </tr>
-    </table>
-    <p>
-      <button ng-show="admin" ng-click="enableEdit()">Edit Course</button>
-      <button ng-show="!adding &amp;&amp; !posted" ng-click="enableAdd()">Add Info</button>
-      <button ng-show="!adding" ng-click="$location.path(&quot;/resource/&quot; + course.courseCode)">Resources</button>
-      <button ng-show="!adding" ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode)">Discussion</button>
-    </p>
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="90" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success" layout="column">
+        <md-card>
+          <md-card-title><span class="md-headline">Course Detail</span><span flex="flex"></span>
+            <md-button ng-show="admin" ng-click="editCourseDialog($event)" aria-label="Edit" class="md-icon-button">
+              <md-icon class="material-icons">mode_edit</md-icon>
+            </md-button>
+          </md-card-title>
+          <md-card-content>
+            <div layout="column" layout-gt-sm="row">
+              <div layout="column" layout-gt-xs="row" flex-gt-sm="60">
+                <div flex-gt-xs="66">
+                  <p>Course Code: {{course.courseCode}}</p>
+                  <p>Course Name: <br/>{{course.courseName}}</p>
+                  <p>Instructor: {{course.prof}}</p>
+                </div>
+                <div flex-gt-xs="33">
+                  <p>Average rating: </p>
+                  <h1 class="rating">{{avgRating}}</h1>
+                </div>
+              </div>
+              <div flex-gt-sm="40">
+                <p>Schedule:</p>
+                <md-table-container>
+                  <table md-table="md-table">
+                    <thead md-head="md-head">
+                      <tr md-row="md-row">
+                        <th md-column="md-column">Day</th>
+                        <th md-column="md-column">Time</th>
+                        <th md-column="md-column">Venue</th>
+                      </tr>
+                    </thead>
+                    <tbody md-body="md-body">
+                      <tr md-row="md-row" ng-repeat="lesson in lessons">
+                        <td md-cell="md-cell">{{days[lesson.day-1].val}}</td>
+                        <td md-cell="md-cell">{{times[lesson.day-1].val}}</td>
+                        <td md-cell="md-cell">{{lesson.venue}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-table-container>
+              </div>
+            </div>
+          </md-card-content>
+          <md-card-actions layout="row" layout-align="end center">
+            <md-button ng-click="$location.path(&quot;/resource/&quot; + course.courseCode)">Resources</md-button>
+            <md-button ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode)">Discussion</md-button>
+          </md-card-actions>
+        </md-card>
+        <md-card>
+          <div class="md-toolbar-tools"><span>{{course.info.length}} Comment(s)</span><span flex="flex"></span>
+            <md-button ng-hide="posted" ng-click="addDialog($event)" class="md-icon-button">
+              <md-icon class="material-icons">add</md-icon>
+            </md-button>
+          </div>
+        </md-card>
+        <md-card ng-repeat="info in course.info | orderBy: &quot;-_id&quot;">
+          <md-card-header>
+            <md-card-header-text><span class="md-title">{{info.author}}</span><span class="md-subhead">#{{course.info.length - $index}}: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
+            <md-button ng-show="admin" ng-click="deleteInfo(info._id)" aria-label="Delete Comment" class="md-icon-button">
+              <md-icon class="material-icons">delete</md-icon>
+            </md-button>
+          </md-card-header>
+          <md-card-content>
+            <div layout="row" layout-xs="column">
+              <div layout="column" flex-gt-xs="flex-gt-xs"><span>Rating: </span>
+                <h1 class="rating">{{info.rating}}</h1>
+              </div>
+              <div layout="column" flex-gt-xs="80"><span>Outline:</span>
+                <section layout-wrap="layout-wrap">{{info.outline}}</section>
+                <p></p><span>Assessment Method:</span>
+                <section layout-wrap="layout-wrap">{{info.assessMethod}}</section>
+                <p></p><span>Comment:</span>
+                <section layout-wrap="layout-wrap">{{info.comment}}</section>
+              </div>
+            </div>
+          </md-card-content>
+        </md-card>
+      </div>
+    </div>
   </div>
-  <div ng-show="editing">
-    <form> 
-      <p>Course Code: {{course.courseCode}}</p>
-      <p>Course Name: 
-        <input type="text" ng-model="edit.courseName"/>
-      </p>
-      <p>Instructor:
-        <input type="text" ng-model="edit.prof"/>
-      </p>
-      <table>
-        <tr>
-          <th>Day</th>
-          <th>Time</th>
-          <th>Venue</th>
-          <th></th>
-        </tr>
-        <tr>
-          <td>
-            <select ng-model="day" ng-options="d.val for d in days">
-              <option value="">--Choose Day--</option>
-            </select>
-          </td>
-          <td>
-            <select ng-model="time" ng-options="t.val for t in times">
-              <option value="">--Choose Lesson--</option>
-            </select>
-          </td>
-          <td>
-            <input type="text" ng-model="venue"/>
-          </td>
-          <td>
-            <button type="button" ng-click="addLesson()">Add Lesson</button>
-          </td>
-        </tr>
-        <tr ng-repeat="lesson in lessons">
-          <td>{{lesson.day.val}}</td>
-          <td>{{lesson.time.val}}</td>
-          <td>{{lesson.venue}}</td>
-          <td>
-            <button type="button" ng-click="removeLesson($index)">Remove Lesson</button>
-          </td>
-        </tr>
-      </table>
-      <p>
-        <button type="submit" ng-show="admin" ng-click="editCourse()">Sumbit</button>
-      </p>
-    </form>
-  </div>
-  <div ng-show="adding">
-    <form>
-      <p>Rating: 
-        <select ng-model="rating" ng-options="r.val for r in ratings">
-          <option value="">--Choose Rating--</option>
-        </select>
-      </p>
-      <p>Outline:</p>
-      <p>
-        <textarea rows="3" cols="50" ng-model="newInfo.outline" placeholder="At least 30 characters"></textarea>
-      </p>
-      <p>Assessment Method:</p>
-      <p> 
-        <textarea rows="3" cols="50" ng-model="newInfo.assessMethod" placeholder="At least 30 characters"></textarea>
-      </p>
-      <p>Comment:</p>
-      <p> 
-        <textarea rows="3" cols="50" ng-model="newInfo.comment" placeholder="At least 30 characters"></textarea>
-      </p>
-      <button type="submit" ng-click="addInfo()">Confirm</button>
-    </form>
-  </div>
-  <Strong>{{course.info.length}} Info:</Strong>
-  <div ng-repeat="info in course.info">
-    <p>Author: {{info.author}}</p>
-    <p>Time: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}</p>
-    <p>rating: {{info.rating}}</p>
-    <p>Outline:<br/>{{info.outline}}</p>
-    <p>Assessment Method:<br/>{{info.assessMethod}}</p>
-    <p>Comment:<br/>{{info.comment}}</p>
-    <p>
-      <button ng-show="admin" ng-click="deleteInfo(info._id)">Delete</button>
-    </p>
-  </div>
-  <p>
-    <button ng-click="$location.path(&quot;/dept/&quot; + course.deptCode)">Back</button>
-  </p>
 </div>

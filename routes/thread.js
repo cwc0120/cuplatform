@@ -9,7 +9,7 @@ router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-router.route('/:id')
+router.route('/:cid')
 	.get(function(req, res, next) {
 		// get all threads under a course
 		findList(req, res, next);
@@ -17,7 +17,7 @@ router.route('/:id')
 
 	.post(function(req, res, next) {
 		// post a new thread
-		Course.findOne({courseCode: req.params.id.toUpperCase()}, function(err, course) {
+		Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 			if (err) {
 				return next(err);
 			} else if (course === null) {
@@ -56,7 +56,7 @@ router.route('/:id')
 		});
 	});
 
-router.route('/detail/:id') 
+router.route('/detail/:tid') 
 	.get(function(req, res, next) {
 		// get detail of a thread
 		find(req, res, next);
@@ -69,7 +69,7 @@ router.route('/detail/:id')
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
-		Thread.findOne({_id: req.params.id}, 
+		Thread.findOne({_id: req.params.tid}, 
 			function(err, thread) {
 				if (err) {
 					return next(err);
@@ -93,7 +93,7 @@ router.route('/detail/:id')
 
 	.put(function(req, res, next) {
 		// edit a thread
-		Thread.findOne({_id:req.params.id}, function(err, thread) {
+		Thread.findOne({_id:req.params.tid}, function(err, thread) {
 			if (err) {
 				return next(err);
 			} else if (thread === null) {
@@ -120,11 +120,11 @@ router.route('/detail/:id')
 	.delete(function(req, res, next) {
 		// delete a thread
 		if (req.decoded.admin) {
-			Thread.findOne({_id: req.params.id}, function(err, thread) {
+			Thread.findOne({_id: req.params.tid}, function(err, thread) {
 				if (err) {
 					return next(err);
 				} else {
-					req.params.id = thread.courseCode;
+					req.params.cid = thread.courseCode;
 					thread.remove();
 					findList(req, res, next);
 				}
@@ -134,11 +134,11 @@ router.route('/detail/:id')
 		}
 	});
 
-router.route('/detail/:id/:cmid')
+router.route('/detail/:tid/:cmid')
 	.delete(function(req, res, next) {
 		// delete a comment
 		if (req.decoded.admin) {
-			Thread.findOne({_id: req.params.id}, function(err, thread) {
+			Thread.findOne({_id: req.params.tid}, function(err, thread) {
 				if (err) {
 					return next(err);
 				} else if (thread === null) {
@@ -159,7 +159,7 @@ router.route('/detail/:id/:cmid')
 	});
 
 function findList(req, res, next) {
-	Thread.find({courseCode: req.params.id.toUpperCase()})
+	Thread.find({courseCode: req.params.cid.toUpperCase()})
 		.sort({dateOfUpdate: -1})
 		.select('topic content author dateOfUpdate annoymous')
 		.exec(function(err, threads) {
@@ -180,7 +180,7 @@ function findList(req, res, next) {
 }
 
 function find(req, res, next) {
-	Thread.findOne({_id: req.params.id}, function(err, thread) {
+	Thread.findOne({_id: req.params.tid}, function(err, thread) {
 		if (err) {
 			next(err);
 		} else if (thread === null) {

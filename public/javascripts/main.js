@@ -1,16 +1,17 @@
 'use strict';
-angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'])
+angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers', 'textAngular', 'ngMessages', 'md.data.table'])
+	.config(function($mdThemingProvider) {
+		$mdThemingProvider.theme('default')
+		.primaryPalette('purple')
+		.accentPalette('amber')
+		.backgroundPalette('grey');
+	})
+
 	.config(function($routeProvider) {
 		$routeProvider
 			.when('/', {
 				templateUrl: '/views/home.html',
 				controller: 'homeController',
-				requiredLogin: false
-			})
-
-			.when('/register', {
-				templateUrl: '/views/register.html',
-				controller: 'registerController',
 				requiredLogin: false
 			})
 
@@ -35,12 +36,6 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'
 			.when('/resource/:id', {
 				templateUrl: '/views/reslist.html',
 				controller: 'ResListController',
-				requiredLogin: true
-			})
-
-			.when('/resource/info/:id', {
-				templateUrl: '/views/resinfo.html',
-				controller: 'ResInfoController',
 				requiredLogin: true
 			})
 
@@ -127,6 +122,25 @@ angular.module('CUP', ['ngRoute', 'CUPServices', 'CUPControllers', 'textAngular'
 				});
 			}
 		};
+	})
+
+	.directive('compareTo', function() {
+		return {
+			require: "ngModel",
+			scope: {
+				otherModelValue: "=compareTo"
+			},
+			link: function(scope, element, attributes, ngModel) {
+
+				ngModel.$validators.compareTo = function(modelValue) {
+					return modelValue == scope.otherModelValue;
+				};
+
+				scope.$watch("otherModelValue", function() {
+					ngModel.$validate();
+				});
+			}
+		}
 	})
 
 	.filter('htmlToPlaintext', function() {
