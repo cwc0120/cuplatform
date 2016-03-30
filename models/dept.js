@@ -20,14 +20,6 @@ Dept.pre('remove', function(next) {
 			console.log("Relative courses deleted.");
 		}
 	});
-	Item.remove({deptCode: this.deptCode}, function(err) {
-		if (err) {
-			return next(err);
-		} else {
-			console.log("Relative items deleted.");
-		}
-	});
-	next();
 });
 
 module.exports = mongoose.model('Dept', Dept);
