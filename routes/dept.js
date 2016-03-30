@@ -61,13 +61,8 @@ router.route('/:did')
 		// delete dept
 		if (req.decoded.admin) {
 			find(req, res, next, function(dept) {
-				dept.remove().exec(function(err) {
-					if (err) {
-						next(err);
-					} else {
-						findList(req, res, next);
-					}
-				});
+				dept.remove();
+				findList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a department!"});

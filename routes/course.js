@@ -118,14 +118,9 @@ router.route('/info/:cid')
 		// delete course
 		if (req.decoded.admin) {
 			find(req, res, next, function(course) {
-				course.remove().exec(function(err) {
-					if (err) {
-						next(err);
-					} else {
-						req.params.did = course.deptCode;
-						findList(req, res, next);
-					}
-				});
+				req.params.did = course.deptCode;
+				course.remove();
+				findList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a course!"});
