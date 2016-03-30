@@ -2,7 +2,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Course = require('./course');
-var Item = require ('./item');
 
 var Dept = new Schema({
 	deptCode: {type: String, unique: true, required: true},
@@ -20,6 +19,7 @@ Dept.pre('remove', function(next) {
 			console.log("Relative courses deleted.");
 		}
 	});
+	next();
 });
 
 module.exports = mongoose.model('Dept', Dept);
