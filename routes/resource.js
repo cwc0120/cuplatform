@@ -126,14 +126,9 @@ router.route('/info/:resid')
 		// delete resource
 		if (req.decoded.admin) {
 			find(req, res, next, function(resource) {
-				resource.remove().exec(function(err) {
-					if (err) {
-						next(err);
-					} else {
-						req.params.cid = resource.courseCode;
-						findResList(req, res, next);
-					}
-				});
+				req.params.cid = resource.courseCode;
+				resource.remove();
+				findResList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a resource!"});

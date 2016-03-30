@@ -113,14 +113,9 @@ router.route('/detail/:tid')
 		// delete a thread
 		if (req.decoded.admin) {
 			find(req, res, next, function(thread) {
-				thread.remove().exec(function(err) {
-					if (err) {
-						next(err);
-					} else {
-						req.params.cid = thread.courseCode;
-						findList(req, res, next);
-					}
-				});
+				req.params.cid = thread.courseCode;
+				thread.remove();
+				findList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a thread!"});
