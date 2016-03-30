@@ -50,13 +50,13 @@
             </div>
           </md-card-content>
           <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-click="$location.path(&quot;/resource/&quot; + course.courseCode)">Resources</md-button>
-            <md-button ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode)">Discussion</md-button>
+            <md-button ng-click="$location.path(&quot;/resource/&quot; + course.courseCode.slice(0, 8))">Resources</md-button>
+            <md-button ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode.slice(0, 8))">Discussion</md-button>
           </md-card-actions>
         </md-card>
         <md-card>
           <div class="md-toolbar-tools"><span>{{course.info.length}} Comment(s)</span><span flex="flex"></span>
-            <md-button ng-hide="posted" ng-click="addDialog($event)" class="md-icon-button">
+            <md-button ng-hide="posted" ng-click="addInfoDialog($event)" class="md-icon-button">
               <md-icon class="material-icons">add</md-icon>
             </md-button>
           </div>
