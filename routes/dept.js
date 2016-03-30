@@ -2,7 +2,6 @@
 var express = require('express');
 var router = express.Router();
 var Dept = require('../models/dept');
-var Course = require('../models/course');
 var utils = require('../utils');
 
 router.use(function(req, res, next) {
@@ -36,22 +35,23 @@ router.route('/')
 router.route('/:did')
 	.get(function(req, res, next) {
 		// check dept info
-		find(req, res, next);
+		find(req, res, next, function(dept) {
+			res.status(200).json(dept);
+		});
 	})
 
 	.put(function(req, res, next) {
 		// edit dept name
 		if (req.decoded.admin) {
-			Dept.update({deptCode: req.params.did.toUpperCase()}, 
-				{$set: {deptName: req.body.deptName}},
-				function (err) {
+			find(req, res, next, function(dept) {
+				dept.update({$set: {deptName: req.body.deptName}}, function (err) {
 					if (err) {
 						return next(err);
 					} else {
 						findList(req, res, next);
 					}
-				}
-			);
+				});
+			});
 		} else {
 			res.status(401).json({error: "You are not authorized to edit a department!"});
 		}
@@ -60,15 +60,14 @@ router.route('/:did')
 	.delete(function(req, res, next) {
 		// delete dept
 		if (req.decoded.admin) {
-			Dept.findOne({deptCode: req.params.did.toUpperCase()}, function(err, dept) {
-				if (err) {
-					return next(err);
-				} else if (dept === null) {
-					res.status(400).json({error: "Department not found!"});
-				} else {
-					dept.remove();
-					findList(req, res, next);			
-				}
+			find(req, res, next, function(dept) {
+				dept.remove().exec(function(err) {
+					if (err) {
+						next(err);
+					} else {
+						findList(req, res, next);
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a department!"});
@@ -87,7 +86,7 @@ function findList(req, res, next) {
 		});
 }
 
-function find(req, res, next) {
+function find(req, res, next, callback) {
 	Dept.findOne({deptCode: req.params.did.toUpperCase()},
 		function(err, dept) {
 			if (err) {
@@ -95,7 +94,7 @@ function find(req, res, next) {
 			} else if (dept === null) {
 				res.status(400).json({error: "Department not found!"});
 			} else {
-				res.status(200).json(dept);
+				callback(dept);
 			}
 		}
 	);
