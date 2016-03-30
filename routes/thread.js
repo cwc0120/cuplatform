@@ -165,7 +165,7 @@ function findList(req, res, next) {
 function find(req, res, next, callback) {
 	Thread.findOne({_id: req.params.tid}, function(err, thread) {
 		if (err) {
-			next(err);
+			return next(err);
 		} else if (thread === null) {
 			res.status(400).json({error: "Thread not found!"});
 		} else {
