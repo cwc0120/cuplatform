@@ -182,7 +182,7 @@ function findResList(req, res, next) {
 function find(req, res, next, callback) {
 	Resource.findOne({_id: req.params.resid}, function(err, resource) {
 		if (err) {
-			next(err);
+			return next(err);
 		} else if (resource === null) {
 			res.status(400).json({error: "Resource not found!"});
 		} else {

@@ -165,7 +165,7 @@ function findList(req, res, next) {
 function find(req, res, next, callback) {
 	Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 		if (err) {
-			next(err);
+			return next(err);
 		} else if (!course) {
 			res.status(400).json({error: "Course not found!"});
 		} else {
