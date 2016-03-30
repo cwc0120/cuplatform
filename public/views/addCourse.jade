@@ -18,9 +18,8 @@ md-dialog(aria-label='Add Course' ng-cloak flex='60')
 							div(ng-message-exp="['maxlength', 'pattern']") Invalid code.
 					md-input-container(flex-gt-xs='15')
 						label Section
-						input(type='text' name='courseSection' ng-model='newCourse.courseSection' required md-maxlength='2' ng-pattern="/^[A-Z]/")
+						input(type='text' name='courseSection' ng-model='newCourse.courseSection' md-maxlength='2' ng-pattern="/^[A-Z]/")
 						div(ng-messages='addCourseForm.courseSection.$error')
-							div(ng-message='required') Section missing.
 							div(ng-message-exp="['maxlength', 'pattern']") Invalid section.
 					md-input-container(flex-gt-xs='60')
 						label Instructor
