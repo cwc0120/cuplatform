@@ -32,9 +32,9 @@ ctrl.controller('deptCourseListController', function($scope, $window, $location,
 		window.history.back();
 	};
 
-	$scope.addDialog = function(event) {
+	$scope.addCourseDialog = function(event) {
 		$mdDialog.show({
-			controller: AddCourseController,
+			controller: addCourseController,
 			templateUrl: '/views/addcourse.html',
 			parent: angular.element(document.body),
 			targetEvent: event,
@@ -50,7 +50,7 @@ ctrl.controller('deptCourseListController', function($scope, $window, $location,
 		});
 	};
 
-	function AddCourseController($scope, $mdDialog, Course) {
+	function addCourseController($scope, $mdDialog, Course) {
 		$scope.days = Course.days;
 		$scope.times = Course.times;
 		$scope.lessons = [];

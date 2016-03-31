@@ -1,18 +1,16 @@
 'use strict';
-ctrl.controller('ItemListController', function($scope, $window, $location, $routeParams, $route, Item) {
+ctrl.controller('itemListController', function($scope, $window, $location, $mdDialog, Item) {
 	$scope.$location = $location;
-	$scope.$route = $route;
-	$scope.adding = false;
-	$scope.newItem = {};
 	if ($window.localStorage['admin'] === 'true') {
 		$scope.admin = true;
 	} else {
 		$scope.admin = false;
 	}
 
-	$scope.sortType = 'date';
-	$scope.sortReverse = false;
-	$scope.searchDept = '';
+	$scope.order = 'price';
+	$scope.limit = 10;
+	$scope.page = 1;
+	$scope.selected = [];
 	
 	Item.get().success(function(res) {
 		$scope.success = true;
@@ -22,35 +20,61 @@ ctrl.controller('ItemListController', function($scope, $window, $location, $rout
 		$scope.errorMessage = res.error;
 	});
 
-	$scope.enableAdd = function() {
-		if (!$scope.adding) {
-			$scope.adding = true;
-		}
+	$scope.back = function() {
+		window.history.back();
 	};
 
-	$scope.addItem = function() {
-		$scope.newItem.description = $scope.htmlVariable;
-		if ($scope.newItem.name !== undefined && $scope.newItem.name !== '' && 
-			$scope.newItem.price !== undefined && $scope.newItem.price !== '' &&
-			$scope.newItem.description !== undefined && $scope.newItem.description !== '') {
-			Item.create($scope.newItem).success(function(res) {
-				$scope.adding = false;
-				$scope.newItem = {};
-				$scope.htmlVariable = '';
+	$scope.addItemDialog = function(event) {
+		$mdDialog.show({
+			controller: addItemController,
+			templateUrl: '/views/additem.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		})
+		.then(function(newItem) {
+			Item.create(newItem).success(function(res) {
 				$scope.items = res;
 			}).error(function(res){
 				$scope.success = false;
 				$scope.errorMessage = res.error;
 			});
-		}	
-	};
-
-	$scope.delete = function(id) {
-		Item.delete(id).success(function(res) {
-			$scope.items = res;
-		}).error(function(res) {
-			$scope.success = false;
-			$scope.errorMessage = res.error;
 		});
 	};
+
+	function addItemController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.add = function() {
+			$scope.newItem.description = $scope.htmlVariable;
+			$mdDialog.hide($scope.newItem);
+		};
+	}
+
+	$scope.delete = function() {
+		async.each($scope.selected, deleteItem, function(err) {
+			if (err) {
+				$scope.success = false;
+				$scope.errorrMessage = err;
+			} else {
+				$scope.selected = [];
+				Item.get().success(function(res) {
+					$scope.items = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			}
+		});
+	};
+
+	function deleteItem(e, cb) {
+		Item.delete(e._id).success(function(res) {
+			cb();
+		}).error(function(res) {
+			cb(res.error);
+		});
+	}
 });

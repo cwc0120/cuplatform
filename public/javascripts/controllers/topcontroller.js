@@ -19,8 +19,8 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		icon: 'chat'
 	},
 	{
-		link: '/barter',
-		title: 'Barter',
+		link: '/item',
+		title: 'Trading Platform',
 		icon: 'shopping_basket'
 	}];
 

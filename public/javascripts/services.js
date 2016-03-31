@@ -83,6 +83,9 @@ angular.module('CUPServices', [])
 		{
 			index: 5,
 			val: 'Fri'
+		},{
+			index: 6,
+			val: 'Sat'
 		}];
 
 		Course.times = [{

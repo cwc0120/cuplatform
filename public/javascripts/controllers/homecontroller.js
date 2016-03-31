@@ -36,7 +36,7 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth) {
 
 	$scope.registerDialog = function(event) {
 			$mdDialog.show({
-				controller: RegisterController,
+				controller: registerController,
 				templateUrl: '/views/register.html',
 				parent: angular.element(document.body),
 				targetEvent: event,
@@ -55,7 +55,7 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth) {
 			});
 		};
 
-	function RegisterController($scope, $mdDialog, Auth) {
+	function registerController($scope, $mdDialog, Auth) {
 		$scope.newUser = {};
 
 		$scope.cancel = function() {

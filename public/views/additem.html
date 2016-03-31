@@ -1,0 +1,51 @@
+
+<md-dialog aria-label="Sell Item" ng-cloak="ng-cloak" flex="60">
+  <form name="addItemForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Sell Item</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <md-input-container class="md-block">
+          <label>Item name</label>
+          <input type="text" name="name" ng-model="newItem.name" required="required"/>
+          <div ng-messages="addItemForm.name.$error">
+            <div ng-message="required">Name missing.</div>
+          </div>
+        </md-input-container>
+        <div layout="row" layout-xs="column">
+          <md-input-container flex-gt-xs="30">
+            <label>Department code (optional)</label>
+            <input type="text" name="deptCode" ng-model="newItem.deptCode"/>
+          </md-input-container>
+          <md-input-container flex-gt-xs="70">
+            <label>Course code (optional)</label>
+            <input type="text" name="courseCode" ng-model="newItem.courseCode"/>
+          </md-input-container>
+        </div>
+        <div layout="row" layout-xs="column">
+          <md-input-container flex-gt-xs="30">
+            <label>Price</label>
+            <input type="number" name="price" ng-model="newItem.price" required="required"/>
+            <div ng-messages="addItemForm.price.$error">
+              <div ng-message="required">Pricing missing.</div>
+            </div>
+          </md-input-container>
+          <md-input-container flex-gt-xs="30">
+            <label>Flexible price</label>
+            <input type="checkbox" name="priceFlexible" ng-model="newItem.priceFlexible"/>
+          </md-input-container>
+        </div>
+        <text-angular ng-model="htmlVariable" placeholder="Click to type description"></text-angular>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="add()" ng-disabled="addItemForm.$invalid">Upload</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

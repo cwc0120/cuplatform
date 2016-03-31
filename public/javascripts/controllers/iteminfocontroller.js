@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('ItemInfoController', function($scope, $window, $location, $routeParams, $route, Item) {
+ctrl.controller('itemInfoController', function($scope, $window, $location, $routeParams, $route, Item) {
 	$scope.$location = $location;
 	$scope.$route = $route;
 	$scope.editing = false;

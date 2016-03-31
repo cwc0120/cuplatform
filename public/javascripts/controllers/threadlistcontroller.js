@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('ThreadListController', function($scope, $window, $location, $routeParams, $route, Thread) {
+ctrl.controller('threadListController', function($scope, $window, $location, $routeParams, $route, Thread) {
 	$scope.$location = $location;
 	$scope.$route = $route;
 	$scope.adding = false;

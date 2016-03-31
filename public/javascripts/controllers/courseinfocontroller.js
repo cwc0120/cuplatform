@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('CourseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Course) {
+ctrl.controller('courseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Course) {
 	$scope.$location = $location;
 	$scope.days = Course.days;
 	$scope.times = Course.times;
@@ -16,15 +16,7 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 		$scope.success = true;
 		$scope.course = res;
 		$scope.lessons = res.schedule;
-		$scope.avgRating = 0;
-		for (var i=0; i<$scope.course.info.length; i++) {
-			$scope.avgRating += $scope.course.info[i].rating;
-			if ($scope.course.info[i].author === $window.localStorage['uid']) {
-				$scope.posted = true;
-			}
-		}
-		$scope.avgRating /= $scope.course.info.length;
-		$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
+		calculate();
 	}).error(function(res) {
 		$scope.success = false;
 		$scope.errorMessage = res.error;
@@ -38,7 +30,7 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 	// Course basic module -----------------------------------------------
 	$scope.editCourseDialog = function(event) {
 		$mdDialog.show({
-			controller: EditCourseController,
+			controller: editCourseController,
 			templateUrl: '/views/editcourse.html',
 			parent: angular.element(document.body),
 			targetEvent: event,
@@ -58,7 +50,7 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 		});
 	};
 
-	function EditCourseController($scope, $mdDialog, Course, course) {
+	function editCourseController($scope, $mdDialog, Course, course) {
 		$scope.days = Course.days;
 		$scope.times = Course.times;
 		$scope.edit = course;
@@ -91,7 +83,7 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 	// Course info module -----------------------------------------------
 	$scope.addInfoDialog = function(event) {
 		$mdDialog.show({
-			controller: AddCourseInfoController,
+			controller: addCourseInfoController,
 			templateUrl: '/views/addcourseinfo.html',
 			parent: angular.element(document.body),
 			targetEvent: event,
@@ -101,6 +93,7 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 			Course.postInfo(courseCode, newInfo).success(function(res) {
 				$scope.posted = true;
 				$scope.course = res;
+				calculate();
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -108,7 +101,7 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 		});
 	};
 
-	function AddCourseInfoController($scope, $mdDialog) {
+	function addCourseInfoController($scope, $mdDialog) {
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
@@ -121,9 +114,24 @@ ctrl.controller('CourseInfoController', function($scope, $window, $location, $ro
 	$scope.deleteInfo = function(cmid) {
 		Course.deleteInfo(courseCode, cmid).success(function(res) {
 			$scope.course = res;
+			calculate();
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;
 		});
 	};
+
+	function calculate() {
+		$scope.avgRating = 0;
+		for (var i=0; i<$scope.course.info.length; i++) {
+			$scope.avgRating += $scope.course.info[i].rating;
+			if ($scope.course.info[i].author === $window.localStorage['uid']) {
+				$scope.posted = true;
+			}
+		}
+		if ($scope.course.info.length !== 0) {
+			$scope.avgRating /= $scope.course.info.length;
+			$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
+		}
+	}
 });

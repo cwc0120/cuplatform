@@ -1,68 +1,52 @@
-div(ng-hide='success')
-	h3 {{errorMessage}}
-	button(ng-click='$route.reload()') Return
-div(ng-show='success')
-	h1 Barter
-	p
-		button(ng-show='!adding' ng-click='enableAdd()') New Item
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='90' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				h1(layout-padding) Trading Platform
+				md-card
+					md-toolbar.md-table-toolbar.md-default(ng-hide='selected.length || search')
+						div.md-toolbar-tools
+							span Item List
+							span(flex)
+							md-button.md-icon-button(ng-click='addItemDialog($event)' aria-label='Add')
+								md-icon.material-icons add
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
+								md-icon.material-icons search
 
-	div(ng-show='adding')
-		form
-			p Item name: 
-				input(type='text' ng-model='newItem.name')
-			p Department code (optional):
-				input(type='text' ng-model='newItem.deptCode')
-			p Course code (optional):
-				input(type='text' ng-model='newItem.courseCode')
-			p Price:
-				input(type='number' ng-model='newItem.price')
-			p Flexible price?
-				input(type='checkbox' ng-model='newThread.priceFlexible')
-			p Description:
-			p
-				text-angular(ng-model='htmlVariable')
-			button(type='submit' ng-click='addItem()') Submit
+					md-toolbar.md-table-toolbar.md-default(ng-show='search && !selected.length')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchItem' placeholder='Search item')
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
+								md-icon.material-icons clear
 
-	div
-		p Search: 
-			input(type='text' ng-model='searchItem')
+					md-toolbar.md-table-toolbar.md-accent.md-hue-1(ng-show='selected.length')
+						div.md-toolbar-tools
+							span {{selected.length}} item(s) selected
+							span(flex)
+							md-button.md-icon-button(ng-click='delete()' aria-label='Delete')
+								md-icon.material-icons delete
 
-	table(border='1')
-		tr
-			th 
-				a(ng-click='sortType = "deptCode"; sortReverse = !sortReverse')
-					| Category
-					span(ng-show='sortType == "deptCode" && !sortReverse') Down
-					span(ng-show='sortType == "deptCode" && sortReverse') Up
-			th 
-				a(ng-click='sortType = "courseCode"; sortReverse = !sortReverse')
-					| Course code
-					span(ng-show='sortType == "courseCode" && !sortReverse') Down
-					span(ng-show='sortType == "courseCode" && sortReverse') Up
-			th
-				a(ng-click='sortType = "name"; sortReverse = !sortReverse')
-					| Item name
-					span(ng-show='sortType == "name" && !sortReverse') Down
-					span(ng-show='sortType == "name" && sortReverse') Up
-			th 
-				a(ng-click='sortType = "price"; sortReverse = !sortReverse')
-					| Price
-					span(ng-show='sortType == "price" && !sortReverse') Down
-					span(ng-show='sortType == "price" && sortReverse') Up
-			th Seller
-			th 
-				a(ng-click='sortType = "date"; sortReverse = !sortReverse')
-					| Date
-					span(ng-show='sortType == "date" && !sortReverse') Down
-					span(ng-show='sortType == "date" && sortReverse') Up
-			th
-		tr(ng-repeat='item in items | orderBy:sortType:sortReverse | filter: searchItem')
-			td {{item.deptCode}}
-			td {{item.courseCode}}
-			td 
-				a(ng-href='#/item/{{item._id}}') {{item.name}}
-			td {{item.price | currency}}
-			td {{item.seller}}
-			td {{item.date | date:'d/M/yyyy h:mma'}}
-			td
-				button(ng-show='admin' ng-click='delete(item._id)') delete
+					md-table-container
+							table(md-table md-row-select='admin' ng-model='selected')
+								thead(md-head md-order='order')
+									tr(md-row)
+										th(md-column md-order-by='deptCode' hide-xs) Department
+										th(md-column md-order-by='courseCode' hide-xs) Course
+										th(md-column md-order-by='name') Item name
+										th(md-column md-order-by='price') Price
+										th(md-column md-order-by='seller' hide-xs) Seller
+										th(md-column md-order-by='date' hide-xs) Date
+								tbody(md-body)
+									tr(md-row ng-repeat='item in items | filter: searchItem | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='item')
+										td(md-cell hide-xs) {{item.deptCode}}
+										td(md-cell hide-xs) {{item.courseCode}}
+										td(md-cell)
+											a(ng-href='#/item/{{item._id}}') {{item.name}}
+										td(md-cell) {{item.price | currency}}
+										td(md-cell hide-xs) {{item.seller}}
+										td(md-cell hide-xs) {{item.date | date:'d/M/yyyy h:mma'}}

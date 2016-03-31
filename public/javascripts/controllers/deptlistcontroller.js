@@ -24,9 +24,9 @@ ctrl.controller('deptListController', function($scope, $window, $location, $mdDi
 		window.history.back();
 	};
 
-	$scope.addDialog = function(event) {
+	$scope.addDeptDialog = function(event) {
 		$mdDialog.show({
-			controller: AddDeptController,
+			controller: addDeptController,
 			templateUrl: '/views/adddept.html',
 			parent: angular.element(document.body),
 			targetEvent: event,
@@ -42,7 +42,7 @@ ctrl.controller('deptListController', function($scope, $window, $location, $mdDi
 		});
 	};
 
-	function AddDeptController($scope, $mdDialog) {
+	function addDeptController($scope, $mdDialog) {
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};

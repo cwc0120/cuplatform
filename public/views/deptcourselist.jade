@@ -18,7 +18,7 @@ div(layout='column')
 						div.md-toolbar-tools
 							span Course List under {{dept.deptName}}
 							span(flex)
-							md-button.md-icon-button(ng-show='admin' ng-click='addDialog($event)' aria-label='Add')
+							md-button.md-icon-button(ng-show='admin' ng-click='addCourseDialog($event)' aria-label='Add')
 								md-icon.material-icons add
 							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
 								md-icon.material-icons search
@@ -49,4 +49,4 @@ div(layout='column')
 									td(md-cell)
 										a(ng-href='#/course/{{course.courseCode}}') {{course.courseCode}}
 									td(md-cell hide-xs) {{course.courseName}}
-					md-table-pagination(md-limit='limit' md-page='page' md-total='{{depts.length}}')
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{courses.length}}')

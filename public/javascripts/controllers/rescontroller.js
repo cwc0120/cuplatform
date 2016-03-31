@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('ResController', function($scope, $window, $location, $routeParams, $route, $mdDialog, Resource) {
+ctrl.controller('resController', function($scope, $window, $location, $routeParams, $route, $mdDialog, Resource) {
 	$scope.$location = $location;
 	$scope.$route = $route;
 	if ($window.localStorage['admin'] === 'true') {
@@ -28,7 +28,7 @@ ctrl.controller('ResController', function($scope, $window, $location, $routePara
 
 	$scope.addResDialog = function(event) {
 		$mdDialog.show({
-			controller: AddResController,
+			controller: addResController,
 			templateUrl: '/views/addres.html',
 			parent: angular.element(document.body),
 			targetEvent: event,
@@ -44,7 +44,7 @@ ctrl.controller('ResController', function($scope, $window, $location, $routePara
 		});
 	};
 
-	function AddResController($scope, $mdDialog) {
+	function addResController($scope, $mdDialog) {
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
@@ -96,7 +96,7 @@ ctrl.controller('ResController', function($scope, $window, $location, $routePara
 
 	$scope.editResDialog = function(event) {
 		$mdDialog.show({
-			controller: EditResController,
+			controller: editResController,
 			templateUrl: '/views/editres.html',
 			parent: angular.element(document.body),
 			targetEvent: event,
@@ -118,7 +118,7 @@ ctrl.controller('ResController', function($scope, $window, $location, $routePara
 		});
 	};
 
-	function EditResController($scope, $mdDialog) {
+	function editResController($scope, $mdDialog) {
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};

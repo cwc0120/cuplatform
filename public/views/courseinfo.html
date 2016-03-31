@@ -27,7 +27,7 @@
                 </div>
               </div>
               <div flex-gt-sm="40">
-                <p>Schedule:</p>
+                <p>Schedule: ({{course.cred}} credit(s))</p>
                 <md-table-container>
                   <table md-table="md-table">
                     <thead md-head="md-head">
@@ -40,7 +40,7 @@
                     <tbody md-body="md-body">
                       <tr md-row="md-row" ng-repeat="lesson in lessons">
                         <td md-cell="md-cell">{{days[lesson.day-1].val}}</td>
-                        <td md-cell="md-cell">{{times[lesson.day-1].val}}</td>
+                        <td md-cell="md-cell">{{times[lesson.time-1].val}}</td>
                         <td md-cell="md-cell">{{lesson.venue}}</td>
                       </tr>
                     </tbody>
