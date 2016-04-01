@@ -76,7 +76,7 @@ div(layout='column')
 						md-list-item.md-3-line(ng-repeat='cm in resource.comment')
 							div.md-list-item-text
 								h3 {{cm.author}}
-								h4 {{cm.dateOfComment | date:'dd/MM/yyyy'}}
+								h4 {{cm.dateOfComment | date:'d/M/yyyy h:mma'}}
 								p {{cm.content}}
 							md-button.md-secondary.md-icon-button(ng-show='admin' ng-click='deleteComment(cm._id)' aria-label='Delete Comment')
 								md-icon.material-icons delete

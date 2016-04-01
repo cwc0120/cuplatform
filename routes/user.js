@@ -12,7 +12,7 @@ router.use(function(req, res, next) {
 // upload user icon
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, './public/images/');
+		cb(null, './public/images/user/');
 	},
 	filename: function (req, file, cb) {
 		// use user name as file name

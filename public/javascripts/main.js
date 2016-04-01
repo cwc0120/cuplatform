@@ -85,7 +85,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				},
 
 				responseError: function(rejection) {
-					if (rejection != undefined && rejection.status == 403) {
+					if (rejection != undefined && rejection.status == 401) {
 						$window.localStorage.removeItem('uid');
 						$window.localStorage.removeItem('admin');
 						$window.localStorage.removeItem('cupToken');

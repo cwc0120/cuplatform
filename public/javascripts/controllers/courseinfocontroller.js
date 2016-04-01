@@ -75,7 +75,6 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 
 		$scope.editCourse = function() {
 			$scope.edit.schedule = $scope.editLessons;
-			console.log($scope.edit);
 			$mdDialog.hide($scope.edit);
 		};
 	}

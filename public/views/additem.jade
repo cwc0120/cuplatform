@@ -1,5 +1,5 @@
 md-dialog(aria-label='Sell Item' ng-cloak flex='60')
-	form(name='addItemForm')
+	form(name='addItemForm' enctype="multipart/form-data")
 		md-toolbar
 			div.md-toolbar-tools
 				h2 Sell Item
@@ -10,25 +10,30 @@ md-dialog(aria-label='Sell Item' ng-cloak flex='60')
 			div.md-dialog-content(layout='column')
 				md-input-container.md-block
 					label Item name
-					input(type='text' name='name' ng-model='newItem.name' required)
+					input(type='text' name='name' ng-model='name' required)
 					div(ng-messages='addItemForm.name.$error')
 						div(ng-message='required') Name missing.
 				div(layout='row', layout-xs='column')
 					md-input-container(flex-gt-xs='30')
 						label Department code (optional)
-						input(type='text' name='deptCode' ng-model='newItem.deptCode')
+						input(type='text' name='deptCode' ng-model='deptCode')
 					md-input-container(flex-gt-xs='70')
 						label Course code (optional)
-						input(type='text' name='courseCode' ng-model='newItem.courseCode')
+						input(type='text' name='courseCode' ng-model='courseCode')
 				div(layout='row', layout-xs='column')
 					md-input-container(flex-gt-xs='30')
 						label Price
-						input(type='number' name='price' ng-model='newItem.price' required)
+						input(type='number' name='price' ng-model='price' required)
 						div(ng-messages='addItemForm.price.$error')
 							div(ng-message='required') Pricing missing.
-					md-input-container(flex-gt-xs='30')
+					md-input-container(flex-gt-xs='70')
 						label Flexible price
-						input(type='checkbox' name='priceFlexible' ng-model='newItem.priceFlexible')
+						input(type='checkbox' name='priceFlexible' ng-model='priceFlexible')
+				md-input-container.md-block.md-input-has-placeholder
+					label Image
+					input(type='file' name='img' file-model='img' required)
+					div(ng-messages='addItemForm.img.$error')
+						div(ng-message='required') Iamge missing.
 				text-angular(ng-model='htmlVariable' placeholder='Click to type description')
 		md-dialog-actions
-			md-button(type='submit' ng-click='add()' ng-disabled='addItemForm.$invalid') Upload
+			md-button(type='submit' ng-click='addItem()' ng-disabled='addItemForm.$invalid') Upload

@@ -8,6 +8,29 @@
       </div>
       <div ng-show="success">
         <h1 layout-padding="layout-padding">Trading Platform</h1>
+        <h2 layout-padding="layout-padding">New items</h2>
+        <md-card layout-padding="layout-padding" class="gridListdemoDynamicTiles">
+          <md-grid-list md-cols-xs="2" md-cols-sm="3" md-cols-md="6" md-cols-gt-md="6" md-row-height="1:1" md-gutter="8px" md-gutter-gt-sm="4px">
+            <md-grid-tile ng-repeat="item in items | limitTo: 6 | orderBy: &quot;-date&quot;" md-rowspan="" md-colspan="1" ng-click="$location.path(&quot;/item/&quot; + item._id)">
+              <figure><img ng-src="/images/item/{{item.img}}"/></figure>
+              <md-grid-tile-footer>
+                <h3>{{item.name}}</h3>
+              </md-grid-tile-footer>
+            </md-grid-tile>
+          </md-grid-list>
+        </md-card>
+        <h2 layout-padding="layout-padding">Bargins</h2>
+        <md-card layout-padding="layout-padding" class="gridListdemoDynamicTiles">
+          <md-grid-list md-cols-xs="2" md-cols-sm="3" md-cols-md="6" md-cols-gt-md="6" md-row-height="1:1" md-gutter="8px" md-gutter-gt-sm="4px">
+            <md-grid-tile ng-repeat="item in items | limitTo: 6 | orderBy: &quot;price&quot;" md-rowspan="" md-colspan="1" ng-click="$location.path(&quot;/item/&quot; + item._id)">
+              <figure><img ng-src="/images/item/{{item.img}}"/></figure>
+              <md-grid-tile-footer>
+                <h3>{{item.name}} ({{item.price | currency}})</h3>
+              </md-grid-tile-footer>
+            </md-grid-tile>
+          </md-grid-list>
+        </md-card>
+        <h2 layout-padding="layout-padding">Cannot find goodies?</h2>
         <md-card>
           <md-toolbar ng-hide="selected.length || search" class="md-table-toolbar md-default">
             <div class="md-toolbar-tools"><span>Item List</span><span flex="flex"></span>
@@ -41,26 +64,27 @@
             <table md-table="md-table" md-row-select="admin" ng-model="selected">
               <thead md-head="md-head" md-order="order">
                 <tr md-row="md-row">
-                  <th md-column="md-column" md-order-by="deptCode" hide-xs="hide-xs">Department</th>
-                  <th md-column="md-column" md-order-by="courseCode" hide-xs="hide-xs">Course</th>
+                  <th md-column="md-column" md-order-by="deptCode" hide="hide" show-gt-xs="show-gt-xs">Department</th>
+                  <th md-column="md-column" md-order-by="courseCode" hide="hide" show-gt-sm="show-gt-sm">Course</th>
                   <th md-column="md-column" md-order-by="name">Item name</th>
                   <th md-column="md-column" md-order-by="price">Price</th>
-                  <th md-column="md-column" md-order-by="seller" hide-xs="hide-xs">Seller</th>
-                  <th md-column="md-column" md-order-by="date" hide-xs="hide-xs">Date</th>
+                  <th md-column="md-column" md-order-by="seller" hide="hide" show-gt-md="show-gt-md">Seller</th>
+                  <th md-column="md-column" md-order-by="date" hide="hide" show-gt-md="show-gt-md">Date</th>
                 </tr>
               </thead>
               <tbody md-body="md-body">
                 <tr md-row="md-row" ng-repeat="item in items | filter: searchItem | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="item">
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{item.deptCode}}</td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{item.courseCode}}</td>
+                  <td md-cell="md-cell" hide="hide" show-gt-xs="show-gt-xs">{{item.deptCode}}</td>
+                  <td md-cell="md-cell" hide="hide" show-gt-sm="show-gt-sm">{{item.courseCode}}</td>
                   <td md-cell="md-cell"><a ng-href="#/item/{{item._id}}">{{item.name}}</a></td>
                   <td md-cell="md-cell">{{item.price | currency}}</td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{item.seller}}</td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{item.date | date:'d/M/yyyy h:mma'}}</td>
+                  <td md-cell="md-cell" hide="hide" show-gt-md="show-gt-md">{{item.seller}}</td>
+                  <td md-cell="md-cell" hide="hide" show-gt-md="show-gt-md">{{item.date | date:'d/M/yyyy h:mma'}}</td>
                 </tr>
               </tbody>
             </table>
           </md-table-container>
+          <md-table-pagination md-limit="limit" md-page="page" md-total="{{items.length}}"></md-table-pagination>
         </md-card>
       </div>
     </div>

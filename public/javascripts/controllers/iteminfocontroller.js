@@ -1,10 +1,7 @@
 'use strict';
-ctrl.controller('itemInfoController', function($scope, $window, $location, $routeParams, $route, Item) {
+ctrl.controller('itemInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Item) {
 	$scope.$location = $location;
-	$scope.$route = $route;
-	$scope.editing = false;
 	$scope.bought = false;
-	$scope.edit = {};
 	$scope.uid = $window.localStorage['uid'];
 	if ($window.localStorage['admin'] === 'true') {
 		$scope.admin = true;
@@ -27,31 +24,35 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		$scope.errorMessage = res.error;
 	});
 
-	$scope.enableEdit = function() {
-		if (!$scope.editing) {
-			$scope.editing = true;
-		}
-	};
-
-	$scope.editItem = function() {
-		$scope.edit.description = $scope.htmlVariable;
-		if ($scope.edit.name !== undefined && $scope.edit.name !== '' && 
-			$scope.edit.price !== undefined && $scope.edit.price !== '' &&
-			$scope.edit.description !== undefined && $scope.edit.description !== '') {
-			Item.edit(itemID, $scope.edit).success(function(res) {
-				$scope.editing = false;
-				$scope.edit = {};
-				$scope.htmlVariable = '';
+	$scope.editItemDialog = function(event) {
+		$mdDialog.show({
+			controller: editItemController,
+			templateUrl: '/views/edititem.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true,
+		}).then(function(edit) {
+			Item.edit(itemID, edit).success(function(res) {
 				$scope.item = res;
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
 			});
-		}
-		
+		});
 	};
 
-	$scope.buy = function() {
+	function editItemController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.editItem = function() {
+			$scope.edit.description = $scope.htmlVariable;
+			$mdDialog.hide($scope.edit);
+		};
+	}
+
+	$scope.interest = function() {
 		Item.buy(itemID).success(function(res) {
 			$scope.bought = true;
 			$scope.item = res;
@@ -61,7 +62,7 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		});
 	};
 
-	$scope.transact = function() {
+	$scope.sell = function() {
 		Item.transact(itemID).success(function(res) {
 			$scope.sold = true;
 			$scope.item = res;

@@ -8,7 +8,7 @@ ctrl.controller('itemListController', function($scope, $window, $location, $mdDi
 	}
 
 	$scope.order = 'price';
-	$scope.limit = 10;
+	$scope.limit = 5;
 	$scope.page = 1;
 	$scope.selected = [];
 	
@@ -32,8 +32,8 @@ ctrl.controller('itemListController', function($scope, $window, $location, $mdDi
 			targetEvent: event,
 			clickOutsideToClose: true
 		})
-		.then(function(newItem) {
-			Item.create(newItem).success(function(res) {
+		.then(function(fd) {
+			Item.create(fd).success(function(res) {
 				$scope.items = res;
 			}).error(function(res){
 				$scope.success = false;
@@ -47,9 +47,17 @@ ctrl.controller('itemListController', function($scope, $window, $location, $mdDi
 			$mdDialog.cancel();
 		};
 
-		$scope.add = function() {
-			$scope.newItem.description = $scope.htmlVariable;
-			$mdDialog.hide($scope.newItem);
+		$scope.addItem = function() {
+			var fd = new FormData();
+			$scope.description = $scope.htmlVariable;
+			fd.append('name', $scope.name);
+			fd.append('deptCode', $scope.deptCode);
+			fd.append('courseCode', $scope.courseCode);
+			fd.append('img', $scope.img);
+			fd.append('price', $scope.price);
+			fd.append('priceFlexible', $scope.priceFlexible);
+			fd.append('description', $scope.description);
+			$mdDialog.hide(fd);
 		};
 	}
 

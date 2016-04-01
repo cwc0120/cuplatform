@@ -1,48 +1,46 @@
-div(ng-hide='success')
-	h3 {{errorMessage}}
-	button(ng-click='$route.reload()') Return
-div(ng-show='success')
-	h1 Item Detail
-	div(ng-hide='editing')
-		p Item name: {{item.name}}
-		p Seller: {{item.seller}}
-		p Department: {{item.deptCode}}
-		p Course: {{item.courseCode}}
-		p Price: {{item.price | currency}} 
-			span(ng-show='item.priceFlexible') (flexible)
-		p 
-			| Description:
-			br
-			span(ng-bind-html='item.description')
-		p Date: {{item.date | date:'d/M/yyyy'}}
-		p
-			button(ng-show='uid === item.seller' ng-click='enableEdit()') Edit Item
-			button(ng-show='uid === item.seller' ng-disabled='item.sold' ng-click='transact()')  Sold
-			button(ng-show='uid !== item.seller' ng-disabled='item.sold || bought' ng-click='buy()')  Buy
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='90' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				md-card
+					md-card-header
+						md-card-header-text
+							span.md-title {{item.seller}}
+							span.md-subhead {{item.date | date:'d/M/yyyy h:mma'}}
+						span(flex)
+						md-button.md-icon-button(ng-show='uid === item.seller' ng-click='editItemDialog($event)' aria-label='Edit item')
+							md-icon.material-icons mode_edit
+						md-button.md-icon-button(ng-show='uid === item.seller' ng-click='delete()' aria-label='Delete item')
+							md-icon.material-icons delete
+					div(layout-gt-xs='row' layout='column')
+						div(flex='60')
+							md-card-title
+								md-card-title-text
+									span.md-headline {{item.name}}
+									span.md-subhead {{item.deptCode}} {{item.courseCode}}
+							md-card-content
+								h3.price {{item.price | currency}} 
+									span(ng-show='item.priceFlexible') (flexible)
+								p 
+								span Description:
+								section(layout-wrap)
+									span(ng-bind-html='item.description')
+						md-card-title-media(flex='40' layout-padding)
+							div.md-media-xl.card-media
+								img.md-card-image(ng-src='/images/item/{{item.img}}')
+					md-card-actions(layout='row' layout-align='end center')
+						md-button(ng-show='uid !== item.seller && !item.sold' ng-disabled='bought' ng-click='interest()') Interested
 
-	div(ng-show='editing')
-		form 
-			p Item name: 
-				input(type='text' ng-model='edit.name')
-			p Seller: {{item.seller}}
-			p Department: {{item.deptCode}}
-			p Course: {{item.courseCode}}
-			p Price:
-				input(type='number' ng-model='edit.price')
-				|  Flexible price?
-				input(type='checkbox' ng-model='edit.priceFlexible')
-			p Description:
-			p
-				text-angular(ng-model='htmlVariable')
-			p Date: {{item.date | date:'d/M/yyyy'}}
-			p
-				button(type='submit' ng-click='editItem()') Sumbit
-	
-	div(ng-show='uid === item.seller')
-		p
-			strong Buyer list
-		table
-			tr(ng-repeat='buyer in item.buyers')
-				td {{buyer}}
-	p
-		button(ng-click='$location.path("/barter")') Back
+				md-card(ng-show='uid === item.seller')
+					md-list(flex)
+						md-subheader {{item.buyers.length}} person(s) interested.
+						md-divider
+						md-list-item.md-2-line(ng-repeat='buyer in item.buyers')
+							div.md-list-item-text
+								h3 {{buyer}}
+								h4 Test
+							md-button.md-secondary(ng-click='sell(buyer)' aria-label='Sell to this person') Sell
+							md-divider(ng-if='!$last')

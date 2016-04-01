@@ -6,6 +6,26 @@ div(layout='column')
 				md-button.md-primary(ng-click='back()') Return
 			div(ng-show='success')
 				h1(layout-padding) Trading Platform
+				
+				h2(layout-padding) New items
+				md-card.gridListdemoDynamicTiles(layout-padding)
+					md-grid-list(md-cols-xs='2' md-cols-sm='3' md-cols-md='6' md-cols-gt-md='6' md-row-height='1:1' md-gutter='8px' md-gutter-gt-sm='4px')
+						md-grid-tile(ng-repeat='item in items | limitTo: 6 | orderBy: "-date"' md-rowspan='' md-colspan='1' ng-click='$location.path("/item/" + item._id)')
+							figure
+								img(ng-src='/images/item/{{item.img}}')
+							md-grid-tile-footer
+								h3 {{item.name}}
+
+				h2(layout-padding) Bargins
+				md-card.gridListdemoDynamicTiles(layout-padding)
+					md-grid-list(md-cols-xs='2' md-cols-sm='3' md-cols-md='6' md-cols-gt-md='6' md-row-height='1:1' md-gutter='8px' md-gutter-gt-sm='4px')
+						md-grid-tile(ng-repeat='item in items | limitTo: 6 | orderBy: "price"' md-rowspan='' md-colspan='1' ng-click='$location.path("/item/" + item._id)')
+							figure
+								img(ng-src='/images/item/{{item.img}}')
+							md-grid-tile-footer
+								h3 {{item.name}} ({{item.price | currency}})
+				
+				h2(layout-padding) Cannot find goodies?
 				md-card
 					md-toolbar.md-table-toolbar.md-default(ng-hide='selected.length || search')
 						div.md-toolbar-tools
@@ -32,21 +52,22 @@ div(layout='column')
 								md-icon.material-icons delete
 
 					md-table-container
-							table(md-table md-row-select='admin' ng-model='selected')
-								thead(md-head md-order='order')
-									tr(md-row)
-										th(md-column md-order-by='deptCode' hide-xs) Department
-										th(md-column md-order-by='courseCode' hide-xs) Course
-										th(md-column md-order-by='name') Item name
-										th(md-column md-order-by='price') Price
-										th(md-column md-order-by='seller' hide-xs) Seller
-										th(md-column md-order-by='date' hide-xs) Date
-								tbody(md-body)
-									tr(md-row ng-repeat='item in items | filter: searchItem | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='item')
-										td(md-cell hide-xs) {{item.deptCode}}
-										td(md-cell hide-xs) {{item.courseCode}}
-										td(md-cell)
-											a(ng-href='#/item/{{item._id}}') {{item.name}}
-										td(md-cell) {{item.price | currency}}
-										td(md-cell hide-xs) {{item.seller}}
-										td(md-cell hide-xs) {{item.date | date:'d/M/yyyy h:mma'}}
+						table(md-table md-row-select='admin' ng-model='selected')
+							thead(md-head md-order='order')
+								tr(md-row)
+									th(md-column md-order-by='deptCode' hide show-gt-xs) Department
+									th(md-column md-order-by='courseCode' hide show-gt-sm) Course
+									th(md-column md-order-by='name') Item name
+									th(md-column md-order-by='price') Price
+									th(md-column md-order-by='seller' hide show-gt-md) Seller
+									th(md-column md-order-by='date' hide show-gt-md) Date
+							tbody(md-body)
+								tr(md-row ng-repeat='item in items | filter: searchItem | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='item')
+									td(md-cell hide show-gt-xs) {{item.deptCode}}
+									td(md-cell hide show-gt-sm) {{item.courseCode}}
+									td(md-cell)
+										a(ng-href='#/item/{{item._id}}') {{item.name}}
+									td(md-cell) {{item.price | currency}}
+									td(md-cell hide show-gt-md) {{item.seller}}
+									td(md-cell hide show-gt-md) {{item.date | date:'d/M/yyyy h:mma'}}
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{items.length}}')

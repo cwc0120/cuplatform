@@ -237,7 +237,10 @@ angular.module('CUPServices', [])
 				return $http.get('/api/item');
 			},
 			create: function(data) {
-				return $http.post('/api/item', data);
+				return $http.post('/api/item', data, {
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				});
 			},
 			getOne: function(itemid) {
 				return $http.get('/api/item/' + itemid);
