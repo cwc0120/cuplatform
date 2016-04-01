@@ -7,6 +7,7 @@ var Item = new Schema({
 	courseCode: {type: String, ref: 'Course'},
 	name: String,
 	description: String,
+	img: String,
 	seller: {type: String, ref: 'User'},
 	// modify
 	buyers: [{type: String, ref: 'User'}],

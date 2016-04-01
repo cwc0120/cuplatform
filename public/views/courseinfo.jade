@@ -24,7 +24,7 @@ div(layout='column')
 									p Average rating: 
 									h1.rating {{avgRating}}
 							div(flex-gt-sm='40')
-								p Schedule:
+								p Schedule: ({{course.cred}} credit(s))
 								md-table-container
 									table(md-table)
 										thead(md-head)
@@ -35,17 +35,17 @@ div(layout='column')
 										tbody(md-body)
 											tr(md-row ng-repeat='lesson in lessons')
 												td(md-cell) {{days[lesson.day-1].val}}
-												td(md-cell) {{times[lesson.day-1].val}}
+												td(md-cell) {{times[lesson.time-1].val}}
 												td(md-cell) {{lesson.venue}}
 					md-card-actions(layout='row' layout-align='end center')
-						md-button(ng-click='$location.path("/resource/" + course.courseCode)') Resources
-						md-button(ng-click='$location.path("/discussion/" + course.courseCode)') Discussion
+						md-button(ng-click='$location.path("/resource/" + course.courseCode.slice(0, 8))') Resources
+						md-button(ng-click='$location.path("/discussion/" + course.courseCode.slice(0, 8))') Discussion
 
 				md-card
 					div.md-toolbar-tools
 						span {{course.info.length}} Comment(s)
 						span(flex)
-						md-button.md-icon-button(ng-hide='posted' ng-click='addDialog($event)')
+						md-button.md-icon-button(ng-hide='posted' ng-click='addInfoDialog($event)')
 							md-icon.material-icons add
 
 				md-card(ng-repeat='info in course.info | orderBy: "-_id"')

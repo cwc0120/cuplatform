@@ -13,15 +13,22 @@
       <div layout="column" class="md-dialog-content">
         <h3>Basic information</h3>
         <div layout="row" layout-xs="column">
-          <md-input-container flex-gt-xs="30">
+          <md-input-container flex-gt-xs="25">
             <label>Code</label>
-            <input type="text" name="courseCode" ng-model="newCourse.courseCode" required="required" md-maxlength="10" ng-pattern="/^[A-Z]{4}[0-9]{4}/"/>
+            <input type="text" name="courseCode" ng-model="newCourse.courseCode" required="required" md-maxlength="8" ng-pattern="/^[A-Z]{4}[0-9]{4}/"/>
             <div ng-messages="addCourseForm.courseCode.$error">
               <div ng-message="required">Code missing.</div>
               <div ng-message-exp="['maxlength', 'pattern']">Invalid code.</div>
             </div>
           </md-input-container>
-          <md-input-container flex-gt-xs="70">
+          <md-input-container flex-gt-xs="15">
+            <label>Section</label>
+            <input type="text" name="courseSection" ng-model="newCourse.courseSection" md-maxlength="2" ng-pattern="/^[A-Z]/"/>
+            <div ng-messages="addCourseForm.courseSection.$error">
+              <div ng-message-exp="['maxlength', 'pattern']">Invalid section.</div>
+            </div>
+          </md-input-container>
+          <md-input-container flex-gt-xs="60">
             <label>Instructor</label>
             <input type="text" name="prof" ng-model="newCourse.prof"/>
           </md-input-container>

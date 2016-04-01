@@ -12,6 +12,7 @@ var Course = new Schema({
 		time: Number,
 		venue: String
 	}],
+	cred: Number,
 	prof: String,
 	info: [{
 		author: {type: String, ref: 'User'},

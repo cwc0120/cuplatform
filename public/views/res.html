@@ -91,7 +91,7 @@
             <md-list-item ng-repeat="cm in resource.comment" class="md-3-line">
               <div class="md-list-item-text">
                 <h3>{{cm.author}}</h3>
-                <h4>{{cm.dateOfComment | date:'dd/MM/yyyy'}}</h4>
+                <h4>{{cm.dateOfComment | date:'d/M/yyyy h:mma'}}</h4>
                 <p>{{cm.content}}</p>
               </div>
               <md-button ng-show="admin" ng-click="deleteComment(cm._id)" aria-label="Delete Comment" class="md-secondary md-icon-button">

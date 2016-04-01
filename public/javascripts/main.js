@@ -29,37 +29,37 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 
 			.when('/course/:id', {
 				templateUrl: '/views/courseinfo.html',
-				controller: 'CourseInfoController',
+				controller: 'courseInfoController',
 				requiredLogin: true
 			})
 
 			.when('/resource/:id', {
-				templateUrl: '/views/reslist.html',
-				controller: 'ResListController',
+				templateUrl: '/views/res.html',
+				controller: 'resController',
 				requiredLogin: true
 			})
 
 			.when('/discussion/:id', {
 				templateUrl: '/views/threadlist.html',
-				controller: 'ThreadListController',
+				controller: 'threadListController',
 				requiredLogin: true
 			})
 
 			.when('/thread/:id', {
 				templateUrl: '/views/thread.html',
-				controller: 'ThreadController',
+				controller: 'threadController',
 				requiredLogin: true
 			})
 
-			.when('/barter', {
+			.when('/item', {
 				templateUrl: '/views/itemlist.html',
-				controller: 'ItemListController',
+				controller: 'itemListController',
 				requiredLogin: true
 			})
 
 			.when('/item/:id', {
 				templateUrl: '/views/iteminfo.html',
-				controller: 'ItemInfoController',
+				controller: 'itemInfoController',
 				requiredLogin: true
 			})
 
@@ -85,7 +85,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				},
 
 				responseError: function(rejection) {
-					if (rejection != undefined && rejection.status == 403) {
+					if (rejection != undefined && rejection.status == 401) {
 						$window.localStorage.removeItem('uid');
 						$window.localStorage.removeItem('admin');
 						$window.localStorage.removeItem('cupToken');
