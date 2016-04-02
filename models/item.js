@@ -9,7 +9,7 @@ var Item = new Schema({
 	description: String,
 	seller: {type: String, ref: 'User'},
 	// modify
-	buyers: [{type: String, ref: 'User'}],
+	//buyers: [{type: String, ref: 'User'}],
 	date: Date,
 	price: Number,
 	priceFlexible: Boolean,
