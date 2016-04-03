@@ -198,7 +198,7 @@ router.route('/buyrequest/:itemid')
 
 // transacted: find all related transactions -> set target success, set others failed
 router.get('/transactrequest/:itemid/:uid', function(req, res, next) {
-		Item.findOne({_id: req.params.itemid}, function(err, item) {
+		Item.findOne({_id: req.params.itemid,active:true,sold:false}, function(err, item) {
 			if (err) {
 				return next(err);
 			} else if (item === null) {
