@@ -182,22 +182,29 @@ router.get('/transactrequest/:itemid/:uid', function(req, res, next) {
 						if(err){
 							return next(err);
 						} else{
-							Transaction.find({item: req.params.itemid},function(err,transactions){
-								if(err) {
+							Transaction.findOne({item: req.params.itemid,buyer: req.params.uid},function (err,transaction){
+								if(err){
 									return next(err);
+								} else if (transaction === null){
+									res.status(401).json({error: "Buyer uid incorrect!"});
 								} else {
-									for (var i=0; i<transactions.length; i++) {
-										if (transactions[i].buyer===req.params.uid){
-											transactions[i].status = 'success';
-											transactions[i].dateOfUpdate = Date.now();
+									Transaction.find({item: req.params.itemid},function(err,transactions){
+										if(err) {
+											return next(err);
 										} else {
-											transactions[i].status = 'failed';
-											transactions[i].dateOfUpdate = Date.now();
-										}
-							}
-							find(req, res, next);
+											for (var i=0; i<transactions.length; i++) {
+												if (transactions[i].buyer===req.params.uid){
+													transactions[i].status = 'success';
+													transactions[i].dateOfUpdate = Date.now();
+												} else {
+													transactions[i].status = 'failed';
+													transactions[i].dateOfUpdate = Date.now();
+												}
+											}
+										find(req, res, next);
+										}});
+								}});
 						}});
-					}});		
 				} else {
 					res.status(401).json({error: "You are not the seller of the item!"});
 				}
