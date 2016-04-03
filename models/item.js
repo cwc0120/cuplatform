@@ -10,11 +10,12 @@ var Item = new Schema({
 	img: String,
 	seller: {type: String, ref: 'User'},
 	// modify
-	buyers: [{type: String, ref: 'User'}],
+	//buyers: [{type: String, ref: 'User'}],
 	date: Date,
 	price: Number,
 	priceFlexible: Boolean,
-	sold: Boolean
+	sold: Boolean,
+	active: Boolean
 });
 
 module.exports = mongoose.model('Item', Item);

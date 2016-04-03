@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('topController', function($scope, $location, $window, $mdSidenav, Auth) {
+ctrl.controller('topController', function($scope, $location, $window, $mdSidenav, Auth, Socket) {
 	$scope.user = {};
 	$scope.$location = $location;
 
@@ -22,6 +22,11 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		link: '/item',
 		title: 'Trading Platform',
 		icon: 'shopping_basket'
+	},
+	{
+		link: '/messenger',
+		title: 'Messages',
+		icon: 'message'
 	}];
 
 	$scope.$watch(function() {
@@ -42,6 +47,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 
 	$scope.logout = function() {
 		Auth.logout();
+		Socket.disconnect()
 	};
 
 	$scope.toggleMenu = function() {

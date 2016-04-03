@@ -1,0 +1,33 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-show='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-hide='success' layout='column' layout-gt-sm='row')
+				div(flex='30' show-gt-sm)
+					md-card
+						md-card-title
+							span.md-headline User List
+						md-card-content
+							md-list(flex)
+								md-list-item.md-2-line(ng-repeat='client in clients')
+									div.md-list-item-text
+										h3 {{client.uid}}
+				div(flex='70')
+					md-card
+						md-card-title
+							span.md-headline Testing
+						md-list(flex)
+							md-list-item.md-2-line(ng-repeat='message in messages | limitTo: 10: messages.length-10>0?messages.length-10:0')
+								div.md-list-item-text
+									h3 {{message.uid}}
+									p {{message.content}}
+						md-divider
+							md-toolbar.md-table-toolbar.md-default
+								form
+									div.md-toolbar-tools(flex layout='row' layout-align='end center')
+										md-input-container(flex md-no-float)
+											input(flex type='text' ng-model='message' placeholder='New Message' autocomplete='off')
+										md-button.md-icon-button(type='submit' ng-click='newMessage()' aria-label='Comment')
+											md-icon.material-icons comment

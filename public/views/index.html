@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/textAngular/dist/textAngular.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body ng-controller="topController" ng-cloak layout="row">
-    <!-- Angular and Angular Material-->
+    <!-- Angular-->
     <script type="text/javascript" src="/node/angular/angular.min.js"></script>
     <script type="text/javascript" src="/node/angular-route/angular-route.min.js"></script>
     <script type="text/javascript" src="/node/angular-aria/angular-aria.min.js"></script>
@@ -24,6 +25,9 @@
     <script type="text/javascript" src="/textAngular/dist/textAngular.min.js"></script>
     <!-- Async-->
     <script type="text/javascript" src="/node/async/dist/async.js"></script>
+    <!-- Socket.io-->
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/node/angular-socket-io/socket.min.js"></script>
     <!-- Main app-->
     <script type="text/javascript" src="/javascripts/main.js"></script>
     <script type="text/javascript" src="/javascripts/services.js"></script>
@@ -38,6 +42,7 @@
     <script type="text/javascript" src="/javascripts/controllers/iteminfocontroller.js"></script>
     <script type="text/javascript" src="/javascripts/controllers/threadlistcontroller.js"></script>
     <script type="text/javascript" src="/javascripts/controllers/threadcontroller.js"></script>
+    <script type="text/javascript" src="/javascripts/controllers/messengercontroller.js"></script>
     <!-- content-->
     <md-sidenav md-component-id="menu" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4" class="md-sidenav-left">
       <md-toolbar md-whiteframe="4" layout-padding class="md-tall md-accent md-hue-2"><span flex></span>

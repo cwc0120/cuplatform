@@ -4,8 +4,8 @@ var multer = require('multer');
 var router = express.Router();
 var Item = require('../models/item');
 var Course = require('../models/course');
-var User = require('../models/user');
 var utils = require('../utils');
+var Transaction = require('../models/transaction');
 
 // upload item img
 var storage = multer.diskStorage({
@@ -121,84 +121,157 @@ router.route('/:itemid')
 	})
 
 	.delete(function(req, res, next) {
-		// delete item: find all transaction records -> set status cancelled -> delete item record
-		if (req.decoded.admin) {
-			Item.remove({_id: req.params.itemid}, function(err) {
-				if (err) {
-					// remove item ID from User.buyList
-					return next(err);
-				} else {
+		// delete item: find all transaction records -> set status cancelled -> delete item record 
+		Item.findOne({_id: req.params.itemid}, function(err, item) {
+			if (err) {
+				return next(err);
+			} else if (item === null) {
+				res.status(400).json({error: "Item not found!"});
+			} else {
+				if (item.seller === req.decoded.uid || req.decoded.admin) {
+					Transaction.find({item: req.params.itemid},function(err,transactions){
+						if(err) {
+							return next(err);
+						} else {
+							for (var i=0; i<transactions.length; i++) {
+								transactions[i].status = 'cancelled';
+								transactions[i].dateOfUpdate = Date.now();
+							}
+						}
+					});
+					item.active = false;
 					findUnsoldList(req, res, next);
+				} else {
+					res.status(401).json({error: "You are not authorized to delete an item!"});
 				}
-			});
-		} else {
-			res.status(401).json({error: "You are not authorized to delete an item!"});
-		}
+			}
+		});
 	});
 
 router.route('/buyrequest/:itemid')
 	// interest in item: add new record -> set status interested
 	.get(function(req, res, next) {
-		Item.findOneAndUpdate({_id:req.params.itemid},
-			{$push: {buyers: req.decoded.uid}}, 
-			function(err) {
-				if (err) {
-					return next(err);
-				} else { 
-					User.findOneAndUpdate({uid: req.decoded.uid}, 
-						{$push: {buyList: req.params.itemid}}, 
-						function(err) {
+		Item.findOne({_id:req.params.itemid}, function(err, item) {
+			if (err) {
+				return next(err);
+			} else { 
+				if (item.seller !== req.decoded.uid){
+					Transaction.findOne({item:req.params.itemid,buyer: req.decoded.uid
+					}, function(err,transaction){
+						if(err){
+							return next(err);
+						} else if (transaction === null) {
+							Transaction.create({
+							seller: item.seller,
+							buyer: req.decoded.uid,
+							item: req.params.itemid,
+							status: 'interested',
+							dateOfUpdate: Date.now(),
+							}, function(err) {
 							if (err) {
 								return next(err);
 							} else {
 								find(req, res, next);
-							}
+							}});
+						} else {
+							res.status(401).json({error: "Transaction already exists!"});
 						}
-					);
+					});
+				} else {
+					res.status(401).json({error: "You are cannot buy your own item!"});
 				}
-			}
+			}}
 		);
 	})
 
 	// uninterest item: delete the record 
 	.delete(function(req, res, next) {
-
-	});
+		Transaction.findOneAndRemove({item:req.params.itemid,buyer: req.decoded.uid
+		}, function(err){
+			if (err) {
+				return next(err);
+			} else {
+				find(req, res, next);
+				}
+			});
+		});
 
 // transacted: find all related transactions -> set target success, set others failed
 router.get('/transactrequest/:itemid/:uid', function(req, res, next) {
-/*	Item.findOne({_id:itemID}, function(err, item) {
-		if (err) {
-			return next(err);
-		} else if (item === null) {
-			res.status(400).json({error: "Item not found!"});
-		} else {
-			// remove item ID from User.buyList
-			for (var i = 0; i < item.buyer)
-			item.update({$set: {sold: true}}, 
-			function(err) {
-				if (err) {
-					return next(err);
+		Item.findOne({_id: req.params.itemid,active:true,sold:false}, function(err, item) {
+			if (err) {
+				return next(err);
+			} else if (item === null) {
+				res.status(400).json({error: "Item not found!"});
+			} else {
+				if (item.seller === req.decoded.uid){
+					item.update({$set: {
+						sold: true,
+						active: false
+					}}, function(err){
+						if(err){
+							return next(err);
+						} else{
+							Transaction.findOne({item: req.params.itemid,buyer: req.params.uid},function (err,transaction){
+								if(err){
+									return next(err);
+								} else if (transaction === null){
+									res.status(401).json({error: "Buyer uid incorrect!"});
+								} else {
+									Transaction.find({item: req.params.itemid},function(err,transactions){
+										if(err) {
+											return next(err);
+										} else {
+											for (var i=0; i<transactions.length; i++) {
+												if (transactions[i].buyer===req.params.uid){
+													transactions[i].status = 'success';
+													transactions[i].dateOfUpdate = Date.now();
+												} else {
+													transactions[i].status = 'failed';
+													transactions[i].dateOfUpdate = Date.now();
+												}
+											}
+										find(req, res, next);
+										}});
+								}});
+						}});
 				} else {
-					find(req, res, next);
+					res.status(401).json({error: "You are not the seller of the item!"});
 				}
-			});
-		}
-	});*/
-});
+			}
+		});
+	});
 
 // return a list of items by searching items by seller's id
 router.get('/selllist/:uid', function(req, res, next) {
 	//if (req.params.uid === req.decoded.uid || req.decoded.admin)
+	Item.find({seller:req.params.uid,active:true,sold:false})
+		.sort({date: -1})
+		.exec(function(err, items) {
+			if(err){
+				return next(err);
+			}else{
+				res.status(200).json(items);
+			}
+	});
 });
 
 // return a list of items by searching item records by buyer's id
 router.get('/buylist/:uid', function(req, res, next) {
-
-});
+	Transaction.find({buyer:req.params.uid})
+		.populate('item')
+		.sort({dateOfUpdate: -1})
+		.exec(function(err, items) {
+			if(err){
+				return next(err);
+			}else{
+				res.status(200).json(items);
+			}	
+		});
+	});	
 
 function findUnsoldList(req, res, next) {
-	Item.find({sold: false})
+	Item.find({sold: false, active: true})
 		.sort({date: -1})
 		.select ('deptCode courseCode name price priceFlexible date seller img')
 		.exec(function(err, items) {
