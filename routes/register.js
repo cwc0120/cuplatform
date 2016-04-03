@@ -8,29 +8,40 @@ router.post('/', function(req, res, next) {
 	var uid = req.body.uid;
 	var email = req.body.email;
 	var pwd1 = req.body.pwd1;
+	var pwd2 = req.body.pwd2;
 
-	User.findOne({$or: [{uid: uid}, {email:email}]}, function(err, result) {
-		if (err) {
-			return next(err);
-		} else if (result !== null) {
-			res.status(400).json({error: 'User ID or email has been used.'});
+	var emailPattern = new RegExp(/@link.cuhk.edu.hk$/);
+
+	if (pwd1 !== pwd2) {
+		res.status(400).json({error: 'Passwords unmatched.'});
+	} else {
+		if (!email.match(emailPattern)) {
+			res.status(400).json({error: 'CUHK email required.'});
 		} else {
-			var salt = crypto.randomBytes(128).toString('base64');
-			var hash = crypto.pbkdf2Sync(pwd1, salt, 10000, 512);
-			User.create({
-				uid: uid,
-				email: email,
-				salt: salt,
-				hash: hash
-			}, function(err) {
+			User.findOne({$or: [{uid: uid}, {email: email}]}, function(err, result) {
 				if (err) {
 					return next(err);
+				} else if (result !== null) {
+					res.status(400).json({error: 'User ID or email has been used.'});
 				} else {
-					res.status(200).end();
-				}		
+					var salt = crypto.randomBytes(128).toString('base64');
+					var hash = crypto.pbkdf2Sync(pwd1, salt, 10000, 512);
+					User.create({
+						uid: uid,
+						email: email,
+						salt: salt,
+						hash: hash
+					}, function(err) {
+						if (err) {
+							return next(err);
+						} else {
+							res.status(200).end();
+						}		
+					});
+				}
 			});
-		}
-	});
+		}	
+	}
 });
 
 module.exports = router;
