@@ -1,7 +1,7 @@
 
 <div ng-hide="isLogged" layout="column">
   <div layout="row" layout-align="center center" class="inset">
-    <div flex="90" flex-gt-sm="80">
+    <div flex="95" flex-gt-sm="80">
       <div layout="column" layout-align="start center" layout-gt-xs="row">
         <div flex="50">
           <div>
@@ -16,16 +16,10 @@
                 <md-input-container class="md-block">
                   <label>User ID</label>
                   <input type="text" name="userID" ng-model="user.uid" required="required"/>
-                  <div ng-messages="loginForm.userID.$error">
-                    <div ng-message="required">User ID missing.</div>
-                  </div>
                 </md-input-container>
                 <md-input-container class="md-block">
                   <label>Password</label>
                   <input type="password" name="password" ng-model="user.pwd" required="required"/>
-                  <div ng-messages="loginForm.password.$error">
-                    <div ng-message="required">Password missing.</div>
-                  </div>
                 </md-input-container>
                 <md-card-actions layout="row" layout-align="end center">
                   <md-button ng-click="registerDialog($event)">Register</md-button>

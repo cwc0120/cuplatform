@@ -1,5 +1,5 @@
 'use strict';
-angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers', 'textAngular', 'ngMessages', 'md.data.table'])
+angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers', 'textAngular', 'ngMessages', 'md.data.table', 'btford.socket-io'])
 	.config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
 		.primaryPalette('purple')
@@ -60,6 +60,12 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 			.when('/item/:id', {
 				templateUrl: '/views/iteminfo.html',
 				controller: 'itemInfoController',
+				requiredLogin: true
+			})
+
+			.when('/messenger', {
+				templateUrl: '/views/messenger.html',
+				controller: 'messengerController',
 				requiredLogin: true
 			})
 

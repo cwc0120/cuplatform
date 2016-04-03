@@ -1,0 +1,35 @@
+md-dialog(aria-label='Registration' ng-cloak flex='40')
+	form(name='registerForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Register
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				span.error {{registerMessage}}
+				md-input-container.md-block
+					label User ID
+					input(type='text' name='userID' ng-model='newUser.uid' required ng-pattern="/^[a-zA-Z0-9]*$/")
+					div(ng-messages='registerForm.userID.$error')
+						div(ng-message='required') User ID required.
+						div(ng-message='pattern') User ID should be alphanumeric.
+				md-input-container.md-block
+					label CUHK e-mail
+					input(type='text' name='email' ng-model='newUser.email' required ng-pattern="/@link.cuhk.edu.hk$/")
+					div(ng-messages='registerForm.email.$error')
+						div(ng-message-exp="['required', 'pattern']") CUHK e-mail required.
+				md-input-container.md-block
+					label Password
+					input(type='password' name='pwd1' ng-model='newUser.pwd1' required minlength='7')
+					div(ng-messages='registerForm.pwd1.$error')
+						div(ng-message='required') Password required.
+						div(ng-message='minlength') Your password must be at least 7 characters long.
+				md-input-container.md-block
+					label Password confirmation
+					input(type='password' name='pwd2' ng-model='newUser.pwd2' compare-to='newUser.pwd1')
+					div(ng-messages='registerForm.pwd2.$error')
+						div(ng-message='compareTo') Password not matched
+		md-dialog-actions
+			md-button(type='submit' ng-click='createUser()' ng-disabled='registerForm.$invalid') Register

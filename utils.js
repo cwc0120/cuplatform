@@ -21,22 +21,18 @@ module.exports = {
 		}
 	},
 
-	validateTokenPartial: function(req, res, next) {
+	findUser: function(token, callback) {
+		var config = require('./config')
 		var jwt = require('jsonwebtoken');
-		var token = req.headers['x-access-token'];
 
 		if (token) {
-			jwt.verify(token, req.app.get('secret'), function(err, decoded) {
+			jwt.verify(token, config.secret, function(err, decoded) {
 				if (err) {
-					return res.status(400).json({error: err.name + ': ' + err.message});
+					callback(err);
 				} else {
-					req.decoded = decoded;
-					next();
+					callback(err, decoded.uid);
 				}
 			});
-		} else {
-			res.decoded = false;
-			next();
 		}
 	}
 };

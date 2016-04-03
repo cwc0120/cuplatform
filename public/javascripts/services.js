@@ -258,4 +258,8 @@ angular.module('CUPServices', [])
 				return $http.get('api/item/transactrequest/' + itemid + '/' + uid);
 			}
 		};
+	})
+
+	.factory('Socket', function(socketFactory) {
+		return socketFactory();
 	});
