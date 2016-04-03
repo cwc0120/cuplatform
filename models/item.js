@@ -13,7 +13,8 @@ var Item = new Schema({
 	date: Date,
 	price: Number,
 	priceFlexible: Boolean,
-	sold: Boolean
+	sold: Boolean,
+	active: Boolean
 });
 
 module.exports = mongoose.model('Item', Item);

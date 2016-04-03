@@ -125,22 +125,32 @@ router.route('/buyrequest/:itemid')
 			if (err) {
 				return next(err);
 			} else { 
-					Transaction.create({
-						seller: item.seller,
-						buyer: req.decoded.uid,
-						item: req.params.itemid,
-						status: 'interested',
-						dateOfUpdate: Date.now(),
-					}, function(err) {
-						if (err) {
+				if (item.seller !== req.decoded.uid){
+					Transaction.findOne({item:req.params.itemid,buyer: req.decoded.uid
+					}, function(err,transaction){
+						if(err){
 							return next(err);
+						} else if (transaction === null) {
+							Transaction.create({
+							seller: item.seller,
+							buyer: req.decoded.uid,
+							item: req.params.itemid,
+							status: 'interested',
+							dateOfUpdate: Date.now(),
+							}, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next);
+							}});
 						} else {
-							find(req, res, next);
-							}
+							res.status(401).json({error: "Transaction already exists!"});
 						}
-					);
+					});
+				} else {
+					res.status(401).json({error: "You are cannot buy your own item!"});
 				}
-			}
+			}}
 		);
 	})
 
@@ -212,14 +222,12 @@ router.get('/selllist/:uid', function(req, res, next) {
 // return a list of items by searching item records by buyer's id
 router.get('/buylist/:uid', function(req, res, next) {
 	Transaction.find({buyer:req.params.uid})
+		.populate('item')
 		.sort({dateOfUpdate: -1})
-		.exec(function(err, transactions) {
+		.exec(function(err, items) {
 			if(err){
 				return next(err);
 			}else{
-				var items = transactions.map(function(transaction){
-					return transaction.item;
-				});
 				res.status(200).json(items);
 			}	
 		});
