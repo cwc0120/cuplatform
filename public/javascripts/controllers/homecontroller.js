@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth) {
+ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth, Socket) {
 	$scope.user = {};
 	$scope.disable = true;
 	$scope.$location = $location;
@@ -24,10 +24,12 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth) {
 		if ($scope.user.uid !== undefined && $scope.user.pwd !== undefined) {
 			Auth.login($scope.user).success(function(res) {
 				$scope.user = {};
+				$scope.loginMessage = '';
 				Auth.uid = res.uid;
 				Auth.isLogged = true;	
 				Auth.setToken(res);
-				$location.path('/task');
+				$location.path('/');
+				Socket.connect();
 			}).error(function(err) {
 				$scope.loginMessage = err.error;
 			});
