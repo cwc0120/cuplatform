@@ -10,8 +10,10 @@ html(ng-app='CUP')
 		link(rel='stylesheet' href='/textAngular/dist/textAngular.css')
 		link(rel='stylesheet' href='/stylesheets/style.css')
 
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
 	body(ng-controller='topController' ng-cloak layout='row')
-		// Angular and Angular Material
+		// Angular
 		script(type='text/javascript' src='/node/angular/angular.min.js')
 		script(type='text/javascript' src='/node/angular-route/angular-route.min.js')
 		script(type='text/javascript' src='/node/angular-aria/angular-aria.min.js')
@@ -28,10 +30,25 @@ html(ng-app='CUP')
 		// Async
 		script(type='text/javascript' src='/node/async/dist/async.js')
 
+		// Socket.io
+		script(type='text/javascript' src='/socket.io/socket.io.js')
+		script(type='text/javascript' src='/node/angular-socket-io/socket.min.js')
+
 		// Main app
 		script(type='text/javascript' src='/javascripts/main.js')
-		script(type='text/javascript' src='/javascripts/controllers.js')
 		script(type='text/javascript' src='/javascripts/services.js')
+		script(type='text/javascript' src='/javascripts/controllers.js')
+		script(type='text/javascript' src='/javascripts/controllers/topcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/homecontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/deptlistcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/deptcourselistcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/courseinfocontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/rescontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/itemlistcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/iteminfocontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/threadlistcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/threadcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/messengercontroller.js')
 
 		// content
 		md-sidenav.md-sidenav-left(md-component-id='menu' md-is-locked-open="$mdMedia('gt-md')" md-whiteframe='4')

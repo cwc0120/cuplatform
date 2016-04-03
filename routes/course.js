@@ -23,11 +23,13 @@ router.route('/:did')
 					return next(err);
 				} else if (dept === null) {
 					res.status(400).json({error: "Department not found!"});
-				} else {		
+				} else {	
+					var courseCode = req.body.courseCode;
+					var courseSection = req.body.courseSection || '';
 					Course.create({
-						courseCode: req.body.courseCode.toUpperCase(),
+						courseCode: courseCode.toUpperCase() + courseSection.toUpperCase(),
 						courseName: req.body.courseName,
-						deptCode: req.params.did,
+						deptCode: req.params.did.toUpperCase(),
 						schedule: req.body.schedule,
 						prof: req.body.prof
 					}, function(err) {
@@ -47,7 +49,10 @@ router.route('/:did')
 router.route('/info/:cid')
 	.get(function(req, res, next) {
 		// check course info
-		find(req, res, next);
+		find(req, res, next, function(course) {
+			course.info.sort({dateOfComment: -1});
+			res.status(200).json(course);
+		});
 	})
 
 	.post(function(req, res, next) {
@@ -60,42 +65,36 @@ router.route('/info/:cid')
 			comment: req.body.comment,
 			dateOfComment: Date.now()
 		};
-		Course.findOne({courseCode: req.params.cid.toUpperCase()}, 
-			function(err, course) {
-				if (err) {
-					return next(err);
-				} else if (course === null) {
-					res.status(400).json({error: "Course not found!"});
-				} else {
-					var repeat = false;
-					course.info.forEach(function(c) {
-						if (c.author === req.decoded.uid) {
-							repeat = true;
-						}
-					});
-					if (!repeat) {
-						course.update({$push: {info: info}}, 
-						function(err) {
-							if (err) {
-								return next(err);
-							} else {
-								console.log('last');
-								find(req, res, next);
-							}
-						});
-					} else {
-						res.status(400).json({error: "You have made comment"});
-					}
+
+		find(req, res, next, function(course) {
+			var repeat = false;
+			course.info.forEach(function(c) {
+				if (c.author === req.decoded.uid) {
+					repeat = true;
 				}
+			});
+			if (!repeat) {
+				course.update({$push: {info: info}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(course) {
+							course.info.sort({dateOfComment: -1});
+							res.status(200).json(course);
+						});
+					}
+				});
+			} else {
+				res.status(400).json({error: "You have made comment"});
 			}
-		);	
+		});
 	})
 
 	.put(function(req, res, next) {
 		// edit course info
 		if (req.decoded.admin) {
-			Course.update({courseCode: req.params.cid.toUpperCase()},
-				{$set: {
+			find(req, res, next, function(course) {
+				course.update({$set: {
 					courseName: req.body.courseName,
 					schedule: req.body.schedule,
 					prof: req.body.prof
@@ -103,10 +102,13 @@ router.route('/info/:cid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next);
+						find(req, res, next, function(course) {
+							course.info.sort({dateOfComment: -1});
+							res.status(200).json(course);
+						});
 					}
-				}
-			);
+				});
+			});
 		} else {
 			res.status(401).json({error: "You are not authorized to edit a course!"});
 		}
@@ -115,16 +117,10 @@ router.route('/info/:cid')
 	.delete(function(req, res, next) {
 		// delete course
 		if (req.decoded.admin) {
-			Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
-				if (err) {
-					return next(err);
-				} else if (course === null) {
-					res.status(400).json({error: "Course not found!"});
-				} else {
-					req.params.did = course.deptCode;
-					course.remove();
-					findList(req, res, next);
-				}
+			find(req, res, next, function(course) {
+				req.params.did = course.deptCode;
+				course.remove();
+				findList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a course!"});
@@ -135,20 +131,17 @@ router.route('/info/:cid/:cmid')
 	.delete(function(req, res, next) {
 		// delete comment
 		if (req.decoded.admin) {
-			Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
-				if (err) {
-					return next(err);
-				} else if (course === null) {
-					res.status(400).json({error: "Course not found!"});
-				} else {
-					course.update({$pull: {info: {_id: req.params.cmid}}}, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
-					});
-				}
+			find(req, res, next, function(course) {
+				course.update({$pull: {info: {_id: req.params.cmid}}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(course) {
+							course.info.sort({dateOfComment: -1});
+							res.status(200).json(course);
+						});
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
@@ -161,7 +154,7 @@ function findList(req, res, next) {
 		.exec(function(err, courses) {
 			if (err) {
 				return next(err);
-			} else if (courses === null ) {
+			} else if (courses === null) {
 				res.status(400).json({error: "Department not found!"});
 			} else {
 				res.status(200).json(courses);
@@ -169,15 +162,14 @@ function findList(req, res, next) {
 		});
 }
 
-function find(req, res, next) {
+function find(req, res, next, callback) {
 	Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
 		if (err) {
-			next(err);
-		} else if (course === null) {
+			return next(err);
+		} else if (!course) {
 			res.status(400).json({error: "Course not found!"});
 		} else {
-			course.info.sort({dateOfComment: -1});
-			res.status(200).json(course);
+			callback(course);		
 		}
 	});
 }

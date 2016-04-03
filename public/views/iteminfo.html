@@ -1,58 +1,56 @@
 
-<div ng-hide="success">
-  <h3>{{errorMessage}}</h3>
-  <button ng-click="$route.reload()">Return</button>
-</div>
-<div ng-show="success">
-  <h1>Item Detail</h1>
-  <div ng-hide="editing">
-    <p>Item name: {{item.name}}</p>
-    <p>Seller: {{item.seller}}</p>
-    <p>Department: {{item.deptCode}}</p>
-    <p>Course: {{item.courseCode}}</p>
-    <p>Price: {{item.price | currency}} <span ng-show="item.priceFlexible">(flexible)</span></p>
-    <p>
-       
-      Description:<br/><span ng-bind-html="item.description"></span>
-    </p>
-    <p>Date: {{item.date | date:'d/M/yyyy'}}</p>
-    <p>
-      <button ng-show="uid === item.seller" ng-click="enableEdit()">Edit Item</button>
-      <button ng-show="uid === item.seller" ng-disabled="item.sold" ng-click="transact()"> Sold</button>
-      <button ng-show="uid !== item.seller" ng-disabled="item.sold || bought" ng-click="buy()"> Buy</button>
-    </p>
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="95" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success">
+        <md-card>
+          <md-card-header>
+            <md-card-header-text><span class="md-title">{{item.seller}}</span><span class="md-subhead">{{item.date | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
+            <md-button ng-show="uid === item.seller" ng-click="editItemDialog($event)" aria-label="Edit item" class="md-icon-button">
+              <md-icon class="material-icons">mode_edit</md-icon>
+            </md-button>
+            <md-button ng-show="uid === item.seller" ng-click="delete()" aria-label="Delete item" class="md-icon-button">
+              <md-icon class="material-icons">delete</md-icon>
+            </md-button>
+          </md-card-header>
+          <div layout-gt-xs="row" layout="column">
+            <div flex="60">
+              <md-card-title>
+                <md-card-title-text><span class="md-headline">{{item.name}}</span><span class="md-subhead">{{item.deptCode}} {{item.courseCode}}</span></md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                <h3 class="price">{{item.price | currency}} <span ng-show="item.priceFlexible">(flexible)</span></h3>
+                <p> </p><span>Description:</span>
+                <section layout-wrap="layout-wrap"><span ng-bind-html="item.description"></span></section>
+              </md-card-content>
+            </div>
+            <md-card-title-media flex="40" layout-padding="layout-padding">
+              <div class="md-media-xl card-media"><img ng-src="/images/item/{{item.img}}" class="md-card-image"/></div>
+            </md-card-title-media>
+          </div>
+          <md-card-actions layout="row" layout-align="end center">
+            <md-button ng-show="uid !== item.seller &amp;&amp; !item.sold" ng-disabled="bought" ng-click="interest()">Interested</md-button>
+          </md-card-actions>
+        </md-card>
+        <md-card ng-show="uid === item.seller">
+          <md-list flex="flex">
+            <md-subheader>{{item.buyers.length}} person(s) interested.</md-subheader>
+            <md-divider></md-divider>
+            <md-list-item ng-repeat="buyer in item.buyers" class="md-2-line">
+              <div class="md-list-item-text">
+                <h3>{{buyer}}</h3>
+                <h4>Test</h4>
+              </div>
+              <md-button ng-click="sell(buyer)" aria-label="Sell to this person" class="md-secondary">Sell</md-button>
+              <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+          </md-list>
+        </md-card>
+      </div>
+    </div>
   </div>
-  <div ng-show="editing">
-    <form> 
-      <p>Item name: 
-        <input type="text" ng-model="edit.name"/>
-      </p>
-      <p>Seller: {{item.seller}}</p>
-      <p>Department: {{item.deptCode}}</p>
-      <p>Course: {{item.courseCode}}</p>
-      <p>Price:
-        <input type="number" ng-model="edit.price"/> Flexible price?
-        <input type="checkbox" ng-model="edit.priceFlexible"/>
-      </p>
-      <p>Description:</p>
-      <p>
-        <text-angular ng-model="htmlVariable"></text-angular>
-      </p>
-      <p>Date: {{item.date | date:'d/M/yyyy'}}</p>
-      <p>
-        <button type="submit" ng-click="editItem()">Sumbit</button>
-      </p>
-    </form>
-  </div>
-  <div ng-show="uid === item.seller">
-    <p><strong>Buyer list</strong></p>
-    <table>
-      <tr ng-repeat="buyer in item.buyers">
-        <td>{{buyer}}</td>
-      </tr>
-    </table>
-  </div>
-  <p>
-    <button ng-click="$location.path(&quot;/barter&quot;)">Back</button>
-  </p>
 </div>

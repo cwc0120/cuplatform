@@ -47,14 +47,14 @@ router.route('/:cid')
 		if (!req.file) {
 			res.status(400).json({error: 'No file uploaded.'});
 		} else {
-			Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
+			Course.findOne({courseCode: new RegExp('^' + req.params.cid, 'i')}, function(err, course) {
 				if (err) {
 					return next(err);
 				} else if (course === null) {
 					res.status(400).json({error: 'Course not found!'});
 				} else {
 					Resource.create({
-						courseCode: req.params.cid.toUpperCase(),
+						courseCode: req.params.cid.toUpperCase().slice(0, 8),
 						name: req.body.name,
 						description: req.body.description,
 						uploader: req.decoded.uid,
@@ -75,7 +75,9 @@ router.route('/:cid')
 router.route('/info/:resid')
 	.get(function(req, res, next) {
 		// check resource info
-		find(req, res, next);
+		find(req, res, next, function(resource) {
+			res.status(200).json(resource);
+		});
 	})
 
 	.post(function(req, res, next) {
@@ -85,48 +87,37 @@ router.route('/info/:resid')
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
-		Resource.findOne({_id: req.params.resid}, 
-			function(err, resource) {
+		find(req, res, next, function(resource) {
+			resource.update({$push: {comment: comment}}, function(err) {
 				if (err) {
 					return next(err);
-				} else if (resource === null) {
-					res.status(400).json({error: "Resource not found!"});
 				} else {
-					resource.update({$push: {comment: comment}}, 
-					function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
+					find(req, res, next, function(resource) {
+						res.status(200).json(resource);
 					});
 				}
-			}
-		);	
+			});
+		});
 	})
 
 	.put(function(req, res, next) {
 		// edit resource info
-		Resource.findOne({_id:req.params.resid}, function(err, resource) {
-			if (err) {
-				return next(err);
-			} else if (resource === null) {
-				res.status(400).json({error: "Resource not found!"});
+		find(req, res, next, function(resource) {
+			if (resource.uploader === req.decoded.uid) {
+				resource.update({$set: {
+					name: req.body.name,
+					description: req.body.description
+				}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(resource) {
+							res.status(200).json(resource);
+						});
+					}
+				});
 			} else {
-				if (resource.uploader === req.decoded.uid) {
-					resource.update({$set: {
-						name: req.body.name,
-						description: req.body.description
-					}}, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
-					});
-				} else {
-					res.status(401).json({error: "You are not the uploader of the resource!"});
-				}
+				res.status(401).json({error: "You are not the uploader of the resource!"});
 			}
 		});
 	})
@@ -134,14 +125,10 @@ router.route('/info/:resid')
 	.delete(function(req, res, next) {
 		// delete resource
 		if (req.decoded.admin) {
-			Resource.findOne({_id: req.params.resid}, function(err, resource) {
-				if (err) {
-					return next(err);
-				} else {
-					req.params.cid = resource.courseCode;
-					resource.remove();
-					findResList(req, res, next);
-				}
+			find(req, res, next, function(resource) {
+				req.params.cid = resource.courseCode;
+				resource.remove();
+				findResList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a resource!"});
@@ -164,20 +151,16 @@ router.route('/info/:resid/:cmid')
 	.delete(function(req, res, next) {
 		// delete comment
 		if (req.decoded.admin) {
-			Resource.findOne({_id: req.params.resid}, function(err, resource) {
-				if (err) {
-					return next(err);
-				} else if (resource === null) {
-					res.status(400).json({error: "Resource not found!"});
-				} else {
-					resource.update({$pull: {comment: {_id: req.params.cmid}}}, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
-					});
-				}
+			find(req, res, next, function(resource) {
+				resource.update({$pull: {comment: {_id: req.params.cmid}}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(resource) {
+							res.status(200).json(resource);
+						});
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
@@ -186,7 +169,6 @@ router.route('/info/:resid/:cmid')
 
 function findResList(req, res, next) {
 	Resource.find({courseCode: req.params.cid.toUpperCase()})
-		.sort({dateOfUpload: -1})
 		.select('name dateOfUpload uploader')
 		.exec(function(err, resources) {
 			if (err) {
@@ -197,14 +179,14 @@ function findResList(req, res, next) {
 		});
 }
 
-function find(req, res, next) {
+function find(req, res, next, callback) {
 	Resource.findOne({_id: req.params.resid}, function(err, resource) {
 		if (err) {
-			next(err);
+			return next(err);
 		} else if (resource === null) {
 			res.status(400).json({error: "Resource not found!"});
 		} else {
-			res.status(200).json(resource);
+			callback(resource);
 		}
 	});
 }

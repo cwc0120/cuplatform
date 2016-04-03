@@ -29,7 +29,27 @@ h1.rating {
 	text-align: center;
 }
 
+h3.price {
+	margin: 0px;
+}
+
 a {
 	color: purple;
 	text-decoration: underline;
+}
+
+figure img {
+	max-height: 100%;
+	max-width: 100%;
+} 
+
+.gridListdemoDynamicTiles md-grid-tile-footer figcaption {
+	width: 100%; 
+}
+
+.gridListdemoDynamicTiles md-grid-tile-footer figcaption h3 {
+	margin: 0;
+	font-weight: 700;
+	width: 100%;
+	text-align: center;
 }

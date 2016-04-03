@@ -1,7 +1,7 @@
 
 <div layout="column">
   <div layout="row" layout-align="center center" class="inset">
-    <div flex="90" flex-gt-sm="80">
+    <div flex="95" flex-gt-sm="80">
       <div ng-hide="success">
         <h3>{{errorMessage}}</h3>
         <md-button ng-click="back()" class="md-primary">Return</md-button>
@@ -27,7 +27,7 @@
                 </div>
               </div>
               <div flex-gt-sm="40">
-                <p>Schedule:</p>
+                <p>Schedule: ({{course.cred}} credit(s))</p>
                 <md-table-container>
                   <table md-table="md-table">
                     <thead md-head="md-head">
@@ -40,7 +40,7 @@
                     <tbody md-body="md-body">
                       <tr md-row="md-row" ng-repeat="lesson in lessons">
                         <td md-cell="md-cell">{{days[lesson.day-1].val}}</td>
-                        <td md-cell="md-cell">{{times[lesson.day-1].val}}</td>
+                        <td md-cell="md-cell">{{times[lesson.time-1].val}}</td>
                         <td md-cell="md-cell">{{lesson.venue}}</td>
                       </tr>
                     </tbody>
@@ -50,13 +50,13 @@
             </div>
           </md-card-content>
           <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-click="$location.path(&quot;/resource/&quot; + course.courseCode)">Resources</md-button>
-            <md-button ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode)">Discussion</md-button>
+            <md-button ng-click="$location.path(&quot;/resource/&quot; + course.courseCode.slice(0, 8))">Resources</md-button>
+            <md-button ng-click="$location.path(&quot;/discussion/&quot; + course.courseCode.slice(0, 8))">Discussion</md-button>
           </md-card-actions>
         </md-card>
         <md-card>
           <div class="md-toolbar-tools"><span>{{course.info.length}} Comment(s)</span><span flex="flex"></span>
-            <md-button ng-hide="posted" ng-click="addDialog($event)" class="md-icon-button">
+            <md-button ng-hide="posted" ng-click="addInfoDialog($event)" class="md-icon-button">
               <md-icon class="material-icons">add</md-icon>
             </md-button>
           </div>

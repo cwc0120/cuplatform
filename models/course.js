@@ -1,8 +1,6 @@
 'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Resource = require('./resource');
-var Item = require ('./item');
 var Thread = require('./thread');
 
 var Course = new Schema({
@@ -14,6 +12,7 @@ var Course = new Schema({
 		time: Number,
 		venue: String
 	}],
+	cred: Number,
 	prof: String,
 	info: [{
 		author: {type: String, ref: 'User'},
@@ -27,23 +26,6 @@ var Course = new Schema({
 });
 
 Course.pre('remove', function(next) {
-	Resource.find({courseCode: this.courseCode}, function(err, resources) {
-		if (err) {
-			return next(err);
-		} else {
-			for (var i=0; i<resources.length; i++) {
-				resources[i].remove();
-			}
-			console.log("Relative resources deleted.");
-		}
-	});
-	Item.remove({courseCode: this.courseCode}, function(err) {
-		if (err) {
-			return next(err);
-		} else {
-			console.log("Relative items deleted.");
-		}
-	});
 	Thread.remove({courseCode: this.courseCode}, function(err) {
 		if (err) {
 			return next(err);

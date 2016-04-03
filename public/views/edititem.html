@@ -1,0 +1,41 @@
+
+<md-dialog aria-label="Edit Item" ng-cloak="ng-cloak" flex="95" flex-gt-sm="60">
+  <form name="editItemForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Edit Item</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <md-input-container class="md-block">
+          <label>Item name</label>
+          <input type="text" name="name" ng-model="edit.name" required="required"/>
+          <div ng-messages="editItemForm.name.$error">
+            <div ng-message="required">Name missing.</div>
+          </div>
+        </md-input-container>
+        <div layout="row" layout-xs="column">
+          <md-input-container flex-gt-xs="30">
+            <label>Price</label>
+            <input type="number" name="price" ng-model="edit.price" required="required"/>
+            <div ng-messages="editItemForm.price.$error">
+              <div ng-message="required">Pricing missing.</div>
+            </div>
+          </md-input-container>
+          <md-input-container flex-gt-xs="70">
+            <label>Flexible price</label>
+            <input type="checkbox" name="priceFlexible" ng-model="edit.priceFlexible"/>
+          </md-input-container>
+        </div>
+        <text-angular ng-model="htmlVariable" placeholder="Click to type description"></text-angular>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="editItem()" ng-disabled="editItemForm.$invalid">Submit</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

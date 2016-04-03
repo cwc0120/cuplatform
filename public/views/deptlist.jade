@@ -1,10 +1,11 @@
 div(layout='column')
 	div.inset(layout='row' layout-align='center center')
-		div(flex='90' flex-gt-sm='80')
+		div(flex='95' flex-gt-sm='80')
 			div(ng-hide='success')
 				h3 {{errorMessage}}
 				md-button.md-primary(ng-click='back()') Return
 			div(ng-show='success')
+				h1(layout-padding) Course Catalog
 				md-card
 					form(ng-submit='$location.path("/course/" + searchCourse)')
 						div.md-toolbar-tools
@@ -17,7 +18,7 @@ div(layout='column')
 						div.md-toolbar-tools
 							span Department List
 							span(flex)
-							md-button.md-icon-button(ng-show='admin' ng-click='addDialog($event)' aria-label='Add')
+							md-button.md-icon-button(ng-show='admin' ng-click='addDeptDialog($event)' aria-label='Add')
 								md-icon.material-icons add
 							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
 								md-icon.material-icons search

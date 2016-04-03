@@ -1,12 +1,13 @@
 
 <div layout="column">
   <div layout="row" layout-align="center center" class="inset">
-    <div flex="90" flex-gt-sm="80">
+    <div flex="95" flex-gt-sm="80">
       <div ng-hide="success">
         <h3>{{errorMessage}}</h3>
         <md-button ng-click="back()" class="md-primary">Return</md-button>
       </div>
       <div ng-show="success">
+        <h1 layout-padding="layout-padding">Course Catalog</h1>
         <md-card>
           <form ng-submit="$location.path(&quot;/course/&quot; + searchCourse)">
             <div class="md-toolbar-tools">
@@ -20,7 +21,7 @@
         <md-card>
           <md-toolbar ng-hide="selected.length || search" class="md-table-toolbar md-default">
             <div class="md-toolbar-tools"><span>Department List</span><span flex="flex"></span>
-              <md-button ng-show="admin" ng-click="addDialog($event)" aria-label="Add" class="md-icon-button">
+              <md-button ng-show="admin" ng-click="addDeptDialog($event)" aria-label="Add" class="md-icon-button">
                 <md-icon class="material-icons">add</md-icon>
               </md-button>
               <md-button ng-click="search = !search" aria-label="Search" class="md-icon-button">

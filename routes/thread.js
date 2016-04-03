@@ -59,7 +59,9 @@ router.route('/:cid')
 router.route('/detail/:tid') 
 	.get(function(req, res, next) {
 		// get detail of a thread
-		find(req, res, next);
+		find(req, res, next, function(thread) {
+			res.status(200).json(thread);
+		});
 	})
 
 	.post(function(req, res, next) {
@@ -69,50 +71,40 @@ router.route('/detail/:tid')
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
-		Thread.findOne({_id: req.params.tid}, 
-			function(err, thread) {
+		find(req, res, next, function(thread) {
+			thread.update({
+				$push: {comment: comment},
+				$set: {dateOfUpdate: Date.now()}
+			}, function(err) {
 				if (err) {
 					return next(err);
-				} else if (thread === null) {
-					res.status(400).json({error: "Thread not found!"});
 				} else {
-					thread.update({
-						$push: {comment: comment},
-						$set: {dateOfUpdate: Date.now()}
-					}, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
+					find(req, res, next, function(thread) {
+						res.status(200).json(thread);
 					});
 				}
-			}
-		);	
+			});
+		});
 	})
 
 	.put(function(req, res, next) {
 		// edit a thread
-		Thread.findOne({_id:req.params.tid}, function(err, thread) {
-			if (err) {
-				return next(err);
-			} else if (thread === null) {
-				res.status(400).json({error: "Thread not found!"});
+		find(req, res, next, function(thread) {
+			if (thread.author === req.decoded.uid) {
+				thread.update({$set: {
+					content: req.body.content,
+					dateOfUpdate: Date.now()
+				}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(thread) {
+							res.status(200).json(thread);
+						});
+					}
+				});
 			} else {
-				if (thread.author === req.decoded.uid) {
-					thread.update({$set: {
-						content: req.body.content,
-						dateOfUpdate: Date.now()
-					}}, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
-					});
-				} else {
-					res.status(401).json({error: "You are not the author of the thread!"});
-				}
+				res.status(401).json({error: "You are not the author of the thread!"});
 			}
 		});
 	})
@@ -120,14 +112,10 @@ router.route('/detail/:tid')
 	.delete(function(req, res, next) {
 		// delete a thread
 		if (req.decoded.admin) {
-			Thread.findOne({_id: req.params.tid}, function(err, thread) {
-				if (err) {
-					return next(err);
-				} else {
-					req.params.cid = thread.courseCode;
-					thread.remove();
-					findList(req, res, next);
-				}
+			find(req, res, next, function(thread) {
+				req.params.cid = thread.courseCode;
+				thread.remove();
+				findList(req, res, next);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a thread!"});
@@ -138,20 +126,16 @@ router.route('/detail/:tid/:cmid')
 	.delete(function(req, res, next) {
 		// delete a comment
 		if (req.decoded.admin) {
-			Thread.findOne({_id: req.params.tid}, function(err, thread) {
-				if (err) {
-					return next(err);
-				} else if (thread === null) {
-					res.status(400).json({error: "Thread not found!"});
-				} else {
-					thread.update({$pull: {comment: {_id: req.params.cmid}}}, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							find(req, res, next);
-						}
-					});
-				}
+			find(req, res, next, function(thread) {
+				thread.update({$pull: {comment: {_id: req.params.cmid}}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(thread) {
+							res.status(200).json(thread);
+						});
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
@@ -160,7 +144,6 @@ router.route('/detail/:tid/:cmid')
 
 function findList(req, res, next) {
 	Thread.find({courseCode: req.params.cid.toUpperCase()})
-		.sort({dateOfUpdate: -1})
 		.select('topic content author dateOfUpdate annoymous')
 		.exec(function(err, threads) {
 			if (err) {
@@ -179,17 +162,17 @@ function findList(req, res, next) {
 		});
 }
 
-function find(req, res, next) {
+function find(req, res, next, callback) {
 	Thread.findOne({_id: req.params.tid}, function(err, thread) {
 		if (err) {
-			next(err);
+			return next(err);
 		} else if (thread === null) {
 			res.status(400).json({error: "Thread not found!"});
 		} else {
 			if (thread.annoymous) {
 				thread.author = 'Annoymous';
 			}
-			res.status(200).json(thread);
+			callback(thread);
 		}
 	});
 }

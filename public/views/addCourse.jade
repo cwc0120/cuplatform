@@ -1,4 +1,4 @@
-md-dialog(aria-label='Add Course' ng-cloak flex='60')
+md-dialog(aria-label='Add Course' ng-cloak flex='95' flex-gt-sm='60')
 	form(name='addCourseForm')
 		md-toolbar
 			div.md-toolbar-tools
@@ -10,13 +10,18 @@ md-dialog(aria-label='Add Course' ng-cloak flex='60')
 			div.md-dialog-content(layout='column')
 				h3 Basic information
 				div(layout='row' layout-xs='column')
-					md-input-container(flex-gt-xs='30')
+					md-input-container(flex-gt-xs='25')
 						label Code
-						input(type='text' name='courseCode' ng-model='newCourse.courseCode' required md-maxlength='10' ng-pattern="/^[A-Z]{4}[0-9]{4}/")
+						input(type='text' name='courseCode' ng-model='newCourse.courseCode' required md-maxlength='8' ng-pattern="/^[A-Z]{4}[0-9]{4}/")
 						div(ng-messages='addCourseForm.courseCode.$error')
 							div(ng-message='required') Code missing.
 							div(ng-message-exp="['maxlength', 'pattern']") Invalid code.
-					md-input-container(flex-gt-xs='70')
+					md-input-container(flex-gt-xs='15')
+						label Section
+						input(type='text' name='courseSection' ng-model='newCourse.courseSection' md-maxlength='2' ng-pattern="/^[A-Z]/")
+						div(ng-messages='addCourseForm.courseSection.$error')
+							div(ng-message-exp="['maxlength', 'pattern']") Invalid section.
+					md-input-container(flex-gt-xs='60')
 						label Instructor
 						input(type='text' name='prof' ng-model='newCourse.prof')
 				div
