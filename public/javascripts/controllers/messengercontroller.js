@@ -8,7 +8,7 @@ ctrl.controller('messengerController', function($scope, Socket, Auth) {
 		$scope.clients = clients;
 	});
 
-	Socket.on('messageList', function(messages) {
+	Socket.on('chatRecord', function(messages) {
 		$scope.messages = messages;
 	});
 
@@ -17,8 +17,8 @@ ctrl.controller('messengerController', function($scope, Socket, Auth) {
 	};
 
 	$scope.newMessage = function() {
-		Socket.emit('message', $scope.message);
-		$scope.message = '';
+		Socket.emit('newMessage', $scope.message);
+		$scope.message = {};
 	};
 
 	// socket.on('send:message', function(message) {
