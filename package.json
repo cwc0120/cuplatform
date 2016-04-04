@@ -13,6 +13,7 @@
     "angular-material-data-table": "^0.9.15",
     "angular-messages": "^1.5.2",
     "angular-route": "^1.5.2",
+    "angular-socket-io": "^0.7.0",
     "async": "^2.0.0-rc.2",
     "body-parser": "1.15.0",
     "cookie-parser": "1.4.1",
