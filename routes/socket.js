@@ -18,6 +18,10 @@ var chatroom = (function() {
 		return list;
 	};
 
+	var getID = function(uid) {
+		return onlineList[uid];
+	};
+
 	var getMessages = function(user1, user2) {
 		Chat.findOne({$or: 
 			[{
@@ -43,7 +47,7 @@ var chatroom = (function() {
 				user2: recipient
 			}, {
 				user1: recipient,
-				user2: send
+				user2: sender
 			}]
 		}, function(err, chat) {
 			if (err) {
@@ -59,23 +63,30 @@ var chatroom = (function() {
 					}]
 				}, function(err) {
 					if (!err) {
-						callback()
+						callback();
 					}
-				})
-			}
-
-				if (uid === chat.user1) {
+				});
+			} else {
+				if (sender === chat.user1) {
 					chat.update({$push: {
 						sender: 1,
-						content: msg.content,
+						content: content,
 						date: Date.now()
-					}});
+					}}, function(err) {
+						if (!err) {
+							callback();
+						}
+					});
 				} else {
 					chat.update({$push: {
 						sender: 2,
-						content: msg.content,
+						content: content,
 						date: Date.now()
-					}});
+						}}, function(err) {
+						if (!err) {
+							callback();
+						}
+					});
 				}
 			}
 		});
@@ -98,6 +109,7 @@ var chatroom = (function() {
 
 	return {
 		getList: getList,
+		getID: getID,
 		getMessages: getMessages,
 		newMessage: newMessage,
 		newClient: newClient,
@@ -134,8 +146,9 @@ module.exports = function (io) {
 		});
 
 		socket.on('newMessage', function(msg) {
-			chatroom.newMessage(user.uid, msg.recipient, msg.content);
-			io.to().emit('message', msg.content);
+			chatroom.newMessage(user.uid, msg.recipient, msg.content, function() {
+				io.to(chatroom.getID(msg.recipient)).emit('message', msg.content);
+			});
 		});
 
 		socket.on('disconnect', function() {
