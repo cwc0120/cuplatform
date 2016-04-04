@@ -8,7 +8,7 @@ var chatroom = (function() {
 	var getList = function() {
 		var list = [];
 		for (var key in onlineList) {
-			if (!onlineList.hasOwnProperty(key)) {
+			if (onlineList.hasOwnProperty(key)) {
 				list.push({
 					uid: key,
 					id: onlineList[key]
@@ -22,7 +22,7 @@ var chatroom = (function() {
 		return onlineList[uid];
 	};
 
-	var getMessages = function(user1, user2) {
+	var getMessages = function(user1, user2, callback) {
 		Chat.findOne({$or: 
 			[{
 				user1: user1, 
@@ -33,9 +33,11 @@ var chatroom = (function() {
 			}]
 		}, function(err, chat) {
 			if (err) {
-				return {error: 'Error occurred.'};
+				callback({error: 'Error occurred.'});
+			} else if (!chat) {
+				callback({error: 'Empty record. Want to chat?'});
 			} else {
-				return chat;
+				callback(chat);
 			}
 		});
 	};
@@ -51,13 +53,13 @@ var chatroom = (function() {
 			}]
 		}, function(err, chat) {
 			if (err) {
-				return {error: 'Error occurred.'};
+				callback({error: 'Error occurred.'});
 			} else if (!chat) {
 				Chat.create({
 					user1: sender,
 					user2: recipient,
 					messages:[{
-						sender: 1,
+						sender: sender,
 						content: content,
 						date: Date.now()
 					}]
@@ -67,27 +69,15 @@ var chatroom = (function() {
 					}
 				});
 			} else {
-				if (sender === chat.user1) {
-					chat.update({$push: {
-						sender: 1,
-						content: content,
-						date: Date.now()
-					}}, function(err) {
-						if (!err) {
-							callback();
-						}
-					});
-				} else {
-					chat.update({$push: {
-						sender: 2,
-						content: content,
-						date: Date.now()
-						}}, function(err) {
-						if (!err) {
-							callback();
-						}
-					});
-				}
+				chat.update({$push: {messages: {
+					sender: sender,
+					content: content,
+					date: Date.now()
+				}}}, function(err) {
+					if (!err) {
+						callback();
+					}
+				});
 			}
 		});
 	};
@@ -107,6 +97,10 @@ var chatroom = (function() {
 		return false;
 	};
 
+	var replaceClient = function(uid, socket) {
+		onlineList[uid] = socket.id;
+	};
+
 	return {
 		getList: getList,
 		getID: getID,
@@ -114,7 +108,8 @@ var chatroom = (function() {
 		newMessage: newMessage,
 		newClient: newClient,
 		freeClient: freeClient,
-		existClient: existClient
+		existClient: existClient,
+		replaceClient: replaceClient
 	};
 }());
 
@@ -128,26 +123,36 @@ module.exports = function (io) {
 					console.log('Not a User!');
 				} else {
 					if (chatroom.existClient(res) !== false) {
-						chatroom.freeClient(res);
-						chatroom.newClient(res, socket);
-						user.uid = res;
+						chatroom.replaceClient(res, socket);
 					} else {
 						chatroom.newClient(res, socket);
-						user.uid = res;
 					}
+					user.uid = res;
 					io.emit('clientList', chatroom.getList());
-					io.emit('messageList', chatroom.getMessages());
 				}
 			});
 		});
 
-		socket.on('getChatRecord', function(target) {
-			socket.emit('chatRecord', chatroom.getMessages(user.uid, target));
+		socket.on('getChatRecord', function(data) {
+			chatroom.getMessages(user.uid, data.uid, function(res) {
+				socket.emit('chatRecord', res);
+			});
 		});
 
 		socket.on('newMessage', function(msg) {
 			chatroom.newMessage(user.uid, msg.recipient, msg.content, function() {
-				io.to(chatroom.getID(msg.recipient)).emit('message', msg.content);
+				if (chatroom.existClient(msg.recipient)){
+					io.to(chatroom.getID(msg.recipient)).emit('msgArrived', {
+						sender: user.uid,
+						content: msg.content,
+						date: Date.now()
+					});
+					socket.emit('msgArrived', {
+						sender: user.uid,
+						content: msg.content,
+						date: Date.now()
+					});
+				}
 			});
 		});
 

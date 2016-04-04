@@ -10,24 +10,24 @@
         <div flex="30" show-gt-sm="show-gt-sm">
           <md-card>
             <md-card-title><span class="md-headline">User List</span></md-card-title>
-            <md-card-content>
-              <md-list flex="flex">
-                <md-list-item ng-repeat="client in clients" class="md-2-line">
-                  <div class="md-list-item-text">
-                    <h3>{{client.uid}}</h3>
-                  </div>
-                </md-list-item>
-              </md-list>
-            </md-card-content>
+            <md-list flex="flex">
+              <md-list-item ng-repeat="client in clients" ng-class="{selected: client.uid === selected}" ng-click="getChatRecord(client.uid)" ng-disabled="client.uid === uid" class="md-2-line">
+                <div class="md-list-item-text">
+                  <h3>{{client.uid}}</h3>
+                </div>
+              </md-list-item>
+            </md-list>
           </md-card>
         </div>
         <div flex="70">
           <md-card>
-            <md-card-title><span class="md-headline">Testing</span></md-card-title>
+            <md-card-title>
+              <md-card-title-text><span class="md-headline">Messages</span><span ng-show="selected" class="md-subhead">To {{selected}}: {{chat.error}}</span></md-card-title-text>
+            </md-card-title>
             <md-list flex="flex">
-              <md-list-item ng-repeat="message in messages | limitTo: 10: messages.length-10&gt;0?messages.length-10:0" class="md-2-line">
+              <md-list-item ng-repeat="message in chat.messages | limitTo: 10: chat.messages.length-10&gt;0?chat.messages.length-10:0" class="md-2-line">
                 <div class="md-list-item-text">
-                  <h3>{{message.uid}}</h3>
+                  <h3>{{message.sender}}</h3>
                   <p>{{message.content}}</p>
                 </div>
               </md-list-item>
@@ -39,7 +39,7 @@
                     <md-input-container flex="flex" md-no-float="md-no-float">
                       <input flex="flex" type="text" ng-model="message" placeholder="New Message" autocomplete="off"/>
                     </md-input-container>
-                    <md-button type="submit" ng-click="newMessage()" aria-label="Comment" class="md-icon-button">
+                    <md-button type="submit" ng-click="newMessage()" ng-disabled="!selected" aria-label="Comment" class="md-icon-button">
                       <md-icon class="material-icons">comment</md-icon>
                     </md-button>
                   </div>

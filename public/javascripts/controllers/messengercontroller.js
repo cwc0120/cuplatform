@@ -1,24 +1,43 @@
 'use strict';
-ctrl.controller('messengerController', function($scope, Socket, Auth) {
+ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
+	$scope.uid = $window.localStorage['uid'];
+
 	Socket.emit('auth', {
 		token: Auth.getToken()
 	});
 
 	Socket.on('clientList', function(clients) {
+		for (var i = 0; i < clients.length; i++) {
+			if (clients[i].uid === $scope.uid) {
+				clients.splice(i, 1);
+			}
+		}
 		$scope.clients = clients;
 	});
 
-	Socket.on('chatRecord', function(messages) {
-		$scope.messages = messages;
+	Socket.on('chatRecord', function(chat) {
+		$scope.chat = chat;
+	});
+
+	Socket.on('msgArrived', function(msg) {
+		$scope.chat.messages.push(msg);
 	});
 
 	$scope.back = function() {
 		window.history.back();
 	};
 
+	$scope.getChatRecord = function(uid) {
+		$scope.selected = uid;
+		Socket.emit('getChatRecord', {uid: uid});
+	};
+
 	$scope.newMessage = function() {
-		Socket.emit('newMessage', $scope.message);
-		$scope.message = {};
+		Socket.emit('newMessage', {
+			recipient: $scope.selected,
+			content: $scope.message
+		});
+		$scope.message = '';
 	};
 
 	// socket.on('send:message', function(message) {

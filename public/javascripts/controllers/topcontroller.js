@@ -16,7 +16,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 	{
 		link: '/discussion/GENERAL',
 		title: 'Discussion',
-		icon: 'chat'
+		icon: 'forum'
 	},
 	{
 		link: '/item',
@@ -26,7 +26,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 	{
 		link: '/messenger',
 		title: 'Messages',
-		icon: 'message'
+		icon: 'chat'
 	}];
 
 	$scope.$watch(function() {

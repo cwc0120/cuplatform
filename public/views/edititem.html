@@ -18,7 +18,7 @@
             <div ng-message="required">Name missing.</div>
           </div>
         </md-input-container>
-        <div layout="row" layout-xs="column">
+        <div layout="row" layout-xs="column" layout-align="start center">
           <md-input-container flex-gt-xs="30">
             <label>Price</label>
             <input type="number" name="price" ng-model="edit.price" required="required"/>
@@ -26,10 +26,9 @@
               <div ng-message="required">Pricing missing.</div>
             </div>
           </md-input-container>
-          <md-input-container flex-gt-xs="70">
-            <label>Flexible price</label>
-            <input type="checkbox" name="priceFlexible" ng-model="edit.priceFlexible"/>
-          </md-input-container>
+          <div flex-gt-xs="70">
+            <md-checkbox ng-model="edit.priceFlexible">Flexible price</md-checkbox>
+          </div>
         </div>
         <text-angular ng-model="htmlVariable" placeholder="Click to type description"></text-angular>
       </div>

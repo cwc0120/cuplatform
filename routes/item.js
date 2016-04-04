@@ -75,6 +75,8 @@ router.route('/')
 					price: req.body.price,
 					priceFlexible: req.body.priceFlexible,
 					sold: false,
+					active: true,
+					buyer: [],
 					date: Date.now()
 				}, function(err) {
 					if (err) {

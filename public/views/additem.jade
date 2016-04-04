@@ -20,15 +20,14 @@ md-dialog(aria-label='Sell Item' ng-cloak flex='95' flex-gt-sm='60')
 					md-input-container(flex-gt-xs='70')
 						label Course code (optional)
 						input(type='text' name='courseCode' ng-model='courseCode')
-				div(layout='row', layout-xs='column')
+				div(layout='row', layout-xs='column' layout-align='start center')
 					md-input-container(flex-gt-xs='30')
 						label Price
 						input(type='number' name='price' ng-model='price' required)
 						div(ng-messages='addItemForm.price.$error')
 							div(ng-message='required') Pricing missing.
-					md-input-container(flex-gt-xs='70')
-						label Flexible price
-						input(type='checkbox' name='priceFlexible' ng-model='priceFlexible')
+					div(flex-gt-xs='70')
+						md-checkbox(ng-model='priceFlexible') Flexible price
 				md-input-container.md-block.md-input-has-placeholder
 					label Image
 					input(type='file' name='img' file-model='img' required)
