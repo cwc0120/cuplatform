@@ -146,7 +146,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 					ngModel.$validate();
 				});
 			}
-		}
+		};
 	})
 
 	.filter('htmlToPlaintext', function() {

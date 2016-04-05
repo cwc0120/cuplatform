@@ -17,10 +17,13 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 
 	Socket.on('chatRecord', function(chat) {
 		$scope.chat = chat;
+		$scope.chat.messages.reverse();
 	});
 
-	Socket.on('msgArrived', function(msg) {
-		$scope.chat.messages.push(msg);
+	Socket.on('newMessage', function(msg) {
+		if (msg.sender === $scope.uid || msg.sender === $scope.selected) {
+			$scope.chat.messages.splice(0, 0, msg);
+		}
 	});
 
 	$scope.back = function() {
@@ -33,7 +36,7 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 	};
 
 	$scope.newMessage = function() {
-		Socket.emit('newMessage', {
+		Socket.emit('sendNewMessage', {
 			recipient: $scope.selected,
 			content: $scope.message
 		});

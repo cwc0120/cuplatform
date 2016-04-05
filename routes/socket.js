@@ -139,15 +139,15 @@ module.exports = function (io) {
 			});
 		});
 
-		socket.on('newMessage', function(msg) {
+		socket.on('sendNewMessage', function(msg) {
 			chatroom.newMessage(user.uid, msg.recipient, msg.content, function() {
-				if (chatroom.existClient(msg.recipient)){
-					io.to(chatroom.getID(msg.recipient)).emit('msgArrived', {
+				if (chatroom.existClient(msg.recipient)) {
+					io.to(chatroom.getID(msg.recipient)).emit('newMessage', {
 						sender: user.uid,
 						content: msg.content,
 						date: Date.now()
 					});
-					socket.emit('msgArrived', {
+					socket.emit('newMessage', {
 						sender: user.uid,
 						content: msg.content,
 						date: Date.now()
