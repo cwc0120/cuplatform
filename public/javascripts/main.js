@@ -69,6 +69,12 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				requiredLogin: true
 			})
 
+			.when('/user/history', {
+				templateUrl: '/views/tradingrecord.html',
+				controller: 'tradingRecordController',
+				requiredLogin: true
+			})
+
 			.otherwise({
 				redirectTo: '/'
 			});

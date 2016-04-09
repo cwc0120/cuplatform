@@ -2,6 +2,8 @@
 ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 	$scope.uid = $window.localStorage['uid'];
 
+	$scope.success = true;
+
 	Socket.emit('auth', {
 		token: Auth.getToken()
 	});

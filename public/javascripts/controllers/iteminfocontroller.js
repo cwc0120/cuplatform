@@ -14,8 +14,8 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 	Item.getOne(itemID).success(function(res) {
 		$scope.success = true;
 		$scope.item = res;
-		for (var i = 0; i < $scope.item.buyers.length; i++) {
-			if ($scope.item.buyers[i] === $scope.uid) {
+		for (var i = 0; i < $scope.item.buyer.length; i++) {
+			if ($scope.item.buyer[i] === $scope.uid) {
 				$scope.bought = true;
 			}
 		}
@@ -62,10 +62,19 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		});
 	};
 
-	$scope.sell = function() {
-		Item.transact(itemID).success(function(res) {
+	$scope.sell = function(buyer) {
+		Item.transact(itemID, buyer).success(function(res) {
 			$scope.sold = true;
 			$scope.item = res;
+		}).error(function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+	};
+
+	$scope.delete = function() {
+		Item.delete(itemID).success(function(res) {
+			$location.path("/item");
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;

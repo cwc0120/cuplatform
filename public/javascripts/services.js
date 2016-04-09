@@ -255,7 +255,18 @@ angular.module('CUPServices', [])
 				return $http.get('/api/item/buyrequest/' + itemid);
 			},
 			transact: function(itemid, uid) {
-				return $http.get('api/item/transactrequest/' + itemid + '/' + uid);
+				return $http.get('/api/item/transactrequest/' + itemid + '/' + uid);
+			}
+		};
+	})
+
+	.factory('User', function($http) {
+		return {
+			getSellList: function() {
+				return $http.get('/api/user/selllist');
+			},
+			getBuyList: function() {
+				return $http.get('/api/user/buylist');
 			}
 		};
 	})
