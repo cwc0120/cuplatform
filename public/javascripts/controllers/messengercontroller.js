@@ -1,7 +1,6 @@
 'use strict';
-ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
+ctrl.controller('messengerController', function($scope, $window, Socket, Auth, User) {
 	$scope.uid = $window.localStorage['uid'];
-
 	$scope.success = true;
 
 	Socket.emit('auth', {
@@ -15,6 +14,14 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 			}
 		}
 		$scope.clients = clients;
+		$scope.offline = true;
+		if ($scope.selected !== '') {
+			for (var j = 0; j < $scope.clients.length; j++) {
+				if ($scope.selected === $scope.clients[j].uid) {
+					$scope.offline = false;
+				}
+			}
+		}
 	});
 
 	Socket.on('pastName', function(list) {
@@ -23,7 +30,19 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 
 	Socket.on('chatRecord', function(chat) {
 		$scope.chat = chat;
-		$scope.chat.messages.reverse();
+		if (!$scope.chat.messages) {
+			$scope.chat.messages = [];
+		}
+		if (!$scope.reversed){
+			$scope.chat.messages.reverse();
+		}
+		$scope.reversed = true;
+		$scope.offline = true;
+		for (var i = 0; i < $scope.clients.length; i++) {
+			if ($scope.selected === $scope.clients[i].uid) {
+				$scope.offline = false;
+			}
+		}
 	});
 
 	Socket.on('newMessage', function(msg) {
@@ -37,6 +56,7 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 	};
 
 	$scope.getChatRecord = function(uid) {
+		$scope.reversed = false;
 		$scope.selected = uid;
 		Socket.emit('getChatRecord', {uid: uid});
 	};
@@ -47,5 +67,17 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 			content: $scope.message
 		});
 		$scope.message = '';
+		$scope.chat.error = '';
+	};
+
+	$scope.searchUser = function() {
+		User.find($scope.newUser).success(function(res) {
+			$scope.searchError = '';
+			$scope.newUser = '';
+			$scope.selected = res.uid;
+			Socket.emit('getChatRecord', {uid: res.uid});
+		}).error(function(res) {
+			$scope.searchError = res.error;
+		});
 	};
 });

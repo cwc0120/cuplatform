@@ -20,19 +20,33 @@ div(layout='column')
 
 					div(flex='70')
 						md-card
-							md-card-title(ng-hide='selected')
+							md-card-title
 								md-card-title-text
-									span.md-headline Messages
-									span.md-subhead(ng-show='selected') {{chat.error}}
-							md-toolbar.md-table-toolbar.md-default(ng-show='chat.messages')
+									span.md-headline Messenger
+
+							md-toolbar.md-table-toolbar.md-default(ng-hide='selected')
 								form
-									div.md-toolbar-tools(flex layout='row' layout-align='end center')
+									div.md-toolbar-tools(flex layout='row' layout-align='start center')
+										md-input-container(flex md-no-float)
+											input(flex type='text' ng-model='newUser' placeholder='Find user' autocomplete='off')
+										md-button.md-icon-button(type='submit' ng-click='searchUser()' aria-label='Search user')
+											md-icon.material-icons search
+							md-subheader.md-no-sticky(ng-show='searchError') {{searchError}}
+
+							md-toolbar.md-table-toolbar.md-default(ng-show='selected')
+								form
+									div.md-toolbar-tools(flex layout='row' layout-align='start center')
 										md-input-container(flex md-no-float)
 											input(flex type='text' ng-model='message' placeholder='To {{selected}}' autocomplete='off')
-										md-button.md-icon-button(type='submit' ng-click='newMessage()' ng-disabled='!selected' aria-label='Comment')
+										md-button.md-icon-button(type='submit' ng-click='newMessage()' aria-label='New message')
 											md-icon.material-icons comment
-							md-divider
-							md-list
+										md-button.md-icon-button(ng-click='selected=""' aria-label='Back')
+											md-icon.material-icons clear
+							
+							md-list(ng-show='selected')
+								md-divider
+								md-subheader.md-no-sticky(ng-show='offline') {{selected}} is currently offline.
+								md-subheader.md-no-sticky(ng-show='chat.error') {{chat.error}}
 								md-virtual-repeat-container#container(flex ng-show='chat.messages')
 									md-list-item.md-2-line.repeated-item(md-virtual-repeat='message in chat.messages')
 										div.md-list-item-text
@@ -40,7 +54,7 @@ div(layout='column')
 												h3 {{message.sender}}
 												span(flex)
 												p {{message.date | date: 'd/M/yyyy h:mma'}}
-											p {{message.content}}
+											span {{message.content}}
 					
 							
 						

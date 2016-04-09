@@ -181,12 +181,12 @@ module.exports = function (io) {
 						content: msg.content,
 						date: Date.now()
 					});
-					socket.emit('newMessage', {
-						sender: user.uid,
-						content: msg.content,
-						date: Date.now()
-					});
 				}
+				socket.emit('newMessage', {
+					sender: user.uid,
+					content: msg.content,
+					date: Date.now()
+				});
 			});
 		});
 

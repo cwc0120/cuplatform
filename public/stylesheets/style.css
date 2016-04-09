@@ -25,6 +25,11 @@ section {
 	padding: 10px;
 }
 
+.md-subheader {
+	color: #616161; 
+	background-color: #f5f5f5;
+}
+
 h1.rating {
 	text-align: center;
 }

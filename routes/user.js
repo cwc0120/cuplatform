@@ -11,7 +11,7 @@ router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
 });
 
-// // upload user icon
+// upload user icon
 // var storage = multer.diskStorage({
 // 	destination: function (req, file, cb) {
 // 		cb(null, './public/images/user/');
@@ -36,20 +36,22 @@ router.use(function(req, res, next) {
 // 	limits: {fileSize: 1048576}
 // });
 
-// router.route('/:id')
-// 	// see the status of user 
-// 	.get(function(req, res, next) {
+router.route('/:uid')
+	// see the status of user 
+	.get(function(req, res, next) {
+		find(req, res, next, function(user) {
+			res.status(200).json(user);
+		});
+	})
 
-// 	})
+	// edit user information (except timetable)
+	.put(function(req, res, next) {
+		if (req.params.id === req.decoded.uid) {
 
-// 	// edit user information (except timetable)
-// 	.put(function(req, res, next) {
-// 		if (req.params.id === req.decoded.uid) {
-
-// 		} else {
-// 			res.status(401).json({error: "You are not authorized to edit user information!"});
-// 		}
-// 	});
+		} else {
+			res.status(401).json({error: "You are not authorized to edit user information!"});
+		}
+	});
 
 // router.route('/icon')
 // 	// get an icon of user (optional)
@@ -109,5 +111,19 @@ router.get('/buylist', function(req, res, next) {
 // 			res.status(401).json({error: "You are not authorized to edit user information!"});
 // 		}
 // 	});
+ 	
+function find(req, res, next, callback) {
+	User.findOne({uid: req.params.uid})
+		.select('uid iconLink gender major points')
+		.exec(function(err, user) {
+			if (err) {
+				return next(err);
+			} else if (!user) {
+				res.status(400).json({error: "User not found!"});
+			} else {
+				callback(user);		
+			}
+		});
+}
 
 module.exports = router;

@@ -30,31 +30,48 @@
           </div>
           <div flex="70">
             <md-card>
-              <md-card-title ng-hide="selected">
-                <md-card-title-text><span class="md-headline">Messages</span><span ng-show="selected" class="md-subhead">{{chat.error}}</span></md-card-title-text>
+              <md-card-title>
+                <md-card-title-text><span class="md-headline">Messenger</span></md-card-title-text>
               </md-card-title>
-              <md-toolbar ng-show="chat.messages" class="md-table-toolbar md-default">
+              <md-toolbar ng-hide="selected" class="md-table-toolbar md-default">
                 <form>
-                  <div flex="flex" layout="row" layout-align="end center" class="md-toolbar-tools">
+                  <div flex="flex" layout="row" layout-align="start center" class="md-toolbar-tools">
                     <md-input-container flex="flex" md-no-float="md-no-float">
-                      <input flex="flex" type="text" ng-model="message" placeholder="To {{selected}}" autocomplete="off"/>
+                      <input flex="flex" type="text" ng-model="newUser" placeholder="Find user" autocomplete="off"/>
                     </md-input-container>
-                    <md-button type="submit" ng-click="newMessage()" ng-disabled="!selected" aria-label="Comment" class="md-icon-button">
-                      <md-icon class="material-icons">comment</md-icon>
+                    <md-button type="submit" ng-click="searchUser()" aria-label="Search user" class="md-icon-button">
+                      <md-icon class="material-icons">search</md-icon>
                     </md-button>
                   </div>
                 </form>
               </md-toolbar>
-              <md-divider></md-divider>
-              <md-list>
+              <md-subheader ng-show="searchError" class="md-no-sticky">{{searchError}}</md-subheader>
+              <md-toolbar ng-show="selected" class="md-table-toolbar md-default">
+                <form>
+                  <div flex="flex" layout="row" layout-align="start center" class="md-toolbar-tools">
+                    <md-input-container flex="flex" md-no-float="md-no-float">
+                      <input flex="flex" type="text" ng-model="message" placeholder="To {{selected}}" autocomplete="off"/>
+                    </md-input-container>
+                    <md-button type="submit" ng-click="newMessage()" aria-label="New message" class="md-icon-button">
+                      <md-icon class="material-icons">comment</md-icon>
+                    </md-button>
+                    <md-button ng-click="selected=&quot;&quot;" aria-label="Back" class="md-icon-button">
+                      <md-icon class="material-icons">clear</md-icon>
+                    </md-button>
+                  </div>
+                </form>
+              </md-toolbar>
+              <md-list ng-show="selected">
+                <md-divider></md-divider>
+                <md-subheader ng-show="offline" class="md-no-sticky">{{selected}} is currently offline.</md-subheader>
+                <md-subheader ng-show="chat.error" class="md-no-sticky">{{chat.error}}</md-subheader>
                 <md-virtual-repeat-container id="container" flex="flex" ng-show="chat.messages">
                   <md-list-item md-virtual-repeat="message in chat.messages" class="md-2-line repeated-item">
                     <div class="md-list-item-text">
                       <div layout="row">
                         <h3>{{message.sender}}</h3><span flex="flex"></span>
                         <p>{{message.date | date: 'd/M/yyyy h:mma'}}</p>
-                      </div>
-                      <p>{{message.content}}</p>
+                      </div><span>{{message.content}}</span>
                     </div>
                   </md-list-item>
                 </md-virtual-repeat-container>

@@ -13,7 +13,6 @@ var User = new Schema({
 	intro: String,
 	points: Number,
 	coursesTaken: [{type: String, ref: 'Course'}],
-	//buyList: [{type: Schema.Types.ObjectId, ref: 'Item'}],
 	admin: Boolean
 });
 

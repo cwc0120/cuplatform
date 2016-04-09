@@ -64,6 +64,14 @@
             </div>
             <div class="inset">{{item.title}}</div>
           </md-list-item>
+          <md-divider></md-divider>
+          <md-subheader>User</md-subheader>
+          <md-list-item md-ink-ripple layout="row" ng-click="$location.path(item.link);toggleMenu()" ng-repeat="item in userMenu">
+            <div class="inset">
+              <md-icon class="material-icons">{{item.icon}}</md-icon>
+            </div>
+            <div class="inset">{{item.title}}</div>
+          </md-list-item>
         </md-list>
       </div>
     </md-sidenav>

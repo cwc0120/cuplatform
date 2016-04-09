@@ -29,6 +29,22 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		icon: 'chat'
 	}];
 
+	$scope.userMenu = [{
+		link: '/user/profile',
+		title: 'Profile',
+		icon: 'account_circle'
+	},
+	{
+		link: '/user/timetable',
+		title: 'Timetable',
+		icon: 'date_range'
+	},
+	{
+		link: '/user/history',
+		title: 'Trading History',
+		icon: 'history'
+	}]
+
 	$scope.$watch(function() {
 		return Auth.isLogged;
 	}, function(newVal, oldVal) {

@@ -265,6 +265,9 @@ angular.module('CUPServices', [])
 
 	.factory('User', function($http) {
 		return {
+			find: function(uid) {
+				return $http.get('/api/user/' + uid);
+			},
 			getSellList: function() {
 				return $http.get('/api/user/selllist');
 			},

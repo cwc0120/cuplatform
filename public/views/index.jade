@@ -68,6 +68,12 @@ html(ng-app='CUP')
 						div.inset
 							md-icon.material-icons {{item.icon}}
 						div.inset {{item.title}}
+					md-divider
+					md-subheader User
+					md-list-item(md-ink-ripple layout='row' ng-click='$location.path(item.link);toggleMenu()' ng-repeat='item in userMenu')
+						div.inset
+							md-icon.material-icons {{item.icon}}
+						div.inset {{item.title}}
 
 		div(layout='column' layout-fill)
 			md-toolbar(md-whiteframe='4')
