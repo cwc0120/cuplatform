@@ -37,7 +37,7 @@ div(layout='column')
 									tbody(md-body)
 										tr(md-row ng-repeat='item in buylist | filter: searchBuyRecord | orderBy: orderBuy | limitTo: limit: (page - 1) * limit')
 											td(md-cell)
-												a(ng-href='#/item/{{item._id}}') {{item.item.name}}
+												a(ng-href='#/item/{{item.item._id}}') {{item.item.name}}
 											td(md-cell hide show-gt-sm) {{item.item.category}}
 											td(md-cell) {{item.item.price | currency}}
 											td(md-cell hide show-gt-md) {{item.item.seller}}
@@ -75,6 +75,6 @@ div(layout='column')
 												a(ng-href='#/item/{{item._id}}') {{item.name}}
 											td(md-cell hide show-gt-sm) {{item.category}}
 											td(md-cell) {{item.price | currency}}
-											td(md-cell) {{item.active?(item.sold?"Sold":"Unsold (" + item.buyer.length + ")"):"Unavailable"}}
+											td(md-cell) {{item.sold?(item.active?"":"Sold"):(item.active?"Unsold (" + item.buyer.length + ")":"Unavailable")}}
 											td(md-cell hide show-gt-md) {{item.date | date:'d/M/yyyy h:mma'}}
 							md-table-pagination(md-limit='limit' md-page='page' md-total='{{selllist.length}}')

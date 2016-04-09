@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('itemInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Item) {
+ctrl.controller('itemInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Item, Socket, Auth) {
 	$scope.$location = $location;
 	$scope.bought = false;
 	$scope.uid = $window.localStorage['uid'];
@@ -52,8 +52,52 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		};
 	}
 
+	$scope.newMessageDialog = function(event, person) {
+		$mdDialog.show({
+			controller: newMessageController,
+			templateUrl: '/views/newmessage.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true,
+		}).then(function(result) {
+			Socket.emit('auth', {token: Auth.getToken()});
+			Socket.emit('sendNewMessage', {
+				recipient: person,
+				content: result
+			});
+		});
+	};
+
+	function newMessageController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.send = function() {
+			$mdDialog.hide($scope.message);
+		};
+	}
+
+	$scope.sellDialog = function(event, person) {
+		var confirm = $mdDialog.confirm()
+			.title('You will sell this item to ' + person + ".")
+			.textContent('This action cannot be reverted.')
+			.ariaLabel('Confirm')
+			.targetEvent(event)
+			.ok('Sell')
+			.cancel('Cancel');
+		$mdDialog.show(confirm).then(function() {
+			Item.transact(itemID, person).success(function(res) {
+				$scope.item = res;
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		});
+	};
+
 	$scope.interest = function() {
-		Item.buy(itemID).success(function(res) {
+		Item.interest(itemID).success(function(res) {
 			$scope.bought = true;
 			$scope.item = res;
 		}).error(function(res) {
@@ -62,9 +106,9 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		});
 	};
 
-	$scope.sell = function(buyer) {
-		Item.transact(itemID, buyer).success(function(res) {
-			$scope.sold = true;
+	$scope.uninterest = function() {
+		Item.uninterest(itemID).success(function(res) {
+			$scope.bought = false;
 			$scope.item = res;
 		}).error(function(res) {
 			$scope.success = false;

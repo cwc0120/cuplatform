@@ -17,6 +17,10 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 		$scope.clients = clients;
 	});
 
+	Socket.on('pastName', function(list) {
+		$scope.pastList = list;
+	});
+
 	Socket.on('chatRecord', function(chat) {
 		$scope.chat = chat;
 		$scope.chat.messages.reverse();
@@ -44,44 +48,4 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 		});
 		$scope.message = '';
 	};
-
-	// socket.on('send:message', function(message) {
-	// 	$scope.messages.push(message);
-	// });
-
-	// socket.on('user:join', function(data) {
-	// 	$scope.messages.push({
-	// 		user: 'chatroom',
-	// 		text: 'User ' + data.name + ' has joined.'
-	// 	});
-	// 	$scope.users.push(data.name);
-	// });
-
-	// socket.on('user:left', function(data) {
-	// 	$scope.messages.push({
-	// 		user: 'chatroom',
-	// 		test: 'User ' + data.name + ' has left.'
-	// 	});
-	// 	var i, user;
-	// 	for (i = 0; i < $scope.users.length ; i++) {
-	// 		user = $scope.user[i];
-	// 		if (user === data.name) {
-	// 			$scope.users.splice(1, i);
-	// 			break;
-	// 		}
-	// 	}
-	// });
-
-	// $scope.sendMessage = function() {
-	// 	socket.emit('send:message', {
-	// 		message: $scope.message
-	// 	});
-
-	// 	$scope.messages.push({
-	// 		user: $scope.name,
-	// 		text: $scope.message
-	// 	});
-
-	// 	$scope.message = '';
-	// };
 });

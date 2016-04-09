@@ -28,4 +28,8 @@ ctrl.controller('tradingRecordController', function($scope, $window, $location, 
 		$scope.success = false;
 		$scope.errorMessage = res.error;
 	});
+
+	$scope.back = function() {
+		window.history.back();
+	};
 });

@@ -76,7 +76,6 @@ router.get('/selllist', function(req, res, next) {
 		if (err){
 			return next(err);
 		} else {
-			console.log(items);
 			res.status(200).json(items);
 		}
 	});

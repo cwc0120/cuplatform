@@ -251,12 +251,15 @@ angular.module('CUPServices', [])
 			delete: function(itemid) {
 				return $http.delete('/api/item/' + itemid);
 			},
-			buy: function(itemid) {
-				return $http.get('/api/item/buyrequest/' + itemid);
+			interest: function(itemid) {
+				return $http.post('/api/item/request/' + itemid);
 			},
 			transact: function(itemid, uid) {
-				return $http.get('/api/item/transactrequest/' + itemid + '/' + uid);
-			}
+				return $http.put('/api/item/request/' + itemid, {uid: uid});
+			},
+			uninterest: function(itemid) {
+				return $http.delete('/api/item/request/' + itemid);
+			}		
 		};
 	})
 
