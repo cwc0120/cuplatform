@@ -49,7 +49,6 @@ ctrl.controller('itemListController', function($scope, $window, $location, $mdDi
 
 		$scope.addItem = function() {
 			var fd = new FormData();
-			console.log($scope.code);
 			$scope.description = $scope.htmlVariable;
 			fd.append('name', $scope.name);
 			fd.append('code', $scope.code);

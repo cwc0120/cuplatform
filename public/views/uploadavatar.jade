@@ -1,0 +1,17 @@
+md-dialog(aria-label='Upload Avatar' ng-cloak flex='95' flex-gt-sm='60')
+	form(name='uploadForm' enctype="multipart/form-data")
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Upload Avatar
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				md-input-container.md-block.md-input-has-placeholder
+					label Avatar
+					input(type='file' name='img' file-model='img' required)
+					div(ng-messages='uploadForm.img.$error')
+						div(ng-message='required') Avatar missing.
+		md-dialog-actions
+			md-button(type='submit' ng-click='upload()' ng-disabled='uploadForm.$invalid') Upload

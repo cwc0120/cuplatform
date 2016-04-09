@@ -33,7 +33,7 @@
             </md-card-title-media>
           </div>
           <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-show="uid !== item.seller &amp;&amp; !item.sold &amp;&amp; item.active &amp;&amp; bought" ng-click="newMessageDialog($event, item.seller)" aria-label="Contact seller">Contact seller</md-button>
+            <md-button ng-show="uid !== item.seller &amp;&amp; !item.sold &amp;&amp; item.active &amp;&amp; bought" ng-click="newMessageDialog($event, item.seller)">Contact seller</md-button>
             <md-button ng-show="uid !== item.seller &amp;&amp; !item.sold &amp;&amp; item.active &amp;&amp; !bought" ng-click="interest()">Interest</md-button>
             <md-button ng-show="uid !== item.seller &amp;&amp; !item.sold &amp;&amp; item.active &amp;&amp; bought" ng-click="uninterest()">Uninterest</md-button>
           </md-card-actions>

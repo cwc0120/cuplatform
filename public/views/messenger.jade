@@ -47,8 +47,8 @@ div(layout='column')
 								md-divider
 								md-subheader.md-no-sticky(ng-show='offline') {{selected}} is currently offline.
 								md-subheader.md-no-sticky(ng-show='chat.error') {{chat.error}}
-								md-virtual-repeat-container#container(flex ng-show='chat.messages')
-									md-list-item.md-2-line.repeated-item(md-virtual-repeat='message in chat.messages')
+								md-virtual-repeat-container#container(flex ng-show='chat.messages' md-auto-shrink)
+									md-list-item.md-2-line.repeated-item(md-virtual-repeat='message in chat.messages' md-item-size='73')
 										div.md-list-item-text
 											div(layout='row')
 												h3 {{message.sender}}

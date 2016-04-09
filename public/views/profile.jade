@@ -1,0 +1,32 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success' layout='column')
+				md-card
+					md-card-title
+						span.md-headline User Profile
+					div(layout-gt-xs='row' layout='column')
+						div(flex='60')
+							md-card-title
+								md-card-title-text
+									span.md-headline {{user.uid}}
+									span.md-subhead(ng-show='user.admin') ADMIN
+							md-card-content
+								p Gender: {{user.gender}}
+								p Birthday: {{user.birthday | date: 'd/M/yyyy'}}
+								p Major: {{user.major}}
+								p E-mail: {{user.email}}
+								p 
+								span Introduction:
+								section(layout-wrap)
+									span(ng-bind-html='user.intro')
+						md-card-title-media(flex='40' layout-padding)
+							div.md-media-xl.card-media
+								img.md-card-image(ng-src='/images/user/{{user.icon}}')
+					md-card-actions(layout='row' layout-align='end center')
+						md-button(ng-show='uid === user.uid' ng-click='') Change password
+						md-button(ng-show='uid === user.uid' ng-click='editProfileDialog($event)') Edit profile
+						md-button(ng-show='uid === user.uid' ng-click='uploadIconDialog($event)') Upload avatar

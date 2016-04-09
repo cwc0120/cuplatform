@@ -30,7 +30,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 	}];
 
 	$scope.userMenu = [{
-		link: '/user/profile',
+		link: '/user/profile/' + Auth.uid,
 		title: 'Profile',
 		icon: 'account_circle'
 	},

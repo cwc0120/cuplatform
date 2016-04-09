@@ -30,13 +30,13 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth, U
 
 	Socket.on('chatRecord', function(chat) {
 		$scope.chat = chat;
-		if (!$scope.chat.messages) {
+		if ($scope.chat.messages === undefined) {
 			$scope.chat.messages = [];
 		}
 		if (!$scope.reversed){
 			$scope.chat.messages.reverse();
+			$scope.reversed = true;
 		}
-		$scope.reversed = true;
 		$scope.offline = true;
 		for (var i = 0; i < $scope.clients.length; i++) {
 			if ($scope.selected === $scope.clients[i].uid) {
@@ -56,6 +56,7 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth, U
 	};
 
 	$scope.getChatRecord = function(uid) {
+		$scope.searchError = '';
 		$scope.reversed = false;
 		$scope.selected = uid;
 		Socket.emit('getChatRecord', {uid: uid});

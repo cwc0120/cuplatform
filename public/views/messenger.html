@@ -65,8 +65,8 @@
                 <md-divider></md-divider>
                 <md-subheader ng-show="offline" class="md-no-sticky">{{selected}} is currently offline.</md-subheader>
                 <md-subheader ng-show="chat.error" class="md-no-sticky">{{chat.error}}</md-subheader>
-                <md-virtual-repeat-container id="container" flex="flex" ng-show="chat.messages">
-                  <md-list-item md-virtual-repeat="message in chat.messages" class="md-2-line repeated-item">
+                <md-virtual-repeat-container id="container" flex="flex" ng-show="chat.messages" md-auto-shrink="md-auto-shrink">
+                  <md-list-item md-virtual-repeat="message in chat.messages" md-item-size="73" class="md-2-line repeated-item">
                     <div class="md-list-item-text">
                       <div layout="row">
                         <h3>{{message.sender}}</h3><span flex="flex"></span>

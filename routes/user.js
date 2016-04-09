@@ -12,31 +12,31 @@ router.use(function(req, res, next) {
 });
 
 // upload user icon
-// var storage = multer.diskStorage({
-// 	destination: function (req, file, cb) {
-// 		cb(null, './public/images/user/');
-// 	},
-// 	filename: function (req, file, cb) {
-// 		// use user name as file name
-// 		var originalName = file.originalname;
-// 		var ext = originalName.split('.');
-// 		cb(null, req.decoded.uid + '.' + ext[ext.length-1]);
-// 	}
-// });
+var storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, './public/images/user/');
+	},
+	filename: function (req, file, cb) {
+		// use user name as file name
+		var originalName = file.originalname;
+		var ext = originalName.split('.');
+		cb(null, req.decoded.uid + '.' + ext[ext.length-1]);
+	}
+});
 
-// var upload = multer({
-// 	storage: storage,
-// 	fileFilter: function(req, file, cb) {
-// 		if (file.mimetype.slice(0,5) == 'image') {
-// 			cb(null, true);
-// 		} else {
-// 			cb(new Error('Not an image file!'));
-// 		}	
-// 	},
-// 	limits: {fileSize: 1048576}
-// });
+var upload = multer({
+	storage: storage,
+	fileFilter: function(req, file, cb) {
+		if (file.mimetype.slice(0,5) == 'image') {
+			cb(null, true);
+		} else {
+			cb(new Error('Not an image file!'));
+		}	
+	},
+	limits: {fileSize: 1048576}
+});
 
-router.route('/:uid')
+router.route('/profile/:uid')
 	// see the status of user 
 	.get(function(req, res, next) {
 		find(req, res, next, function(user) {
@@ -46,23 +46,48 @@ router.route('/:uid')
 
 	// edit user information (except timetable)
 	.put(function(req, res, next) {
-		if (req.params.id === req.decoded.uid) {
-
+		if (req.params.uid === req.decoded.uid) {
+			find(req, res, next, function(user) {
+				user.update({$set: {
+					gender: req.body.gender,
+					major: req.body.major,
+					intro: req.body.intro
+				}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(result) {
+							res.status(200).json(result);
+						});
+					}
+				});
+			});
 		} else {
 			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
-// router.route('/icon')
-// 	// get an icon of user (optional)
-// 	.get(function(req, res, next) {
-
-// 	})
-
-// 	// upload icon
-// 	.post(function(req, res, next) {
-
-// 	});
+router.route('/icon/:uid')
+	// upload icon
+	.post(upload.single('img'), function(req, res, next) {
+		if (!req.file) {
+			res.status(400).json({error: 'No image uploaded.'});
+		} else if (req.params.uid === req.decoded.uid) {
+			find(req, res, next, function(user) {
+				user.update({$set: {
+					icon: req.file.filename
+				}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(result) {
+							res.status(200).json(result);
+						});
+					}
+				});
+			});
+		}
+	});
 
 // router.router('/cred')
 // 	// change password
@@ -75,7 +100,7 @@ router.get('/selllist', function(req, res, next) {
 	Item.find({
 		seller: req.decoded.uid
 	}).sort({date: -1}).exec(function(err, items) {
-		if (err){
+		if (err) {
 			return next(err);
 		} else {
 			res.status(200).json(items);
@@ -114,7 +139,7 @@ router.get('/buylist', function(req, res, next) {
  	
 function find(req, res, next, callback) {
 	User.findOne({uid: req.params.uid})
-		.select('uid iconLink gender major points')
+		.select('uid admin email icon gender birthday major intro points')
 		.exec(function(err, user) {
 			if (err) {
 				return next(err);

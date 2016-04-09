@@ -1,0 +1,39 @@
+
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="95" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success" layout="column">
+        <md-card>
+          <md-card-title><span class="md-headline">User Profile</span></md-card-title>
+          <div layout-gt-xs="row" layout="column">
+            <div flex="60">
+              <md-card-title>
+                <md-card-title-text><span class="md-headline">{{user.uid}}</span><span ng-show="user.admin" class="md-subhead">ADMIN</span></md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                <p>Gender: {{user.gender}}</p>
+                <p>Birthday: {{user.birthday | date: 'd/M/yyyy'}}</p>
+                <p>Major: {{user.major}}</p>
+                <p>E-mail: {{user.email}}</p>
+                <p> </p><span>Introduction:</span>
+                <section layout-wrap="layout-wrap"><span ng-bind-html="user.intro"></span></section>
+              </md-card-content>
+            </div>
+            <md-card-title-media flex="40" layout-padding="layout-padding">
+              <div class="md-media-xl card-media"><img ng-src="/images/user/{{user.icon}}" class="md-card-image"/></div>
+            </md-card-title-media>
+          </div>
+          <md-card-actions layout="row" layout-align="end center">
+            <md-button ng-show="uid === user.uid" ng-click="">Change password</md-button>
+            <md-button ng-show="uid === user.uid" ng-click="editProfileDialog($event)">Edit profile</md-button>
+            <md-button ng-show="uid === user.uid" ng-click="uploadIconDialog($event)">Upload avatar</md-button>
+          </md-card-actions>
+        </md-card>
+      </div>
+    </div>
+  </div>
+</div>

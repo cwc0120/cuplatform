@@ -31,7 +31,7 @@ md-dialog(aria-label='Sell Item' ng-cloak flex='95' flex-gt-sm='60')
 					label Image
 					input(type='file' name='img' file-model='img' required)
 					div(ng-messages='addItemForm.img.$error')
-						div(ng-message='required') Iamge missing.
+						div(ng-message='required') Image missing.
 				text-angular(ng-model='htmlVariable' placeholder='Click to type description')
 		md-dialog-actions
 			md-button(type='submit' ng-click='addItem()' ng-disabled='addItemForm.$invalid') Upload

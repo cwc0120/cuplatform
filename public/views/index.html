@@ -44,13 +44,13 @@
     <script type="text/javascript" src="/javascripts/controllers/threadcontroller.js"></script>
     <script type="text/javascript" src="/javascripts/controllers/messengercontroller.js"></script>
     <script type="text/javascript" src="/javascripts/controllers/tradingrecordcontroller.js"></script>
+    <script type="text/javascript" src="/javascripts/controllers/profilecontroller.js"></script>
     <!-- content-->
     <md-sidenav md-component-id="menu" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4" class="md-sidenav-left">
       <md-toolbar md-whiteframe="4" layout-padding class="md-tall md-accent md-hue-2"><span flex></span>
         <div ng-hide="isLogged" class="md-toolbar-tools md-toolbar-tools-bottom"><span>Visitor</span></div>
         <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset">
-          <div>{{uid}}</div>
-          <div>hihi</div>
+          <div><span class="md-headline">{{uid}}</span><br><span class="md-subhead">hihi</span></div>
         </div>
       </md-toolbar>
       <div ng-hide="isLogged" layout-padding>

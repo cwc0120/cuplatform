@@ -1,0 +1,13 @@
+md-dialog(aria-label='Edit Thread' ng-cloak flex='95' flex-gt-sm='60')
+	form(name='editThreadForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Edit Thread
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				text-angular(ng-model='htmlVariable' placeholder='Click to type content')
+		md-dialog-actions
+			md-button(type='submit' ng-click='editThread()' ng-disabled='editThreadForm.$invalid') Submit

@@ -1,11 +1,6 @@
 'use strict';
-ctrl.controller('threadController', function($scope, $window, $location, $routeParams, $route, Thread) {
+ctrl.controller('threadController', function($scope, $window, $location, $routeParams, $mdDialog, Thread) {
 	$scope.$location = $location;
-	$scope.$route = $route;
-	$scope.editing = false;
-	$scope.adding = false;
-	$scope.editContent = '';
-	$scope.newComment = '';
 	$scope.uid = $window.localStorage['uid'];
 	if ($window.localStorage['admin'] === 'true') {
 		$scope.admin = true;
@@ -23,38 +18,44 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 		$scope.errorMessage = res.error;
 	});
 
-	$scope.enableEdit = function() {
-		if (!$scope.editing) {
-			$scope.editing = true;
-		}
-	};
-
-	$scope.editThread = function() {
-		$scope.editContent = $scope.htmlVariable;
-		if ($scope.editContent !== '') {
-			Thread.edit(threadID, {content: $scope.editContent}).success(function(res) {
-				$scope.editing = false;
-				$scope.editContent = '';
-				$scope.htmlVariable = '';
+	$scope.editThreadDialog = function(event) {
+		$mdDialog.show({
+			controller: editThreadController,
+			templateUrl: '/views/editthread.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true,
+			locals: {
+				thread: $scope.thread
+			}
+		})
+		.then(function(edit) {
+			Thread.edit($scope.thread._id, edit).success(function(res) {
 				$scope.thread = res;
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
 			});
-		}
-		
+		});
 	};
 
-	$scope.enableAdd = function() {
-		if (!$scope.adding) {
-			$scope.adding = true;
-		}
-	};
+	function editThreadController($scope, $mdDialog, thread) {
+		$scope.edit = thread;
+		$scope.htmlVariable = $scope.edit.content;
+
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.editThread = function() {
+			$scope.edit.content = $scope.htmlVariable;
+			$mdDialog.hide($scope.edit);
+		};
+	}
 
 	$scope.addComment = function() {
 		if ($scope.newComment !== '') {
 			Thread.postComment(threadID, {content: $scope.newComment}).success(function(res) {
-				$scope.adding = false;
 				$scope.newComment = '';
 				$scope.thread = res;
 			}).error(function(res) {

@@ -266,7 +266,16 @@ angular.module('CUPServices', [])
 	.factory('User', function($http) {
 		return {
 			find: function(uid) {
-				return $http.get('/api/user/' + uid);
+				return $http.get('/api/user/profile/' + uid);
+			},
+			editProfile: function(uid, data) {
+				return $http.put('/api/user/profile/' + uid, data);
+			},
+			uploadIcon: function(uid, data) {
+				return $http.post('/api/user/icon/' + uid, data, {
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				});
 			},
 			getSellList: function() {
 				return $http.get('/api/user/selllist');

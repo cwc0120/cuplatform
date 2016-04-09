@@ -50,6 +50,7 @@ html(ng-app='CUP')
 		script(type='text/javascript' src='/javascripts/controllers/threadcontroller.js')
 		script(type='text/javascript' src='/javascripts/controllers/messengercontroller.js')
 		script(type='text/javascript' src='/javascripts/controllers/tradingrecordcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/profilecontroller.js')
 
 		// content
 		md-sidenav.md-sidenav-left(md-component-id='menu' md-is-locked-open="$mdMedia('gt-md')" md-whiteframe='4')
@@ -58,8 +59,10 @@ html(ng-app='CUP')
 				div(ng-hide='isLogged' class='md-toolbar-tools md-toolbar-tools-bottom')
 					span Visitor
 				div(ng-show='isLogged' class='md-toolbar-tools-bottom inset' layout='column')
-					div {{uid}}
-					div hihi
+					div
+						span.md-headline {{uid}}
+						br
+						span.md-subhead hihi
 			div(ng-hide='isLogged' layout-padding)
 				p Please Log in
 			div(ng-show='isLogged')

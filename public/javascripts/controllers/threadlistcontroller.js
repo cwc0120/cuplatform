@@ -1,9 +1,6 @@
 'use strict';
-ctrl.controller('threadListController', function($scope, $window, $location, $routeParams, $route, Thread) {
+ctrl.controller('threadListController', function($scope, $window, $location, $routeParams, $mdDialog, Thread) {
 	$scope.$location = $location;
-	$scope.$route = $route;
-	$scope.adding = false;
-	$scope.newThread = {};
 	if ($window.localStorage['admin'] === 'true') {
 		$scope.admin = true;
 	} else {
@@ -15,6 +12,11 @@ ctrl.controller('threadListController', function($scope, $window, $location, $ro
 	} else {
 		$scope.code = $routeParams.id;
 	}
+
+	$scope.order = 'topic';
+	$scope.limit = 10;
+	$scope.page = 1;
+	$scope.selected = [];
 	
 	Thread.get($scope.code).success(function(res) {
 		$scope.success = true;
@@ -24,34 +26,57 @@ ctrl.controller('threadListController', function($scope, $window, $location, $ro
 		$scope.errorMessage = res.error;
 	});
 
-	$scope.enableAdd = function() {
-		if (!$scope.adding) {
-			$scope.adding = true;
-		}
-	};
-
-	$scope.addThread = function() {
-		$scope.newThread.content = $scope.htmlVariable;
-		if ($scope.newThread.topic !== undefined && $scope.newThread.topic !== '' && 
-			$scope.newThread.content !== undefined && $scope.newThread.content !== '') {
-			Thread.create($scope.code, $scope.newThread).success(function(res) {
-				$scope.adding = false;
-				$scope.newThread = {};
-				$scope.htmlVariable = '';
+	$scope.addThreadDialog = function(event) {
+		$mdDialog.show({
+			controller: addThreadController,
+			templateUrl: '/views/addthread.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		})
+		.then(function(newThread) {
+			Thread.create($scope.code, newThread).success(function(res) {
 				$scope.threads = res;
-			}).error(function(res){
+			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
 			});
-		}	
-	};
-
-	$scope.delete = function(id) {
-		Thread.delete(id).success(function(res) {
-			$scope.threads = res;
-		}).error(function(res) {
-			$scope.success = false;
-			$scope.errorMessage = res.error;
 		});
 	};
+
+	function addThreadController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.addThread = function() {
+			$scope.newThread.content = $scope.htmlVariable;
+			$mdDialog.hide($scope.newThread);
+		};
+	}
+
+	$scope.delete = function() {
+		async.each($scope.selected, deleteThread, function(err) {
+			if (err) {
+				$scope.success = false;
+				$scope.errorMessage = err;
+			} else {
+				$scope.selected = [];
+				Thread.get($scope.code).success(function(res){
+					$scope.threads = res;
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});	
+			}
+		});
+	};
+
+	function deleteThread(e, cb) {
+		Thread.delete(e._id).success(function(res) {
+			cb();
+		}).error(function(res) {
+			cb(res.error);
+		});
+	}
 });

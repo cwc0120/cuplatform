@@ -69,6 +69,12 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				requiredLogin: true
 			})
 
+			.when('/user/profile/:uid', {
+				templateUrl: '/views/profile.html',
+				controller: 'profileController',
+				requiredLogin: true
+			})
+
 			.when('/user/history', {
 				templateUrl: '/views/tradingrecord.html',
 				controller: 'tradingRecordController',

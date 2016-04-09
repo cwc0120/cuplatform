@@ -31,6 +31,9 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 			parent: angular.element(document.body),
 			targetEvent: event,
 			clickOutsideToClose: true,
+			locals: {
+				item: $scope.item
+			}
 		}).then(function(edit) {
 			Item.edit(itemID, edit).success(function(res) {
 				$scope.item = res;
@@ -41,7 +44,10 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		});
 	};
 
-	function editItemController($scope, $mdDialog) {
+	function editItemController($scope, $mdDialog, item) {
+		$scope.edit = item;
+		$scope.htmlVariable = $scope.edit.description;
+
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
