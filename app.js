@@ -33,6 +33,7 @@ var course = require('./routes/course');
 var item = require('./routes/item');
 var resource = require('./routes/resource');
 var thread = require('./routes/thread');
+var user = require('./routes/user');
 
 app.use('/api/auth', auth);
 app.use('/api/register', register);
@@ -41,6 +42,7 @@ app.use('/api/course', course);
 app.use('/api/item', item);
 app.use('/api/resource', resource);
 app.use('/api/thread', thread);
+app.use('/api/user', user);
 
 app.get('*', function(req, res) {
   res.sendFile('/public/views/index.html', {root : __dirname});

@@ -1,0 +1,106 @@
+
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="95" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success">
+        <h1 layout-padding="layout-padding">Trading Record</h1>
+        <md-card>
+          <md-tabs md-dynamic-height="md-dynamic-height" md-border-bottom="md-border-bottom">
+            <md-tab label="Interest">
+              <md-toolbar ng-hide="searchBuy" class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools"><span>Interest List</span><span flex="flex"></span>
+                  <md-button ng-click="searchBuy = !searchBuy" aria-label="Search Buy" class="md-icon-button">
+                    <md-icon class="material-icons">search</md-icon>
+                  </md-button>
+                </div>
+              </md-toolbar>
+              <md-toolbar ng-show="searchBuy" class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+                  <md-input-container flex="flex" md-no-float="md-no-float">
+                    <md-icon class="material-icons">search</md-icon>
+                    <input type="text" ng-model="searchBuyRecord" placeholder="Search record"/>
+                  </md-input-container>
+                  <md-button ng-click="searchBuy = !searchBuy" aria-label="Back" class="md-icon-button">
+                    <md-icon class="material-icons">clear</md-icon>
+                  </md-button>
+                </div>
+              </md-toolbar>
+              <md-table-container>
+                <table md-table="md-table">
+                  <thead md-head="md-head" md-order="orderBuy">
+                    <tr md-row="md-row">
+                      <th md-column="md-column" md-order-by="name">Item name</th>
+                      <th md-column="md-column" md-order-by="category" hide="hide" show-gt-sm="show-gt-sm">Category</th>
+                      <th md-column="md-column" md-order-by="price">Price</th>
+                      <th md-column="md-column" md-order-by="seller" hide="hide" show-gt-md="show-gt-md">Seller</th>
+                      <th md-column="md-column" md-order-by="status">Status</th>
+                      <th md-column="md-column" md-order-by="date" hide="hide" show-gt-md="show-gt-md">Date of update</th>
+                    </tr>
+                  </thead>
+                  <tbody md-body="md-body">
+                    <tr md-row="md-row" ng-repeat="item in buylist | filter: searchBuyRecord | orderBy: orderBuy | limitTo: limit: (page - 1) * limit">
+                      <td md-cell="md-cell"><a ng-href="#/item/{{item._id}}">{{item.item.name}}</a></td>
+                      <td md-cell="md-cell" hide="hide" show-gt-sm="show-gt-sm">{{item.item.category}}</td>
+                      <td md-cell="md-cell">{{item.item.price | currency}}</td>
+                      <td md-cell="md-cell" hide="hide" show-gt-md="show-gt-md">{{item.item.seller}}</td>
+                      <td md-cell="md-cell">{{item.status}}</td>
+                      <td md-cell="md-cell" hide="hide" show-gt-md="show-gt-md">{{item.dateOfUpdate | date:'d/M/yyyy h:mma'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </md-table-container>
+              <md-table-pagination md-limit="limit" md-page="page" md-total="{{buylist.length}}"></md-table-pagination>
+            </md-tab>
+            <md-tab label="Sell">
+              <md-toolbar ng-hide="searchSell" class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools"><span>Sell List</span><span flex="flex"></span>
+                  <md-button ng-click="searchSell = !searchSell" aria-label="Search Sell" class="md-icon-button">
+                    <md-icon class="material-icons">search</md-icon>
+                  </md-button>
+                </div>
+              </md-toolbar>
+              <md-toolbar ng-show="searchSell" class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+                  <md-input-container flex="flex" md-no-float="md-no-float">
+                    <md-icon class="material-icons">search</md-icon>
+                    <input type="text" ng-model="searchSellRecord" placeholder="Search record"/>
+                  </md-input-container>
+                  <md-button ng-click="searchSell = !searchSell" aria-label="Back" class="md-icon-button">
+                    <md-icon class="material-icons">clear</md-icon>
+                  </md-button>
+                </div>
+              </md-toolbar>
+              <md-table-container>
+                <table md-table="md-table">
+                  <thead md-head="md-head" md-order="orderSell">
+                    <tr md-row="md-row">
+                      <th md-column="md-column" md-order-by="name">Item name</th>
+                      <th md-column="md-column" md-order-by="category" hide="hide" show-gt-sm="show-gt-sm">Category</th>
+                      <th md-column="md-column" md-order-by="price">Price</th>
+                      <th md-column="md-column" md-order-by="status">Status</th>
+                      <th md-column="md-column" md-order-by="date" hide="hide" show-gt-md="show-gt-md">Date of update</th>
+                    </tr>
+                  </thead>
+                  <tbody md-body="md-body">
+                    <tr md-row="md-row" ng-repeat="item in selllist | filter: searchSellRecord | orderBy: orderSell | limitTo: limit: (page - 1) * limit">
+                      <td md-cell="md-cell"><a ng-href="#/item/{{item._id}}">{{item.name}}</a></td>
+                      <td md-cell="md-cell" hide="hide" show-gt-sm="show-gt-sm">{{item.category}}</td>
+                      <td md-cell="md-cell">{{item.price | currency}}</td>
+                      <td md-cell="md-cell">{{item.active?(item.sold?"Sold":"Unsold (" + item.buyer.length + ")"):"Unavailable"}}</td>
+                      <td md-cell="md-cell" hide="hide" show-gt-md="show-gt-md">{{item.date | date:'d/M/yyyy h:mma'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </md-table-container>
+              <md-table-pagination md-limit="limit" md-page="page" md-total="{{selllist.length}}"></md-table-pagination>
+            </md-tab>
+          </md-tabs>
+        </md-card>
+      </div>
+    </div>
+  </div>
+</div>

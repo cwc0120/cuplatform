@@ -5,8 +5,15 @@ div(layout='column')
 				h3 {{errorMessage}}
 				md-button.md-primary(ng-click='back()') Return
 			div(ng-show='success')
-				h1(layout-padding) Trading Platform
-				
+				div(layout='row' layout-align='start center')
+					h1(layout-padding) Trading Platform
+					span(flex)
+					md-button.md-raised(ng-click='addItemDialog($event)') 
+						md-icon.material-icons add
+						span New item
+					md-button.md-raised(ng-click='$location.path("/user/history")') 
+						md-icon.material-icons shopping_cart 
+						span Record
 				h2(layout-padding) New items
 				md-card.gridListdemoDynamicTiles(layout-padding)
 					md-grid-list(md-cols-xs='2' md-cols-sm='3' md-cols-md='6' md-cols-gt-md='6' md-row-height='1:1' md-gutter='8px' md-gutter-gt-sm='4px')
@@ -31,8 +38,6 @@ div(layout='column')
 						div.md-toolbar-tools
 							span Item List
 							span(flex)
-							md-button.md-icon-button(ng-click='addItemDialog($event)' aria-label='Add')
-								md-icon.material-icons add
 							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
 								md-icon.material-icons search
 
@@ -55,18 +60,16 @@ div(layout='column')
 						table(md-table md-row-select='admin' ng-model='selected')
 							thead(md-head md-order='order')
 								tr(md-row)
-									th(md-column md-order-by='deptCode' hide show-gt-xs) Department
-									th(md-column md-order-by='courseCode' hide show-gt-sm) Course
 									th(md-column md-order-by='name') Item name
+									th(md-column md-order-by='category' hide show-gt-sm) Category
 									th(md-column md-order-by='price') Price
 									th(md-column md-order-by='seller' hide show-gt-md) Seller
 									th(md-column md-order-by='date' hide show-gt-md) Date
 							tbody(md-body)
 								tr(md-row ng-repeat='item in items | filter: searchItem | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='item')
-									td(md-cell hide show-gt-xs) {{item.deptCode}}
-									td(md-cell hide show-gt-sm) {{item.courseCode}}
 									td(md-cell)
 										a(ng-href='#/item/{{item._id}}') {{item.name}}
+									td(md-cell hide show-gt-sm) {{item.category}}
 									td(md-cell) {{item.price | currency}}
 									td(md-cell hide show-gt-md) {{item.seller}}
 									td(md-cell hide show-gt-md) {{item.date | date:'d/M/yyyy h:mma'}}

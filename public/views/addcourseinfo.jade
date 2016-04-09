@@ -11,7 +11,7 @@ md-dialog(aria-label='Add Course Information' ng-cloak flex='95' flex-gt-sm='60'
 				p Rating
 				md-slider-container(layout='row' layout-align='start center')
 					span(layout-padding) Worst
-					md-slider(flex min='1' max='5' ng-model='newInfo.rating' aria-label='rating')
+					md-slider(flex name='rating' min='1' max='5' ng-model='newInfo.rating' aria-label='rating' required)
 					span(layout-padding) Best
 				md-input-container.md-block
 					label Outline

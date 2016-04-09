@@ -53,3 +53,15 @@ figure img {
 	width: 100%;
 	text-align: center;
 }
+
+.selected {
+	background-color: #e0e0e0;
+}
+
+#container {
+	height: 511px;
+}
+
+.repeated-item {
+	border-bottom: 1px solid #ddd;
+}
