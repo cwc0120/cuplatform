@@ -277,6 +277,9 @@ angular.module('CUPServices', [])
 					headers: {'Content-Type': undefined}
 				});
 			},
+			changePwd: function(uid, data) {
+				return $http.put('/api/user/pwd/' + uid, data);
+			},
 			getSellList: function() {
 				return $http.get('/api/user/selllist');
 			},

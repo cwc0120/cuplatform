@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('profileController', function($scope, $window, $location, $routeParams, $mdDialog, User) {
+ctrl.controller('profileController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, User) {
 	$scope.$location = $location;
 	$scope.uid = $window.localStorage['uid'];
 
@@ -77,6 +77,33 @@ ctrl.controller('profileController', function($scope, $window, $location, $route
 			var fd = new FormData();
 			fd.append('img', $scope.img);
 			$mdDialog.hide(fd);
+		};
+	}
+
+	$scope.changePwdDialog = function(event) {
+		$mdDialog.show({
+			controller: changePwdController,
+			templateUrl: '/views/changepwd.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		}).then(function(pwd) {
+			User.changePwd(uid, pwd).success(function(res) {
+				$mdToast.show($mdToast.simple().textContent('Password is changed.'));
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		});
+	};
+
+	function changePwdController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.change = function() {
+			$mdDialog.hide($scope.pwd);
 		};
 	}
 });

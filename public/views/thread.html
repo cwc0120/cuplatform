@@ -9,6 +9,7 @@
       <div ng-show="success">
         <md-card>
           <md-card-header>
+            <md-card-avatar><img ng-src="/images/user/{{thread.author}}.jpg" class="md-user-avatar"/></md-card-avatar>
             <md-card-header-text><span class="md-title">{{thread.author}}</span><span class="md-subhead">{{thread.dateOfThread | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
             <md-button ng-show="uid === thread.author" ng-click="editThreadDialog($event)" aria-label="Edit thread" class="md-icon-button">
               <md-icon class="material-icons">mode_edit</md-icon>
@@ -36,7 +37,7 @@
             <md-subheader class="md-no-sticky">{{thread.comment.length}} comment(s)</md-subheader>
             <md-divider></md-divider>
             <md-virtual-repeat-container id="container" flex="flex" md-auto-shrink="md-auto-shrink">
-              <md-list-item md-virtual-repeat="cm in thread.comment" md-item-size="73" class="md-2-line repeated-item">
+              <md-list-item md-virtual-repeat="cm in thread.comment" md-item-size="73" class="md-2-line repeated-item"><img ng-src="/images/user/{{cm.author}}.jpg" alt="{{cm.author}}" class="md-avatar"/>
                 <div class="md-list-item-text">
                   <div layout="row">
                     <h3>{{cm.author}}</h3><span flex="flex"></span>

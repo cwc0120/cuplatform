@@ -27,6 +27,6 @@ div(layout='column')
 							div.md-media-xl.card-media
 								img.md-card-image(ng-src='/images/user/{{user.icon}}')
 					md-card-actions(layout='row' layout-align='end center')
-						md-button(ng-show='uid === user.uid' ng-click='') Change password
+						md-button(ng-show='uid === user.uid' ng-click='changePwdDialog($event)') Change password
 						md-button(ng-show='uid === user.uid' ng-click='editProfileDialog($event)') Edit profile
 						md-button(ng-show='uid === user.uid' ng-click='uploadIconDialog($event)') Upload avatar

@@ -28,7 +28,7 @@
             </md-card-title-media>
           </div>
           <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-show="uid === user.uid" ng-click="">Change password</md-button>
+            <md-button ng-show="uid === user.uid" ng-click="changePwdDialog($event)">Change password</md-button>
             <md-button ng-show="uid === user.uid" ng-click="editProfileDialog($event)">Edit profile</md-button>
             <md-button ng-show="uid === user.uid" ng-click="uploadIconDialog($event)">Upload avatar</md-button>
           </md-card-actions>

@@ -1,0 +1,42 @@
+
+<md-dialog aria-label="Change Password" ng-cloak="ng-cloak" flex="95" flex-gt-sm="40">
+  <form name="changePwdForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Change Password</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <md-input-container class="md-block">
+          <label>Original Password</label>
+          <input type="password" name="oldPwd" ng-model="pwd.oldPwd" required="required"/>
+          <div ng-messages="changePwdForm.oldPwd.$error">
+            <div ng-message="required">Original Password missing.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>New Password</label>
+          <input type="password" name="newPwd1" ng-model="pwd.newPwd1" required="required" minlength="7"/>
+          <div ng-messages="changePwdForm.newPwd1.$error">
+            <div ng-message="required">New Password missing.</div>
+            <div ng-message="minlength">Your password must be at least 7 characters long.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>New Password confirmation</label>
+          <input type="password" name="newPwd2" ng-model="pwd.newPwd2" compare-to="pwd.newPwd1"/>
+          <div ng-messages="changePwdForm.newPwd2.$error">
+            <div ng-message="compareTo">Password not matched</div>
+          </div>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="change()" ng-disabled="changePwdForm.$invalid">Confirm</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

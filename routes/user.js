@@ -1,6 +1,7 @@
 "use strict";
 var express = require('express');
 var multer = require('multer');
+var crypto = require('crypto');
 var router = express.Router();
 var User = require('../models/user');
 var Item = require('../models/item');
@@ -27,7 +28,7 @@ var storage = multer.diskStorage({
 var upload = multer({
 	storage: storage,
 	fileFilter: function(req, file, cb) {
-		if (file.mimetype.slice(0,5) == 'image') {
+		if (file.mimetype === 'image/jpeg') {
 			cb(null, true);
 		} else {
 			cb(new Error('Not an image file!'));
@@ -63,7 +64,7 @@ router.route('/profile/:uid')
 				});
 			});
 		} else {
-			res.status(401).json({error: "You are not authorized to edit user information!"});
+			res.status(400).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
@@ -86,14 +87,47 @@ router.route('/icon/:uid')
 					}
 				});
 			});
+		} else {
+			res.status(400).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
-// router.router('/cred')
-// 	// change password
-// 	.put(function(req, res, next) {
-
-// 	});
+router.route('/pwd/:uid')
+	// change password
+	.put(function(req, res, next) {
+		if (req.params.uid === req.decoded.uid) {
+			User.findOne({uid: req.params.uid}, function(err, user) {
+				if (err) {
+					return next(err);
+				} else if (user === null) {
+					res.status(400).json({error: 'User not found'});
+				} else {
+					var salt = user.salt;
+					var hash = crypto.pbkdf2Sync(req.body.oldPwd, salt, 10000, 512);
+					if (hash != user.hash) {
+						res.status(400).json({error: 'Incorrect password'});
+					} else if (req.body.newPwd1 !== req.body.newPwd2) {
+						res.status(400).json({error: 'Password unmatched.'});
+					} else {
+						var newSalt = crypto.randomBytes(128).toString('base64');
+						var newHash = crypto.pbkdf2Sync(req.body.newPwd1, newSalt, 10000, 512);
+						user.update({$set: {
+							salt: newSalt,
+							hash: newHash
+						}}, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								res.status(200).end();
+							}
+						});
+					}
+				}
+			});
+		} else {
+			res.status(400).json({error: "You are not authorized to edit user information!"});
+		}
+	});
 
 // return a list of items by searching items by seller's id
 router.get('/selllist', function(req, res, next) {

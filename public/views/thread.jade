@@ -7,6 +7,8 @@ div(layout='column')
 			div(ng-show='success')
 				md-card
 					md-card-header
+						md-card-avatar
+							img.md-user-avatar(ng-src='/images/user/{{thread.author}}.jpg')
 						md-card-header-text
 							span.md-title {{thread.author}}
 							span.md-subhead {{thread.dateOfThread | date:'d/M/yyyy h:mma'}}
@@ -33,6 +35,7 @@ div(layout='column')
 						md-divider
 						md-virtual-repeat-container#container(flex md-auto-shrink)
 							md-list-item.md-2-line.repeated-item(md-virtual-repeat='cm in thread.comment' md-item-size='73')
+								img.md-avatar(ng-src='/images/user/{{cm.author}}.jpg' alt='{{cm.author}}')
 								div.md-list-item-text
 									div(layout='row')
 										h3 {{cm.author}}

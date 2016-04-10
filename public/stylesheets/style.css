@@ -48,6 +48,19 @@ figure img {
 	max-width: 100%;
 } 
 
+img.avatar {
+	width: 50px;
+    height: 50px;
+    -webkit-border-radius: 50px;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 50px;
+    -moz-background-clip: padding;
+    border-radius: 50px;
+    background-clip: padding-box;
+    margin: 7px 0 0 5px;
+    float: left;
+}
+
 .gridListdemoDynamicTiles md-grid-tile-footer figcaption {
 	width: 100%; 
 }

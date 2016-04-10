@@ -30,7 +30,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 	}];
 
 	$scope.userMenu = [{
-		link: '/user/profile/' + Auth.uid,
+		link: '/user/profile/' + $scope.uid,
 		title: 'Profile',
 		icon: 'account_circle'
 	},
@@ -58,6 +58,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 	}, function(newVal, oldVal) {
 		if(typeof newVal !== 'undefined') {
 			$scope.uid = Auth.uid;
+			$scope.userMenu[0].link = '/user/profile/' + $scope.uid;
 		}
 	});
 
