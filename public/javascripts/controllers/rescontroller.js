@@ -101,6 +101,9 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 			parent: angular.element(document.body),
 			targetEvent: event,
 			clickOutsideToClose: true,
+			locals: {
+				res: $scope.resource
+			}
 		})
 		.then(function(edit) {
 			Resource.edit($scope.resource._id, edit).success(function(res) {
@@ -118,7 +121,10 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 		});
 	};
 
-	function editResController($scope, $mdDialog) {
+	function editResController($scope, $mdDialog, res) {
+		$scope.edit = res;
+		$scope.htmlVariable = $scope.edit.description;
+		
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};

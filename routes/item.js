@@ -110,7 +110,7 @@ router.route('/:itemid')
 			if (item.seller === req.decoded.uid || req.decoded.admin) {
 				Transaction.update({item: req.params.itemid}, 
 					{$set: {
-						status: 'cancelled', 
+						status: 'Cancelled', 
 						dateOfUpdate: Date.now()
 					}}, function(err) {
 						if (err) {
@@ -132,9 +132,9 @@ router.route('/:itemid')
 		});
 	});
 
-router.route('/buyrequest/:itemid')
+router.route('/request/:itemid')
 	// interest in item: add new record -> set status interested
-	.get(function(req, res, next) {
+	.post(function(req, res, next) {
 		find(req, res, next, function(item) {
 			if (item.seller !== req.decoded.uid) {
 				item.update({$push: {buyer: req.decoded.uid}}, function(err) {
@@ -152,7 +152,7 @@ router.route('/buyrequest/:itemid')
 									seller: item.seller,
 									buyer: req.decoded.uid,
 									item: req.params.itemid,
-									status: 'interested',
+									status: 'Interested',
 									dateOfUpdate: Date.now(),
 								}, function(err) {
 									if (err) {
@@ -175,6 +175,73 @@ router.route('/buyrequest/:itemid')
 		});
 	})
 
+	// transacted: find all related transactions -> set target success, set others failed
+	.put(function(req, res, next) {
+		find(req, res, next, function(item) {
+			if (item.active && !item.sold && item.seller === req.decoded.uid){
+				item.update({$set: {
+					sold: true,
+					active: false
+				}}, function(err){
+					if(err){
+						return next(err);
+					} else {
+						Transaction.findOne({
+							item: req.params.itemid,
+							buyer: req.body.uid
+						}, function(err, transaction){
+							if (err) {
+								return next(err);
+							} else if (transaction === null){
+								res.status(400).json({error: "Buyer uid incorrect!"});
+							} else {
+								Transaction.find({item: req.params.itemid}, function(err, transactions) {
+									if (err) {
+										return next(err);
+									} else {
+										async.each(transactions, function(record, callback) {
+											if (record.buyer === req.body.uid) {
+												record.update({
+													$set: {status: 'Success', dateOfUpdate: Date.now()}
+												}, function(err) {
+													if (err) {
+														callback(err);
+													} else {
+														callback();
+													}
+												});
+											} else {
+												record.update({
+													$set: {status: 'Failed', dateOfUpdate: Date.now()}
+												}, function(err) {
+													if (err) {
+														callback(err);
+													} else {
+														callback();
+													}
+												});
+											}
+										}, function(err) {
+											if (err) {
+												return next(err);
+											} else {
+												find(req, res, next, function(result) {
+													res.status(200).json(result);
+												});
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			} else {
+				res.status(401).json({error: "You are not the seller of the item!"});
+			}
+		});
+	})
+
 	// uninterest item: delete the record 
 	.delete(function(req, res, next) {
 		find(req, res, next, function(item) {
@@ -183,7 +250,7 @@ router.route('/buyrequest/:itemid')
 					return next(err);
 				} else {
 					Transaction.findOneAndRemove({
-						item:req.params.itemid, 
+						item: req.params.itemid, 
 						buyer: req.decoded.uid
 					}, function(err){
 						if (err) {
@@ -198,73 +265,6 @@ router.route('/buyrequest/:itemid')
 			});
 		});
 	});
-
-// transacted: find all related transactions -> set target success, set others failed
-router.get('/transactrequest/:itemid/:uid', function(req, res, next) {
-	find(req, res, next, function(item) {
-		if (item.active && !item.sold && item.seller === req.decoded.uid){
-			item.update({$set: {
-				sold: true,
-				active: false
-			}}, function(err){
-				if(err){
-					return next(err);
-				} else {
-					Transaction.findOne({
-						item: req.params.itemid,
-						buyer: req.params.uid
-					}, function(err, transaction){
-						if (err) {
-							return next(err);
-						} else if (transaction === null){
-							res.status(400).json({error: "Buyer uid incorrect!"});
-						} else {
-							Transaction.find({item: req.params.itemid}, function(err, transactions) {
-								if (err) {
-									return next(err);
-								} else {
-									async.each(transactions, function(record, callback) {
-										if (record.buyer === req.params.uid) {
-											record.update({
-												$set: {status: 'success', dateOfUpdate: Date.now()}
-											}, function(err) {
-												if (err) {
-													callback(err);
-												} else {
-													callback();
-												}
-											});
-										} else {
-											record.update({
-												$set: {status: 'failed', dateOfUpdate: Date.now()}
-											}, function(err) {
-												if (err) {
-													callback(err);
-												} else {
-													callback();
-												}
-											});
-										}
-									}, function(err) {
-										if (err) {
-											return next(err);
-										} else {
-											find(req, res, next, function(result) {
-												res.status(200).json(result);
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-				}
-			});
-		} else {
-			res.status(401).json({error: "You are not the seller of the item!"});
-		}
-	});
-});
 
 function findUnsoldList(req, res, next) {
 	Item.find({sold: false, active: true})

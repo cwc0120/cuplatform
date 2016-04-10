@@ -50,21 +50,30 @@ html(ng-app='CUP')
 		script(type='text/javascript' src='/javascripts/controllers/threadcontroller.js')
 		script(type='text/javascript' src='/javascripts/controllers/messengercontroller.js')
 		script(type='text/javascript' src='/javascripts/controllers/tradingrecordcontroller.js')
+		script(type='text/javascript' src='/javascripts/controllers/profilecontroller.js')
 
 		// content
 		md-sidenav.md-sidenav-left(md-component-id='menu' md-is-locked-open="$mdMedia('gt-md')" md-whiteframe='4')
-			md-toolbar(class='md-tall md-accent md-hue-2' md-whiteframe='4' layout-padding)
-				span(flex)
+			md-toolbar(class='md-tall md-accent md-hue-2' md-whiteframe='4')
 				div(ng-hide='isLogged' class='md-toolbar-tools md-toolbar-tools-bottom')
 					span Visitor
 				div(ng-show='isLogged' class='md-toolbar-tools-bottom inset' layout='column')
-					div {{uid}}
-					div hihi
+					img.avatar(ng-src='/images/user/{{uid}}.jpg' alt='{{uid}}')
+					div
+						span.md-headline {{uid}}
+						br
+						span.md-subhead Welcome!
 			div(ng-hide='isLogged' layout-padding)
 				p Please Log in
 			div(ng-show='isLogged')
 				md-list
 					md-list-item(md-ink-ripple layout='row' ng-click='$location.path(item.link);toggleMenu()' ng-repeat='item in menu')
+						div.inset
+							md-icon.material-icons {{item.icon}}
+						div.inset {{item.title}}
+					md-divider
+					md-subheader User
+					md-list-item(md-ink-ripple layout='row' ng-click='$location.path(item.link);toggleMenu()' ng-repeat='item in userMenu')
 						div.inset
 							md-icon.material-icons {{item.icon}}
 						div.inset {{item.title}}

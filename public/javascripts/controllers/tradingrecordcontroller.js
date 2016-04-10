@@ -23,9 +23,12 @@ ctrl.controller('tradingRecordController', function($scope, $window, $location, 
 	User.getBuyList().success(function(res) {
 		$scope.success = true;
 		$scope.buylist = res;
-		console.log($scope.buylist);
 	}).error(function(res) {
 		$scope.success = false;
 		$scope.errorMessage = res.error;
 	});
+
+	$scope.back = function() {
+		window.history.back();
+	};
 });

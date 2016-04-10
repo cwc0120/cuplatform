@@ -1,7 +1,6 @@
 'use strict';
-ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
+ctrl.controller('messengerController', function($scope, $window, Socket, Auth, User) {
 	$scope.uid = $window.localStorage['uid'];
-
 	$scope.success = true;
 
 	Socket.emit('auth', {
@@ -15,11 +14,35 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 			}
 		}
 		$scope.clients = clients;
+		$scope.offline = true;
+		if ($scope.selected !== '') {
+			for (var j = 0; j < $scope.clients.length; j++) {
+				if ($scope.selected === $scope.clients[j].uid) {
+					$scope.offline = false;
+				}
+			}
+		}
+	});
+
+	Socket.on('pastName', function(list) {
+		$scope.pastList = list;
 	});
 
 	Socket.on('chatRecord', function(chat) {
 		$scope.chat = chat;
-		$scope.chat.messages.reverse();
+		if ($scope.chat.messages === undefined) {
+			$scope.chat.messages = [];
+		}
+		if (!$scope.reversed){
+			$scope.chat.messages.reverse();
+			$scope.reversed = true;
+		}
+		$scope.offline = true;
+		for (var i = 0; i < $scope.clients.length; i++) {
+			if ($scope.selected === $scope.clients[i].uid) {
+				$scope.offline = false;
+			}
+		}
 	});
 
 	Socket.on('newMessage', function(msg) {
@@ -33,6 +56,8 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 	};
 
 	$scope.getChatRecord = function(uid) {
+		$scope.searchError = '';
+		$scope.reversed = false;
 		$scope.selected = uid;
 		Socket.emit('getChatRecord', {uid: uid});
 	};
@@ -43,45 +68,17 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth) {
 			content: $scope.message
 		});
 		$scope.message = '';
+		$scope.chat.error = '';
 	};
 
-	// socket.on('send:message', function(message) {
-	// 	$scope.messages.push(message);
-	// });
-
-	// socket.on('user:join', function(data) {
-	// 	$scope.messages.push({
-	// 		user: 'chatroom',
-	// 		text: 'User ' + data.name + ' has joined.'
-	// 	});
-	// 	$scope.users.push(data.name);
-	// });
-
-	// socket.on('user:left', function(data) {
-	// 	$scope.messages.push({
-	// 		user: 'chatroom',
-	// 		test: 'User ' + data.name + ' has left.'
-	// 	});
-	// 	var i, user;
-	// 	for (i = 0; i < $scope.users.length ; i++) {
-	// 		user = $scope.user[i];
-	// 		if (user === data.name) {
-	// 			$scope.users.splice(1, i);
-	// 			break;
-	// 		}
-	// 	}
-	// });
-
-	// $scope.sendMessage = function() {
-	// 	socket.emit('send:message', {
-	// 		message: $scope.message
-	// 	});
-
-	// 	$scope.messages.push({
-	// 		user: $scope.name,
-	// 		text: $scope.message
-	// 	});
-
-	// 	$scope.message = '';
-	// };
+	$scope.searchUser = function() {
+		User.find($scope.newUser).success(function(res) {
+			$scope.searchError = '';
+			$scope.newUser = '';
+			$scope.selected = res.uid;
+			Socket.emit('getChatRecord', {uid: res.uid});
+		}).error(function(res) {
+			$scope.searchError = res.error;
+		});
+	};
 });

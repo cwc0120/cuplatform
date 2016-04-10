@@ -5,15 +5,16 @@ div(layout='column')
 				h3 {{errorMessage}}
 				md-button.md-primary(ng-click='back()') Return
 			div(ng-show='success')
-				div(layout='row' layout-align='start center')
+				div(layout='column' layout-gt-sm='row' layout-align-gt-sm='start center')
 					h1(layout-padding) Trading Platform
 					span(flex)
-					md-button.md-raised(ng-click='addItemDialog($event)') 
-						md-icon.material-icons add
-						span New item
-					md-button.md-raised(ng-click='$location.path("/user/history")') 
-						md-icon.material-icons shopping_cart 
-						span Record
+					div(layout='row')
+						md-button.md-raised(ng-click='addItemDialog($event)') 
+							md-icon.material-icons add
+							span New item
+						md-button.md-raised(ng-click='$location.path("/user/history")') 
+							md-icon.material-icons shopping_cart 
+							span Record
 				h2(layout-padding) New items
 				md-card.gridListdemoDynamicTiles(layout-padding)
 					md-grid-list(md-cols-xs='2' md-cols-sm='3' md-cols-md='6' md-cols-gt-md='6' md-row-height='1:1' md-gutter='8px' md-gutter-gt-sm='4px')

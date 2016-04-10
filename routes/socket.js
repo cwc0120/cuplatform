@@ -42,6 +42,30 @@ var chatroom = (function() {
 		});
 	};
 
+	var getPastName = function(user, callback) {
+		Chat.find({$or:
+			[{
+				user1: user
+			}, {
+				user2: user
+			}]
+		}, function(err, chat) {
+			if (err) {
+				callback({error: 'Error occurred.'});
+			} else {
+				var list = [];
+				for (var i = 0; i < chat.length; i++) {
+					if (chat[i].user1 === user) {
+						list.push(chat[i].user2);
+					} else {
+						list.push(chat[i].user1);
+					}
+				}
+				callback(list);
+			}
+		});
+	};
+
 	var newMessage = function(sender, recipient, content, callback) {
 		Chat.findOne({$or: 
 			[{
@@ -105,6 +129,7 @@ var chatroom = (function() {
 		getList: getList,
 		getID: getID,
 		getMessages: getMessages,
+		getPastName: getPastName,
 		newMessage: newMessage,
 		newClient: newClient,
 		freeClient: freeClient,
@@ -129,6 +154,9 @@ module.exports = function (io) {
 					}
 					user.uid = res;
 					io.emit('clientList', chatroom.getList());
+					chatroom.getPastName(user.uid, function(res) {
+						socket.emit('pastName', res);
+					});
 				}
 			});
 		});
@@ -136,6 +164,12 @@ module.exports = function (io) {
 		socket.on('getChatRecord', function(data) {
 			chatroom.getMessages(user.uid, data.uid, function(res) {
 				socket.emit('chatRecord', res);
+			});
+		});
+
+		socket.on('getPastName', function() {
+			chatroom.getPastName(user.uid, function(res) {
+				socket.emit('pastName', res);
 			});
 		});
 
@@ -147,12 +181,12 @@ module.exports = function (io) {
 						content: msg.content,
 						date: Date.now()
 					});
-					socket.emit('newMessage', {
-						sender: user.uid,
-						content: msg.content,
-						date: Date.now()
-					});
 				}
+				socket.emit('newMessage', {
+					sender: user.uid,
+					content: msg.content,
+					date: Date.now()
+				});
 			});
 		});
 

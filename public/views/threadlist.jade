@@ -1,33 +1,48 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				h1(layout-padding) {{code}} Discussion Forum
+				md-card
+					md-toolbar.md-table-toolbar.md-default(ng-hide='selected.length || search')
+						div.md-toolbar-tools
+							span Thread List
+							span(flex)
+							md-button.md-icon-button(ng-show='admin' ng-click='addThreadDialog($event)' aria-label='Add')
+								md-icon.material-icons add
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
+								md-icon.material-icons search
 
-div(ng-hide='success')
-	h3 {{errorMessage}}
-	button(ng-click='$route.reload()') Return
-div(ng-show='success')
-	h1 {{code}} Discussion Forum
-	p
-		button(ng-show='!adding' ng-click='enableAdd()') New Thread
+					md-toolbar.md-table-toolbar.md-default(ng-show='search && !selected.length')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchThread' placeholder='Search Thread')
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
+								md-icon.material-icons clear
 
-	div(ng-show='adding')
-		form
-			p Topic: 
-				input(type='text' ng-model='newThread.topic')
-			p Content:
-			p
-				text-angular(ng-model='htmlVariable')
-			p Secret?
-				input(type='checkbox' ng-model='newThread.annoymous')
-			button(type='submit' ng-click='addThread()') Submit
-	table
-		tr(ng-repeat='thread in threads')
-			td
-				p
-					a(ng-href='#/thread/{{thread._id}}')
-						strong {{thread.author}}: {{thread.topic}}
-					br 
-					| {{thread.content | htmlToPlaintext}} 
-					br
-					i {{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}
-			td
-				button(ng-show='admin' ng-click='delete(thread._id)') Delete
-	p
-		button(ng-hide='code === "General"' ng-click='$location.path("/course/" + code)') Back
+					md-toolbar.md-table-toolbar.md-accent.md-hue-1(ng-show='selected.length')
+						div.md-toolbar-tools
+							span(ng-show='selected.length === 1') {{selected.length}} thread is selected.		
+							span(ng-show='selected.length>1') {{selected.length}} threads are selected.
+							span(flex)
+							md-button.md-icon-button(ng-click='delete()' aria-label='Delete')
+								md-icon.material-icons delete
+							
+					md-table-container
+						table(md-table md-row-select='admin' ng-model='selected')
+							thead(md-head md-order='order')
+								tr(md-row)
+									th(md-column md-order-by='topic') Topic
+									th(md-column md-order-by='author') Author
+									th(md-column md-order-by='dateOfUpdate') Date of Update
+							tbody(md-body)
+								tr(md-row ng-repeat='thread in threads | filter: searchThread | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='thread')
+									td(md-cell)
+										a(ng-href='#/thread/{{thread._id}}') {{thread.topic}}
+									td(md-cell) {{thread.author}}
+									td(md-cell) {{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{threads.length}}')

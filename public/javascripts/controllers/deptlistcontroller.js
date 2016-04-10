@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('deptListController', function($scope, $window, $location, $mdDialog, $mdMedia, $mdEditDialog, Dept) {
+ctrl.controller('deptListController', function($scope, $window, $location, $mdDialog, $mdEditDialog, Dept) {
 	$scope.$location = $location;
 	if ($window.localStorage['admin'] === 'true') {
 		$scope.admin = true;

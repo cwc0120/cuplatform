@@ -1,39 +1,63 @@
 
-<div ng-hide="success">
-  <h3>{{errorMessage}}</h3>
-  <button ng-click="$route.reload()">Return</button>
-</div>
-<div ng-show="success">
-  <h1>{{code}} Discussion Forum</h1>
-  <p>
-    <button ng-show="!adding" ng-click="enableAdd()">New Thread</button>
-  </p>
-  <div ng-show="adding">
-    <form>
-      <p>Topic: 
-        <input type="text" ng-model="newThread.topic"/>
-      </p>
-      <p>Content:</p>
-      <p>
-        <text-angular ng-model="htmlVariable"></text-angular>
-      </p>
-      <p>Secret?
-        <input type="checkbox" ng-model="newThread.annoymous"/>
-      </p>
-      <button type="submit" ng-click="addThread()">Submit</button>
-    </form>
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="95" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success">
+        <h1 layout-padding="layout-padding">{{code}} Discussion Forum</h1>
+        <md-card>
+          <md-toolbar ng-hide="selected.length || search" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools"><span>Thread List</span><span flex="flex"></span>
+              <md-button ng-show="admin" ng-click="addThreadDialog($event)" aria-label="Add" class="md-icon-button">
+                <md-icon class="material-icons">add</md-icon>
+              </md-button>
+              <md-button ng-click="search = !search" aria-label="Search" class="md-icon-button">
+                <md-icon class="material-icons">search</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="search &amp;&amp; !selected.length" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+              <md-input-container flex="flex" md-no-float="md-no-float">
+                <md-icon class="material-icons">search</md-icon>
+                <input type="text" ng-model="searchThread" placeholder="Search Thread"/>
+              </md-input-container>
+              <md-button ng-click="search = !search" aria-label="Back" class="md-icon-button">
+                <md-icon class="material-icons">clear</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="selected.length" class="md-table-toolbar md-accent md-hue-1">
+            <div class="md-toolbar-tools"><span ng-show="selected.length === 1">{{selected.length}} thread is selected.		</span><span ng-show="selected.length&gt;1">{{selected.length}} threads are selected.</span><span flex="flex"></span>
+              <md-button ng-click="delete()" aria-label="Delete" class="md-icon-button">
+                <md-icon class="material-icons">delete</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-table-container>
+            <table md-table="md-table" md-row-select="admin" ng-model="selected">
+              <thead md-head="md-head" md-order="order">
+                <tr md-row="md-row">
+                  <th md-column="md-column" md-order-by="topic">Topic</th>
+                  <th md-column="md-column" md-order-by="author">Author</th>
+                  <th md-column="md-column" md-order-by="dateOfUpdate">Date of Update</th>
+                </tr>
+              </thead>
+              <tbody md-body="md-body">
+                <tr md-row="md-row" ng-repeat="thread in threads | filter: searchThread | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="thread">
+                  <td md-cell="md-cell"><a ng-href="#/thread/{{thread._id}}">{{thread.topic}}</a></td>
+                  <td md-cell="md-cell">{{thread.author}}</td>
+                  <td md-cell="md-cell">{{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </md-table-container>
+          <md-table-pagination md-limit="limit" md-page="page" md-total="{{threads.length}}"></md-table-pagination>
+        </md-card>
+      </div>
+    </div>
   </div>
-  <table>
-    <tr ng-repeat="thread in threads">
-      <td>
-        <p><a ng-href="#/thread/{{thread._id}}"><strong>{{thread.author}}: {{thread.topic}}</strong></a><br/>{{thread.content | htmlToPlaintext}} <br/><i>{{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}</i></p>
-      </td>
-      <td>
-        <button ng-show="admin" ng-click="delete(thread._id)">Delete</button>
-      </td>
-    </tr>
-  </table>
-  <p>
-    <button ng-hide="code === &quot;General&quot;" ng-click="$location.path(&quot;/course/&quot; + code)">Back</button>
-  </p>
 </div>

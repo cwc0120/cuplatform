@@ -1,0 +1,27 @@
+
+<md-dialog aria-label="Upload Avatar" ng-cloak="ng-cloak" flex="95" flex-gt-sm="60">
+  <form name="uploadForm" enctype="multipart/form-data">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Upload Avatar</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <md-input-container class="md-block md-input-has-placeholder">
+          <label>Avatar</label>
+          <input type="file" name="img" file-model="img" required="required"/>
+          <div ng-messages="uploadForm.img.$error">
+            <div ng-message="required">Avatar missing.</div>
+          </div>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="upload()" ng-disabled="uploadForm.$invalid">Upload</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
