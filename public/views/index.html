@@ -57,6 +57,12 @@
       </md-toolbar>
       <div ng-hide="isLogged">
         <md-list>
+          <md-list-item md-ink-ripple layout="row" ng-click="$location.path(&quot;/&quot;);toggleMenu()">
+            <div class="inset">
+              <md-icon class="material-icons">home</md-icon>
+            </div>
+            <div class="inset">Home</div>
+          </md-list-item>
           <md-list-item md-ink-ripple layout="row" ng-click="$location.path(&quot;/visitor/dept&quot;);toggleMenu()">
             <div class="inset">
               <md-icon class="material-icons">library_books</md-icon>

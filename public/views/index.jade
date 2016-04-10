@@ -68,6 +68,10 @@ html(ng-app='CUP')
 						span.md-subhead Welcome!
 			div(ng-hide='isLogged')
 				md-list
+					md-list-item(md-ink-ripple layout='row' ng-click='$location.path("/");toggleMenu()')
+						div.inset
+							md-icon.material-icons home
+						div.inset Home
 					md-list-item(md-ink-ripple layout='row' ng-click='$location.path("/visitor/dept");toggleMenu()')
 						div.inset
 							md-icon.material-icons library_books
