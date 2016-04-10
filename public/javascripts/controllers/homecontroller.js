@@ -49,7 +49,7 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth, S
 					Auth.uid = res.uid;
 					Auth.isLogged = true;
 					Auth.setToken(res);
-					$location.path('/task');
+					$location.path('/');
 				}).error(function(res) {
 					$scope.success = false;
 					$scope.errorMessage = res.error;

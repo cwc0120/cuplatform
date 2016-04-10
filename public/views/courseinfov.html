@@ -1,0 +1,83 @@
+
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="95" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success" layout="column">
+        <md-card>
+          <md-card-title><span class="md-headline">Course Detail</span></md-card-title>
+          <md-card-content>
+            <div layout="column" layout-gt-sm="row">
+              <div layout="column" layout-gt-xs="row" flex-gt-sm="60">
+                <div flex-gt-xs="66">
+                  <p>Course Code: {{course.courseCode}}</p>
+                  <p>Course Name: <br/>{{course.courseName}}</p>
+                  <p>Instructor: {{course.prof}}</p>
+                </div>
+                <div flex-gt-xs="33">
+                  <p>Average rating: </p>
+                  <h1 class="rating">{{avgRating}}</h1>
+                </div>
+              </div>
+              <div flex-gt-sm="40">
+                <p>Schedule: ({{course.cred}} credit(s))</p>
+                <md-table-container>
+                  <table md-table="md-table">
+                    <thead md-head="md-head">
+                      <tr md-row="md-row">
+                        <th md-column="md-column">Day</th>
+                        <th md-column="md-column">Time</th>
+                        <th md-column="md-column">Venue</th>
+                      </tr>
+                    </thead>
+                    <tbody md-body="md-body">
+                      <tr md-row="md-row" ng-repeat="lesson in lessons">
+                        <td md-cell="md-cell">{{days[lesson.day-1].val}}</td>
+                        <td md-cell="md-cell">{{times[lesson.time-1].val}}</td>
+                        <td md-cell="md-cell">{{lesson.venue}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-table-container>
+              </div>
+            </div>
+          </md-card-content>
+          <md-card-actions layout="row" layout-align="end center">
+            <md-button ng-click="registerDialog($event)">Resources</md-button>
+            <md-button ng-click="registerDialog($event)">Discussion</md-button>
+          </md-card-actions>
+        </md-card>
+        <md-card>
+          <div class="md-toolbar-tools"><span>{{course.info.length}} Comment(s)</span><span flex="flex"></span>
+            <md-button ng-hide="posted" ng-click="registerDialog($event)" class="md-icon-button">
+              <md-icon class="material-icons">add</md-icon>
+            </md-button>
+          </div>
+        </md-card>
+        <md-card ng-repeat="info in course.info | orderBy: &quot;-_id&quot;">
+          <md-card-header>
+            <md-card-avatar><img ng-src="/images/user/{{info.author}}.jpg" class="md-user-avatar"/></md-card-avatar>
+            <md-card-header-text><span class="md-title">{{info.author}}</span><span class="md-subhead">#{{course.info.length - $index}}: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}</span></md-card-header-text>
+          </md-card-header>
+          <md-card-content>
+            <div layout="row" layout-xs="column">
+              <div layout="column" flex-gt-xs="flex-gt-xs"><span>Rating: </span>
+                <h1 class="rating">{{info.rating}}</h1>
+              </div>
+              <div layout="column" flex-gt-xs="80"><span>Outline:</span>
+                <section layout-wrap="layout-wrap">{{info.outline}}</section>
+                <p></p><span>Assessment Method:</span>
+                <section layout-wrap="layout-wrap">Register to see more</section>
+                <p></p><span>Comment:</span>
+                <section layout-wrap="layout-wrap">Register to see more</section>
+              </div>
+            </div>
+          </md-card-content>
+        </md-card>
+      </div>
+    </div>
+  </div>
+</div>

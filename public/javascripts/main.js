@@ -81,6 +81,24 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				requiredLogin: true
 			})
 
+			.when('/visitor/dept', {
+				templateUrl: '/views/deptlistv.html',
+				controller: 'deptListController',
+				requiredLogin: false
+			})
+
+			.when('/visitor/dept/:id', {
+				templateUrl: '/views/deptcourselistv.html',
+				controller: 'deptCourseListController',
+				requiredLogin: false
+			})
+
+			.when('/visitor/course/:id', {
+				templateUrl: '/views/courseinfov.html',
+				controller: 'courseInfoController',
+				requiredLogin: false
+			})
+
 			.otherwise({
 				redirectTo: '/'
 			});

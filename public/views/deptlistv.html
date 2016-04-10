@@ -1,0 +1,61 @@
+
+<div layout="column">
+  <div layout="row" layout-align="center center" class="inset">
+    <div flex="95" flex-gt-sm="80">
+      <div ng-hide="success">
+        <h3>{{errorMessage}}</h3>
+        <md-button ng-click="back()" class="md-primary">Return</md-button>
+      </div>
+      <div ng-show="success">
+        <h1 layout-padding="layout-padding">Course Catalog</h1>
+        <md-card>
+          <form ng-submit="$location.path(&quot;/visitor/course/&quot; + searchCourse)">
+            <div class="md-toolbar-tools">
+              <md-input-container flex="flex" md-no-float="md-no-float">
+                <md-icon class="material-icons">search</md-icon>
+                <input type="text" ng-model="searchCourse" placeholder="Course code quick search"/>
+              </md-input-container>
+            </div>
+          </form>
+        </md-card>
+        <md-card>
+          <md-toolbar ng-hide="search" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools"><span>Department List</span><span flex="flex"></span>
+              <md-button ng-click="search = !search" aria-label="Search" class="md-icon-button">
+                <md-icon class="material-icons">search</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-toolbar ng-show="search" class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+              <md-input-container flex="flex" md-no-float="md-no-float">
+                <md-icon class="material-icons">search</md-icon>
+                <input type="text" ng-model="searchDept" placeholder="Search Department"/>
+              </md-input-container>
+              <md-button ng-click="search = !search" aria-label="Back" class="md-icon-button">
+                <md-icon class="material-icons">clear</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-table-container>
+            <table md-table="md-table">
+              <thead md-head="md-head" md-order="order">
+                <tr md-row="md-row">
+                  <th md-column="md-column" md-order-by="deptCode">Department Code</th>
+                  <th md-column="md-column" md-order-by="deptName" hide-xs="hide-xs">Department Name</th>
+                </tr>
+              </thead>
+              <tbody md-body="md-body">
+                <tr md-row="md-row" ng-repeat="dept in depts | filter: searchDept | orderBy: order | limitTo: limit: (page - 1) * limit">
+                  <td md-cell="md-cell"><a ng-href="#/visitor/dept/{{dept.deptCode}}">{{dept.deptCode}}</a></td>
+                  <td md-cell="md-cell">{{dept.deptName}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </md-table-container>
+          <md-table-pagination md-limit="limit" md-page="page" md-total="{{depts.length}}"></md-table-pagination>
+        </md-card>
+      </div>
+    </div>
+  </div>
+</div>

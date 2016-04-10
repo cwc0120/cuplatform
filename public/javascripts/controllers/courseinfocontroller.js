@@ -133,4 +133,41 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 			$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
 		}
 	}
+
+	$scope.registerDialog = function(event) {
+			$mdDialog.show({
+				controller: registerController,
+				templateUrl: '/views/register.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true
+			})
+			.then(function(newUser) {
+				Auth.login({uid: newUser.uid, pwd: newUser.pwd1}).success(function(res) {
+					Auth.uid = res.uid;
+					Auth.isLogged = true;
+					Auth.setToken(res);
+					$location.path('/');
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			});
+		};
+
+	function registerController($scope, $mdDialog, Auth) {
+		$scope.newUser = {};
+
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.createUser = function() {
+			Auth.register($scope.newUser).success(function(result) {
+				$mdDialog.hide($scope.newUser);
+			}).error(function(err) {
+				$scope.registerMessage = err.error;
+			});
+		};
+	}
 });

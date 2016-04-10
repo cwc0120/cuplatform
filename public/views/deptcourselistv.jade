@@ -1,0 +1,43 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success' layout='column')
+				md-card
+					md-card-title
+						span.md-headline Department Detail
+					md-card-content
+						div
+							p Deparment Code: {{dept.deptCode}}
+							p Department Name: {{dept.deptName}}
+				
+				md-card
+					md-toolbar.md-table-toolbar.md-default(ng-hide='search')
+						div.md-toolbar-tools
+							span Course List under {{dept.deptName}}
+							span(flex)
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
+								md-icon.material-icons search
+
+					md-toolbar.md-table-toolbar.md-default(ng-show='search')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchCourse' placeholder='Search Course')
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
+								md-icon.material-icons clear
+							
+					md-table-container
+						table(md-table)
+							thead(md-head md-order='order')
+								tr(md-row)
+									th(md-column md-order-by='courseCode') Course Code
+									th(md-column md-order-by='courseName' hide-xs) Course Name
+							tbody(md-body)
+								tr(md-row ng-repeat='course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit')
+									td(md-cell)
+										a(ng-href='#/visitor/course/{{course.courseCode}}') {{course.courseCode}}
+									td(md-cell hide-xs) {{course.courseName}}
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{courses.length}}')

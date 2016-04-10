@@ -1,0 +1,69 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success' layout='column')
+				md-card
+					md-card-title
+						span.md-headline Course Detail
+					md-card-content
+						div(layout='column' layout-gt-sm='row')
+							div(layout='column' layout-gt-xs='row' flex-gt-sm='60')
+								div(flex-gt-xs='66')
+									p Course Code: {{course.courseCode}}
+									p Course Name: 
+										br
+										| {{course.courseName}}
+									p Instructor: {{course.prof}}
+								div(flex-gt-xs='33')
+									p Average rating: 
+									h1.rating {{avgRating}}
+							div(flex-gt-sm='40')
+								p Schedule: ({{course.cred}} credit(s))
+								md-table-container
+									table(md-table)
+										thead(md-head)
+											tr(md-row)
+												th(md-column) Day
+												th(md-column) Time
+												th(md-column) Venue
+										tbody(md-body)
+											tr(md-row ng-repeat='lesson in lessons')
+												td(md-cell) {{days[lesson.day-1].val}}
+												td(md-cell) {{times[lesson.time-1].val}}
+												td(md-cell) {{lesson.venue}}
+					md-card-actions(layout='row' layout-align='end center')
+						md-button(ng-click='registerDialog($event)') Resources
+						md-button(ng-click='registerDialog($event)') Discussion
+
+				md-card
+					div.md-toolbar-tools
+						span {{course.info.length}} Comment(s)
+						span(flex)
+						md-button.md-icon-button(ng-hide='posted' ng-click='registerDialog($event)')
+							md-icon.material-icons add
+
+				md-card(ng-repeat='info in course.info | orderBy: "-_id"')
+					md-card-header
+						md-card-avatar
+							img.md-user-avatar(ng-src='/images/user/{{info.author}}.jpg')
+						md-card-header-text
+							span.md-title {{info.author}}
+							span.md-subhead \#{{course.info.length - $index}}: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}
+					md-card-content
+						div(layout='row' layout-xs='column')
+							div(layout='column' flex-gt-xs)
+								span Rating: 
+								h1.rating {{info.rating}}
+							div(layout='column' flex-gt-xs='80')
+								span Outline:
+								section(layout-wrap) {{info.outline}}
+								p
+								span Assessment Method:
+								section(layout-wrap) Register to see more
+								p
+								span Comment:
+								section(layout-wrap) Register to see more
+							

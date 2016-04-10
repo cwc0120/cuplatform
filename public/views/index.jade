@@ -55,16 +55,23 @@ html(ng-app='CUP')
 		// content
 		md-sidenav.md-sidenav-left(md-component-id='menu' md-is-locked-open="$mdMedia('gt-md')" md-whiteframe='4')
 			md-toolbar(class='md-tall md-accent md-hue-2' md-whiteframe='4')
-				div(ng-hide='isLogged' class='md-toolbar-tools md-toolbar-tools-bottom')
-					span Visitor
+				div(ng-hide='isLogged' class='md-toolbar-tools-bottom inset' layout='column')
+					div
+						span.md-headline Visitor
+						br
+						span.md-subhead Please log in
 				div(ng-show='isLogged' class='md-toolbar-tools-bottom inset' layout='column')
 					img.avatar(ng-src='/images/user/{{uid}}.jpg' alt='{{uid}}')
 					div
 						span.md-headline {{uid}}
 						br
 						span.md-subhead Welcome!
-			div(ng-hide='isLogged' layout-padding)
-				p Please Log in
+			div(ng-hide='isLogged')
+				md-list
+					md-list-item(md-ink-ripple layout='row' ng-click='$location.path("/visitor/dept");toggleMenu()')
+						div.inset
+							md-icon.material-icons library_books
+						div.inset Courses
 			div(ng-show='isLogged')
 				md-list
 					md-list-item(md-ink-ripple layout='row' ng-click='$location.path(item.link);toggleMenu()' ng-repeat='item in menu')

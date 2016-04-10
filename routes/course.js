@@ -6,7 +6,7 @@ var Dept = require('../models/dept');
 var utils = require('../utils');
 
 router.use(function(req, res, next) {
-	utils.validateToken(req, res, next);
+	utils.validateTokenPartial(req, res, next);
 });
 
 router.route('/:did')

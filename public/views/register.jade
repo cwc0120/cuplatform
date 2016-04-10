@@ -1,4 +1,4 @@
-md-dialog(aria-label='Registration' ng-cloak flex='95')
+md-dialog(aria-label='Registration' ng-cloak flex='95' flex-gt-sm='60')
 	form(name='registerForm')
 		md-toolbar
 			div.md-toolbar-tools
@@ -8,6 +8,7 @@ md-dialog(aria-label='Registration' ng-cloak flex='95')
 					md-icon.material-icons clear
 		md-dialog-content
 			div.md-dialog-content(layout='column')
+				h3 Just a simple step to join us!
 				span.error {{registerMessage}}
 				md-input-container.md-block
 					label User ID

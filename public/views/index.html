@@ -48,13 +48,22 @@
     <!-- content-->
     <md-sidenav md-component-id="menu" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4" class="md-sidenav-left">
       <md-toolbar md-whiteframe="4" class="md-tall md-accent md-hue-2">
-        <div ng-hide="isLogged" class="md-toolbar-tools md-toolbar-tools-bottom"><span>Visitor</span></div>
+        <div ng-hide="isLogged" layout="column" class="md-toolbar-tools-bottom inset">
+          <div><span class="md-headline">Visitor</span><br><span class="md-subhead">Please log in</span></div>
+        </div>
         <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset"><img ng-src="/images/user/{{uid}}.jpg" alt="{{uid}}" class="avatar">
           <div><span class="md-headline">{{uid}}</span><br><span class="md-subhead">Welcome!</span></div>
         </div>
       </md-toolbar>
-      <div ng-hide="isLogged" layout-padding>
-        <p>Please Log in</p>
+      <div ng-hide="isLogged">
+        <md-list>
+          <md-list-item md-ink-ripple layout="row" ng-click="$location.path(&quot;/visitor/dept&quot;);toggleMenu()">
+            <div class="inset">
+              <md-icon class="material-icons">library_books</md-icon>
+            </div>
+            <div class="inset">Courses</div>
+          </md-list-item>
+        </md-list>
       </div>
       <div ng-show="isLogged">
         <md-list>

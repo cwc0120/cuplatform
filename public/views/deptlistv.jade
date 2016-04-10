@@ -1,0 +1,43 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				h1(layout-padding) Course Catalog
+				md-card
+					form(ng-submit='$location.path("/visitor/course/" + searchCourse)')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchCourse' placeholder='Course code quick search')
+
+				md-card
+					md-toolbar.md-table-toolbar.md-default(ng-hide='search')
+						div.md-toolbar-tools
+							span Department List
+							span(flex)
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
+								md-icon.material-icons search
+
+					md-toolbar.md-table-toolbar.md-default(ng-show='search')
+						div.md-toolbar-tools
+							md-input-container(flex md-no-float)
+								md-icon.material-icons search
+								input(type='text' ng-model='searchDept' placeholder='Search Department')
+							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
+								md-icon.material-icons clear
+							
+					md-table-container
+						table(md-table)
+							thead(md-head md-order='order')
+								tr(md-row)
+									th(md-column md-order-by='deptCode') Department Code
+									th(md-column md-order-by='deptName' hide-xs) Department Name
+							tbody(md-body)
+								tr(md-row ng-repeat='dept in depts | filter: searchDept | orderBy: order | limitTo: limit: (page - 1) * limit')
+									td(md-cell)
+										a(ng-href='#/visitor/dept/{{dept.deptCode}}') {{dept.deptCode}}
+									td(md-cell) {{dept.deptName}}
+					md-table-pagination(md-limit='limit' md-page='page' md-total='{{depts.length}}')
