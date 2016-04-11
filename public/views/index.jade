@@ -61,11 +61,16 @@ html(ng-app='CUP')
 						br
 						span.md-subhead Please log in
 				div(ng-show='isLogged' class='md-toolbar-tools-bottom inset' layout='column')
-					img.avatar(ng-src='/images/user/{{uid}}.jpg' alt='{{uid}}')
-					div
+					div(layout='row' layout-align='start start')
+						img.avatar(ng-src='/images/user/{{uid}}.jpg' alt='{{uid}}')
+						span(flex)
+						md-button.md-icon-button(ng-click = 'refresh()' aria-label='Refresh')
+							md-icon.material-icons refresh
+
+					div(layout='column')
 						span.md-headline {{uid}}
-						br
-						span.md-subhead Welcome!
+						span.md-subhead Point: {{point}}
+						
 			div(ng-hide='isLogged')
 				md-list
 					md-list-item(md-ink-ripple layout='row' ng-click='$location.path("/");toggleMenu()')

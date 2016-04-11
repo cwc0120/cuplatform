@@ -45,7 +45,7 @@ div(layout='column')
 									td(md-cell hide-xs) {{res.dateOfUpload | date:'d/M/yyyy'}}
 					md-table-pagination(md-limit='limit' md-page='page' md-total='{{ress.length}}')
 
-				md-card(ng-show='resource && !selected.length')
+				md-card(ng-show='resource && !selected.length && !deleted')
 					md-card-header
 						md-card-avatar
 							img.md-user-avatar(ng-src='/images/user/{{resource.icon}}')

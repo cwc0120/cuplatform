@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('resController', function($scope, $window, $location, $routeParams, $route, $mdDialog, Resource) {
+ctrl.controller('resController', function($scope, $window, $location, $routeParams, $route, $mdDialog, $mdToast, Resource) {
 	$scope.$location = $location;
 	$scope.$route = $route;
 	if ($window.localStorage['admin'] === 'true') {
@@ -37,6 +37,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 		.then(function(fd) {
 			Resource.create($scope.courseCode, fd).success(function(res) {
 				$scope.ress = res;
+				$mdToast.show($mdToast.simple().textContent('You earn 10 points.'));
 			}).error(function(res){
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -63,6 +64,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 		Resource.getOne(id).success(function(res) {
 			$scope.success = true;
 			$scope.resource = res;
+			$scope.deleted = false;
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;
@@ -78,6 +80,8 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 				$scope.selected = [];
 				Resource.get($scope.courseCode).success(function(res) {
 					$scope.ress = res;
+					$scope.deleted = true;
+					$mdToast.show($mdToast.simple().textContent('10 points are deducted from the selected uploader(s).'));
 				}).error(function(res) {
 					$scope.success = false;
 					$scope.errorMessage = res.error;
@@ -145,6 +149,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 			a.href = fileURL;
 			a.download = $scope.resource.link;
 			a.click();
+			$mdToast.show($mdToast.simple().textContent('5 points are deducted.'));
 		});
 	};
 

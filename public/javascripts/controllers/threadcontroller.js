@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('threadController', function($scope, $window, $location, $routeParams, $mdDialog, Thread) {
+ctrl.controller('threadController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, Thread) {
 	$scope.$location = $location;
 	$scope.uid = $window.localStorage['uid'];
 	if ($window.localStorage['admin'] === 'true') {
@@ -58,6 +58,7 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 			Thread.postComment(threadID, {content: $scope.newComment}).success(function(res) {
 				$scope.newComment = '';
 				$scope.thread = res;
+				$mdToast.show($mdToast.simple().textContent('You earn 1 point.'));
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -68,6 +69,7 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 	$scope.deleteComment = function(cmid) {
 		Thread.deleteComment(threadID, cmid).success(function(res) {
 			$scope.thread = res;
+			$mdToast.show($mdToast.simple().textContent('1 point is deducted from the user.'));
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;

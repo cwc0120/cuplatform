@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('topController', function($scope, $location, $window, $mdSidenav, Auth, Socket) {
+ctrl.controller('topController', function($scope, $location, $window, $mdSidenav, Auth, Socket, User) {
 	$scope.user = {};
 	$scope.$location = $location;
 
@@ -59,8 +59,17 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		if(typeof newVal !== 'undefined') {
 			$scope.uid = Auth.uid;
 			$scope.userMenu[0].link = '/user/profile/' + $scope.uid;
+			User.find($scope.uid).success(function(user) {
+				$scope.point = user.points;
+			});
 		}
 	});
+
+	$scope.refresh = function() {
+		User.find($scope.uid).success(function(user) {
+			$scope.point = user.points;
+		});
+	};
 
 	$scope.logout = function() {
 		Auth.logout();

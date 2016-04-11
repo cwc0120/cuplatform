@@ -56,7 +56,7 @@
           </md-table-container>
           <md-table-pagination md-limit="limit" md-page="page" md-total="{{ress.length}}"></md-table-pagination>
         </md-card>
-        <md-card ng-show="resource &amp;&amp; !selected.length">
+        <md-card ng-show="resource &amp;&amp; !selected.length &amp;&amp; !deleted">
           <md-card-header>
             <md-card-avatar><img ng-src="/images/user/{{resource.icon}}" class="md-user-avatar"/></md-card-avatar>
             <md-card-header-text><span class="md-title">{{resource.uploader}}</span><span class="md-subhead">{{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>

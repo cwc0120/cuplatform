@@ -53,7 +53,7 @@ module.exports = {
 	},
 
 	addPoint: function(uid, point, callback) {
-		var User = require('../models/user');
+		var User = require('./models/user');
 
 		User.findOneAndUpdate({uid: uid}, {$inc: {points: point}}, function(err) {
 			if (err) {
@@ -65,7 +65,7 @@ module.exports = {
 	},
 
 	deductPoint: function(uid, point, callback) {
-		var User = require('../models/user');
+		var User = require('./models/user');
 
 		User.findOneAndUpdate({uid: uid}, {$inc: {points: -point}}, function(err) {
 			if (err) {

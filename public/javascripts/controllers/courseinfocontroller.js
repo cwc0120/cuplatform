@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('courseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Course) {
+ctrl.controller('courseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, Course) {
 	$scope.$location = $location;
 	$scope.days = Course.days;
 	$scope.times = Course.times;
@@ -93,6 +93,7 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 				$scope.posted = true;
 				$scope.course = res;
 				calculate();
+				$mdToast.show($mdToast.simple().textContent('You earn 5 points.'));
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -114,6 +115,7 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		Course.deleteInfo(courseCode, cmid).success(function(res) {
 			$scope.course = res;
 			calculate();
+			$mdToast.show($mdToast.simple().textContent('5 points are deducted from the author.'));
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;

@@ -53,7 +53,8 @@ router.route('/profile/:uid')
 				user.update({$set: {
 					gender: req.body.gender,
 					major: req.body.major,
-					intro: req.body.intro
+					intro: req.body.intro,
+					birthday: req.body.birthday
 				}}, function(err) {
 					if (err) {
 						return next(err);
@@ -158,9 +159,9 @@ router.get('/buylist', function(req, res, next) {
 });	
 
 router.route('/timetable/:uid')
-// see a user's timetable
+	// see a user's timetable
 	.get(function(req, res, next) {
-// return a list of lessons
+	// return a list of lessons
 		User.findOne({uid: req.params.uid})
 			.populate('coursesTaken')
 			.select('courseCode courseName schedule')
@@ -173,10 +174,10 @@ router.route('/timetable/:uid')
 			});
  	})
 
-// edit user's timetable (add course, delete course)
+	// edit user's timetable (add course, delete course)
  	.put(function(req, res, next) {
  		if (req.params.id === req.decoded.uid) {
-// update the user's timetable by $set
+	// update the user's timetable by $set
 			var clash = false;
 			Course.find({courseCode:{$in: req.body.timetable}})
 				.select('schedule')
@@ -196,7 +197,7 @@ router.route('/timetable/:uid')
 							}
 						}
 						if(clash === true){
-							res.status(403).json({error: "Time clash occured!"});
+							res.status(400).json({error: "Time clash occured!"});
 						} else {
 							Course.find({courseCode:{$in: req.body.timetable}}, function(err,addcourses){
 								if(err){
@@ -219,7 +220,7 @@ router.route('/timetable/:uid')
 						}
 					}});	
  		} else {
- 			res.status(401).json({error: "You are not authorized to edit user information!"});
+ 			res.status(400).json({error: "You are not authorized to edit user information!"});
  		}
  	});
  	

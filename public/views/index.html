@@ -51,8 +51,13 @@
         <div ng-hide="isLogged" layout="column" class="md-toolbar-tools-bottom inset">
           <div><span class="md-headline">Visitor</span><br><span class="md-subhead">Please log in</span></div>
         </div>
-        <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset"><img ng-src="/images/user/{{uid}}.jpg" alt="{{uid}}" class="avatar">
-          <div><span class="md-headline">{{uid}}</span><br><span class="md-subhead">Welcome!</span></div>
+        <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset">
+          <div layout="row" layout-align="start start"><img ng-src="/images/user/{{uid}}.jpg" alt="{{uid}}" class="avatar"><span flex></span>
+            <md-button ng-click="refresh()" aria-label="Refresh" class="md-icon-button">
+              <md-icon class="material-icons">refresh</md-icon>
+            </md-button>
+          </div>
+          <div layout="column"><span class="md-headline">{{uid}}</span><span class="md-subhead">Point: {{point}}</span></div>
         </div>
       </md-toolbar>
       <div ng-hide="isLogged">

@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('threadListController', function($scope, $window, $location, $routeParams, $mdDialog, Thread) {
+ctrl.controller('threadListController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, Thread) {
 	$scope.$location = $location;
 	if ($window.localStorage['admin'] === 'true') {
 		$scope.admin = true;
@@ -37,6 +37,7 @@ ctrl.controller('threadListController', function($scope, $window, $location, $ro
 		.then(function(newThread) {
 			Thread.create($scope.code, newThread).success(function(res) {
 				$scope.threads = res;
+				$mdToast.show($mdToast.simple().textContent('You earn 1 point.'));
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -64,6 +65,7 @@ ctrl.controller('threadListController', function($scope, $window, $location, $ro
 				$scope.selected = [];
 				Thread.get($scope.code).success(function(res){
 					$scope.threads = res;
+					$mdToast.show($mdToast.simple().textContent('1 point is deducted from the selected author(s).'));
 				}).error(function(res) {
 					$scope.success = false;
 					$scope.errorMessage = res.error;
