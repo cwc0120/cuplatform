@@ -5,7 +5,6 @@ var Chat = require('../models/chat');
 var chatroom = (function() {
 	var onlineList = {};
 
-
 	var getList = function() {
 		var list = [];
 		for (var key in onlineList) {
@@ -150,13 +149,13 @@ module.exports = function (io) {
 				if (err) {
 					console.log('Not a User!');
 				} else {
-					if (chatroom.existClient(res) !== false) {
-						chatroom.replaceClient(res, socket);
+					if (chatroom.existClient(res.uid) !== false) {
+						chatroom.replaceClient(res.uid, socket);
 					} else {
-						chatroom.newClient(res, socket);
+						chatroom.newClient(res.uid, socket);
 					}
 					user.uid = res.uid;
-					user.icon = res.icon
+					user.icon = res.icon;
 					io.emit('clientList', chatroom.getList());
 					chatroom.getPastName(user.uid, function(res) {
 						socket.emit('pastName', res);
