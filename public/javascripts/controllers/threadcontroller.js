@@ -75,4 +75,33 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 			$scope.errorMessage = res.error;
 		});
 	};
+
+	$scope.reportDialog = function(event) {
+		$mdDialog.show({
+			controller: reportController,
+			templateUrl: '/views/report.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		})
+		.then(function(report) {
+			console.log(report);
+			Thread.report($scope.thread._id, report).success(function() {
+				$mdToast.show($mdToast.simple().textContent('Reported to administrators.'));
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		});
+	};
+
+	function reportController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.confirm = function() {
+			$mdDialog.hide($scope.report);
+		};
+	}
 });

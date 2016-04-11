@@ -80,6 +80,10 @@ md-virtual-repeat-container#container {
 	height: 584px;
 }
 
+md-virtual-repeat-container#shrinkcontainer {
+	max-height: 584px;
+}
+
 md-virtual-repeat-container#commentContainer {
 	height: 712px;
 }

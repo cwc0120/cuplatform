@@ -74,5 +74,29 @@ module.exports = {
 				callback();
 			}
 		});
+	},
+
+	informUser: function(uid, message, callback) {
+		var User = require('./models/user');
+
+		User.findOneAndUpdate({uid: uid}, {$push: {updates: message}}, function(err) {
+			if (err) {
+				callback(err);
+			} else {
+				callback();
+			}
+		});
+	},
+
+	informAdmin: function(message, callback) {
+		var User = require('./models/user');
+
+		User.update({admin: true}, {$push: {updates: message}}, function(err) {
+			if (err) {
+				callback(err);
+			} else {
+				callback();
+			}
+		});
 	}
 };

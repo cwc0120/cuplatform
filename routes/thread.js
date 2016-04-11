@@ -98,8 +98,18 @@ router.route('/detail/:tid')
 						if (err) {
 							return next(err);
 						} else {
-							find(req, res, next, function(thread) {
-								res.status(200).json(thread);
+							utils.informUser(thread.author, {
+								topic: 'Thread ' + thread.topic + ' at ' + thread.courseCode,
+								content: req.decoded.uid + ' has made a comment on your thread.',
+								date: Date.now()
+							}, function(err) {
+								if (err) {
+									return next(err);
+								} else {
+									find(req, res, next, function(thread) {
+										res.status(200).json(thread);
+									});
+								}
 							});
 						}
 					});
@@ -173,6 +183,24 @@ router.route('/detail/:tid/:cmid')
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
 		}	
+	});
+
+router.route('/report/:tid')
+	.post(function(req, res, next) {
+		console.log(req.body.content);
+		find(req, res, next, function(thread) {
+			utils.informAdmin({
+				topic: 'ADMIN: Thread ' + thread.topic + ' at ' + thread.courseCode,
+				content: req.body.content,
+				date: Date.now()
+			}, function(err) {
+				if (err) {
+					return next(err);
+				} else {
+					res.status(200).end();
+				}
+			});
+		});
 	});
 
 function findList(req, res, next) {

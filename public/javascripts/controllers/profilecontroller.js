@@ -60,6 +60,7 @@ ctrl.controller('profileController', function($scope, $window, $location, $route
 			clickOutsideToClose: true
 		}).then(function(fd) {
 			User.uploadIcon(uid, fd).success(function(res) {
+				$mdToast.show($mdToast.simple().textContent('Password is changed. Please log in again.'));
 				$scope.user = res;
 			}).error(function(res) {
 				$scope.success = false;
@@ -89,7 +90,7 @@ ctrl.controller('profileController', function($scope, $window, $location, $route
 			clickOutsideToClose: true
 		}).then(function(pwd) {
 			User.changePwd(uid, pwd).success(function(res) {
-				$mdToast.show($mdToast.simple().textContent('Password is changed.'));
+				$mdToast.show($mdToast.simple().textContent('Password is changed. Please log in again.'));
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;

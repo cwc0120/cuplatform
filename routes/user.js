@@ -66,7 +66,7 @@ router.route('/profile/:uid')
 				});
 			});
 		} else {
-			res.status(400).json({error: "You are not authorized to edit user information!"});
+			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
@@ -90,7 +90,7 @@ router.route('/icon/:uid')
 				});
 			});
 		} else {
-			res.status(400).json({error: "You are not authorized to edit user information!"});
+			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
@@ -127,8 +127,30 @@ router.route('/pwd/:uid')
 				}
 			});
 		} else {
-			res.status(400).json({error: "You are not authorized to edit user information!"});
+			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
+	});
+
+router.route('/update/:updateid')
+	.delete(function(req, res, next) {
+		User.findOne({uid: req.decoded.uid}, function(err, user) {
+			if (err) {
+				return next(err);
+			} else if (user === null) {
+				res.status(400).json({error: "User not found!"});
+			} else {
+				user.update({$pull: {updates: {_id: req.params.updateid}}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						req.params.uid = req.decoded.uid;
+						find(req, res, next, function(user) {
+							res.status(200).json(user);
+						});
+					}
+				});
+			}
+		});
 	});
 
 // return a list of items by searching items by seller's id
@@ -226,7 +248,7 @@ router.route('/timetable/:uid')
  	
 function find(req, res, next, callback) {
 	User.findOne({uid: req.params.uid})
-		.select('uid admin email icon gender birthday major intro points')
+		.select('uid admin email icon gender birthday major intro points updates')
 		.exec(function(err, user) {
 			if (err) {
 				return next(err);

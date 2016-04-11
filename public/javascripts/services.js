@@ -204,6 +204,9 @@ angular.module('CUPServices', [])
 			deleteComment: function(resid, cmid) {
 				return $http.delete('/api/resource/info/' + resid + '/' + cmid);
 			},
+			report: function(resid, data) {
+				return $http.post('/api/resource/report/' + resid, data);
+			}
 		};
 	})
 
@@ -229,6 +232,9 @@ angular.module('CUPServices', [])
 			},
 			deleteComment: function(tid, cmid) {
 				return $http.delete('/api/thread/detail/' + tid + '/' + cmid);
+			},
+			report: function(tid, data) {
+				return $http.post('/api/thread/report/' + tid, data);
 			}
 		};
 	})
@@ -278,6 +284,9 @@ angular.module('CUPServices', [])
 					transformRequest: angular.identity,
 					headers: {'Content-Type': undefined}
 				});
+			},
+			deleteUpdate: function(updateid) {
+				return $http.delete('/api/user/update/' + updateid);
 			},
 			changePwd: function(uid, data) {
 				return $http.put('/api/user/pwd/' + uid, data);

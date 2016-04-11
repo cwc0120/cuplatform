@@ -1,0 +1,17 @@
+md-dialog(aria-label='Report' ng-cloak flex='95' flex-gt-sm='60')
+	form(name='reportForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Report
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				md-input-container.md-block
+					label Report Content
+					textarea(rows='3' columns='50' name='content' ng-model='report.content' required)
+					div(ng-messages='reportForm.content.$error')
+						div(ng-message='required') Content missing.
+		md-dialog-actions
+			md-button(type='submit' ng-click='confirm()' ng-disabled='reportForm.$invalid') report

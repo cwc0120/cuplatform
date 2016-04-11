@@ -36,6 +36,16 @@ div(ng-hide='isLogged' layout='column')
 
 div(ng-show='isLogged' layout='column')
 	div.inset(layout='row' layout-align='center center')
-		div(flex='90' flex-gt-md='80')
-			h1 Log in successful!
-			p Hello, {{uid}}.
+		div(flex='95' flex-gt-md='80')
+			h1(layout-padding) Update Center
+
+			md-card
+				md-list
+					md-subheader.md-no-sticky You have {{updates.length}} updates.
+					md-virtual-repeat-container#shrinkcontainer(flex md-auto-shrink)
+						md-list-item.md-2-line.repeated-item(md-virtual-repeat='update in updates' md-item-size='73')
+							div.md-list-item-text
+								h3 {{update.topic}} @{{update.date | date: 'd/M/yyyy h:mma'}}
+								p {{update.content}}
+							md-button.md-secondary.md-icon-button(ng-click='deleteUpdate(update._id)' aria-label='Delete Update')
+									md-icon.material-icons delete

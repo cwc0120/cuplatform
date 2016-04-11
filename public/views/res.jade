@@ -55,6 +55,8 @@ div(layout='column')
 						span(flex)
 						md-button.md-icon-button(ng-show='uid === resource.uploader' ng-click='editResDialog($event)' aria-label='Edit resource')
 							md-icon.material-icons mode_edit
+						md-button.md-icon-button(ng-click='reportDialog($event)' aria-label='report')
+							md-icon.material-icons report
 					md-card-content
 						p Resource name: {{resource.name}}
 						p 

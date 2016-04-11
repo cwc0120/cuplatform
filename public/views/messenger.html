@@ -13,20 +13,12 @@
               <md-tabs md-dynamic-height="md-dynamic-height" md-border-bottom="md-border-bottom">
                 <md-tab label="User List">
                   <md-list flex="flex">
-                    <md-list-item ng-repeat="client in clients" ng-class="{selected: client.uid === selected}" ng-click="getChatRecord(client.uid)" class="md-2-line">
-                      <div class="md-list-item-text">
-                        <h3>{{client.uid}}</h3>
-                      </div>
-                    </md-list-item>
+                    <md-list-item ng-repeat="client in clients" ng-class="{selected: client.uid === selected}" ng-click="getChatRecord(client.uid)"><span>{{client.uid}}</span></md-list-item>
                   </md-list>
                 </md-tab>
                 <md-tab label="Past record">
                   <md-list flex="flex">
-                    <md-list-item ng-repeat="client in pastList" ng-class="{selected: client === selected}" ng-click="getChatRecord(client)" class="md-2-line">
-                      <div class="md-list-item-text">
-                        <h3>{{client}}</h3>
-                      </div>
-                    </md-list-item>
+                    <md-list-item ng-repeat="client in pastList" ng-class="{selected: client === selected}" ng-click="getChatRecord(client)"><span>{{client}}</span></md-list-item>
                   </md-list>
                 </md-tab>
               </md-tabs>

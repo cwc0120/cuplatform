@@ -63,6 +63,9 @@
             <md-button ng-show="uid === resource.uploader" ng-click="editResDialog($event)" aria-label="Edit resource" class="md-icon-button">
               <md-icon class="material-icons">mode_edit</md-icon>
             </md-button>
+            <md-button ng-click="reportDialog($event)" aria-label="report" class="md-icon-button">
+              <md-icon class="material-icons">report</md-icon>
+            </md-button>
           </md-card-header>
           <md-card-content>
             <p>Resource name: {{resource.name}}</p>

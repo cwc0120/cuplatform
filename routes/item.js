@@ -143,7 +143,7 @@ router.route('/request/:itemid')
 						return next(err);
 					} else {
 						Transaction.findOne({
-							item:req.params.itemid, 
+							item: req.params.itemid, 
 							buyer: req.decoded.uid
 						}, function(err, transaction) {
 							if (err){
@@ -159,8 +159,18 @@ router.route('/request/:itemid')
 									if (err) {
 										return next(err);
 									} else {
-										find(req, res, next, function(result) {
-											res.status(200).json(result);
+										utils.informUser(item.seller, {
+											topic: 'Item ' + item.name,
+											content: req.decoded.uid + ' is interested in your item. Check your item info page to contact him/her.',
+											date: Date.now()
+										}, function(err) {
+											if (err) {
+												return next(err);
+											} else {
+												find(req, res, next, function(result) {
+													res.status(200).json(result);
+												});
+											}
 										});
 									}
 								});
@@ -226,8 +236,18 @@ router.route('/request/:itemid')
 											if (err) {
 												return next(err);
 											} else {
-												find(req, res, next, function(result) {
-													res.status(200).json(result);
+												utils.informUser(req.body.uid, {
+													topic: 'Item ' + item.name,
+													content: 'Your transaction with ' + item.seller + ' is confirmed.',
+													date: Date.now()
+												}, function(err) {
+													if (err) {
+														return next(err);
+													} else {
+														find(req, res, next, function(result) {
+															res.status(200).json(result);
+														});
+													}
 												});
 											}
 										});

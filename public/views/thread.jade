@@ -7,7 +7,7 @@ div(layout='column')
 			div(ng-show='success')
 				md-card
 					md-card-header
-						md-card-avatar
+						md-card-avatar(ng-hide='thread.author === "Annoymous"')
 							img.md-user-avatar(ng-src='/images/user/{{thread.icon}}')
 						md-card-header-text
 							span.md-title {{thread.author}}
@@ -15,6 +15,8 @@ div(layout='column')
 						span(flex)
 						md-button.md-icon-button(ng-show='uid === thread.author' ng-click='editThreadDialog($event)' aria-label='Edit thread')
 							md-icon.material-icons mode_edit
+						md-button.md-icon-button(ng-click='reportDialog($event)' aria-label='report')
+							md-icon.material-icons report
 					md-card-title
 						md-card-title-text
 							span.md-headline {{thread.topic}}

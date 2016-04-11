@@ -50,9 +50,24 @@
 </div>
 <div ng-show="isLogged" layout="column">
   <div layout="row" layout-align="center center" class="inset">
-    <div flex="90" flex-gt-md="80">
-      <h1>Log in successful!</h1>
-      <p>Hello, {{uid}}.</p>
+    <div flex="95" flex-gt-md="80">
+      <h1 layout-padding="layout-padding">Update Center</h1>
+      <md-card>
+        <md-list>
+          <md-subheader class="md-no-sticky">You have {{updates.length}} updates.</md-subheader>
+          <md-virtual-repeat-container id="shrinkcontainer" flex="flex" md-auto-shrink="md-auto-shrink">
+            <md-list-item md-virtual-repeat="update in updates" md-item-size="73" class="md-2-line repeated-item">
+              <div class="md-list-item-text">
+                <h3>{{update.topic}} @{{update.date | date: 'd/M/yyyy h:mma'}}</h3>
+                <p>{{update.content}}</p>
+              </div>
+              <md-button ng-click="deleteUpdate(update._id)" aria-label="Delete Update" class="md-secondary md-icon-button">
+                <md-icon class="material-icons">delete</md-icon>
+              </md-button>
+            </md-list-item>
+          </md-virtual-repeat-container>
+        </md-list>
+      </md-card>
     </div>
   </div>
 </div>

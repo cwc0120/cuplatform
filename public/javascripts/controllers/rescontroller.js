@@ -149,7 +149,9 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 			a.href = fileURL;
 			a.download = $scope.resource.link;
 			a.click();
-			$mdToast.show($mdToast.simple().textContent('5 points are deducted.'));
+			$mdToast.show($mdToast.simple().textContent('3 points are deducted.'));
+		}, function (res) {
+			$mdToast.show($mdToast.simple().textContent('Error occurred.'));
 		});
 	};
 
@@ -173,4 +175,32 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 			$scope.errorMessage = res.error;
 		});
 	};
+
+	$scope.reportDialog = function(event) {
+		$mdDialog.show({
+			controller: reportController,
+			templateUrl: '/views/report.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		})
+		.then(function(report) {
+			Resource.report($scope.resource._id, report).success(function() {
+				$mdToast.show($mdToast.simple().textContent('Reported to administrators.'));
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		});
+	};
+
+	function reportController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.confirm = function() {
+			$mdDialog.hide($scope.report);
+		};
+	}
 });

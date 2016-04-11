@@ -11,14 +11,12 @@ div(layout='column')
 							md-tabs(md-dynamic-height md-border-bottom)
 								md-tab(label='User List')
 									md-list(flex)
-										md-list-item.md-2-line(ng-repeat='client in clients' ng-class='{selected: client.uid === selected}' ng-click='getChatRecord(client.uid)')
-											div.md-list-item-text
-												h3 {{client.uid}}
+										md-list-item(ng-repeat='client in clients' ng-class='{selected: client.uid === selected}' ng-click='getChatRecord(client.uid)')
+											span {{client.uid}}
 								md-tab(label='Past record')
 									md-list(flex)
-										md-list-item.md-2-line(ng-repeat='client in pastList' ng-class='{selected: client === selected}' ng-click='getChatRecord(client)')
-											div.md-list-item-text
-												h3 {{client}}
+										md-list-item(ng-repeat='client in pastList' ng-class='{selected: client === selected}' ng-click='getChatRecord(client)')
+											span {{client}}
 
 					div(flex='70')
 						md-card

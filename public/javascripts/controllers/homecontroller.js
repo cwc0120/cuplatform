@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth, Socket) {
+ctrl.controller('homeController', function($scope, $location, $mdDialog, $mdToast, Auth, Socket, User) {
 	$scope.user = {};
 	$scope.disable = true;
 	$scope.$location = $location;
@@ -17,6 +17,9 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth, S
 	}, function(newVal, oldVal) {
 		if(typeof newVal !== 'undefined') {
 			$scope.uid = Auth.uid;
+			User.find($scope.uid).success(function(user) {
+				$scope.updates = user.updates.reverse();
+			});
 		}
 	});
 
@@ -37,25 +40,25 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth, S
 	};
 
 	$scope.registerDialog = function(event) {
-			$mdDialog.show({
-				controller: registerController,
-				templateUrl: '/views/register.html',
-				parent: angular.element(document.body),
-				targetEvent: event,
-				clickOutsideToClose: true
-			})
-			.then(function(newUser) {
-				Auth.login({uid: newUser.uid, pwd: newUser.pwd1}).success(function(res) {
-					Auth.uid = res.uid;
-					Auth.isLogged = true;
-					Auth.setToken(res);
-					$location.path('/');
-				}).error(function(res) {
-					$scope.success = false;
-					$scope.errorMessage = res.error;
-				});
+		$mdDialog.show({
+			controller: registerController,
+			templateUrl: '/views/register.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		})
+		.then(function(newUser) {
+			Auth.login({uid: newUser.uid, pwd: newUser.pwd1}).success(function(res) {
+				Auth.uid = res.uid;
+				Auth.isLogged = true;
+				Auth.setToken(res);
+				$location.path('/');
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
 			});
-		};
+		});
+	};
 
 	function registerController($scope, $mdDialog, Auth) {
 		$scope.newUser = {};
@@ -72,4 +75,12 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, Auth, S
 			});
 		};
 	}
+
+	$scope.deleteUpdate = function(updateID) {
+		User.deleteUpdate(updateID).success(function(res) {
+			$scope.updates = res.updates;
+		}).error(function(res) {
+			$mdToast.show($mdToast.simple().textContent('Error: ' + res.error));
+		});
+	};
 });
