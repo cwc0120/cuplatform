@@ -7,6 +7,7 @@ var Chat = new Schema({
 	user2: {type: String, ref: 'User'},
 	messages: [{
 		sender: {type: String, ref: 'User'},
+		icon: String,
 		content: String,
 		date: Date
 	}]

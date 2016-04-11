@@ -30,7 +30,8 @@ router.post('/', function(req, res, next) {
 						uid: uid,
 						email: email,
 						salt: salt,
-						hash: hash
+						hash: hash,
+						points: 0
 					}, function(err) {
 						if (err) {
 							return next(err);

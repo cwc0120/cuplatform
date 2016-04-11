@@ -9,7 +9,7 @@
       <div ng-show="success">
         <md-card>
           <md-card-header>
-            <md-card-avatar><img ng-src="/images/user/{{item.seller}}.jpg" class="md-user-avatar"/></md-card-avatar>
+            <md-card-avatar><img ng-src="/images/user/{{item.icon}}" class="md-user-avatar"/></md-card-avatar>
             <md-card-header-text><span class="md-title">{{item.seller}}</span><span class="md-subhead">{{item.date | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
             <md-button ng-show="uid === item.seller &amp;&amp; item.active" ng-click="editItemDialog($event)" aria-label="Edit item" class="md-icon-button">
               <md-icon class="material-icons">mode_edit</md-icon>
@@ -41,9 +41,9 @@
           <md-list flex="flex">
             <md-subheader class="md-no-sticky">{{item.buyer.length}} person(s) interested.</md-subheader>
             <md-divider></md-divider>
-            <md-list-item ng-repeat="buyer in item.buyer" ng-click="sellDialog($event, buyer)" class="md-2-line"><img ng-src="/images/user/{{buyer}}.jpg" alt="{{buyer}}" class="md-avatar"/>
+            <md-list-item ng-repeat="buyer in item.buyer" ng-click="sellDialog($event, buyer)" class="md-2-line"><img ng-src="/images/user/{{buyer.icon}}" alt="{{buyer.uid}}" class="md-avatar"/>
               <div class="md-list-item-text">
-                <h3>{{buyer}}</h3>
+                <h3>{{buyer.uid}}</h3>
               </div>
               <md-icon ng-show="uid === item.seller &amp;&amp; item.active" ng-click="newMessageDialog($event, buyer)" aria-label="Contact buyer" class="md-secondary material-icons">message</md-icon>
               <md-divider ng-if="!$last"></md-divider>

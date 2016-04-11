@@ -23,6 +23,7 @@ angular.module('CUPServices', [])
 			Auth.uid = '';
 			Auth.isLogged = false;
 			$window.localStorage.removeItem('uid');
+			$window.localStorage.removeItem('icon');
 			$window.localStorage.removeItem('admin');
 			$window.localStorage.removeItem('cupToken');
 			$location.path('/');
@@ -34,6 +35,7 @@ angular.module('CUPServices', [])
 
 		Auth.setToken = function(req) {
 			$window.localStorage['uid'] = req.uid;
+			$window.localStorage['icon'] = req.icon;
 			$window.localStorage['admin'] = req.admin;
 			$window.localStorage['cupToken'] = req.token;
 		};

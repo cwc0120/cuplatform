@@ -59,6 +59,7 @@ router.route('/info/:cid')
 		// add comment
 		var info = {
 			author: req.decoded.uid,
+			icon: req.decoded.icon,
 			rating: req.body.rating,
 			outline: req.body.outline,
 			assessMethod: req.body.assessMethod,
@@ -78,9 +79,15 @@ router.route('/info/:cid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next, function(course) {
-							course.info.sort({dateOfComment: -1});
-							res.status(200).json(course);
+						utils.addPoint(req.decoded.uid, 5, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next, function(course) {
+									course.info.sort({dateOfComment: -1});
+									res.status(200).json(course);
+								});
+							}
 						});
 					}
 				});
@@ -136,10 +143,17 @@ router.route('/info/:cid/:cmid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next, function(course) {
-							course.info.sort({dateOfComment: -1});
-							res.status(200).json(course);
+						utils.deductPoint(req.decoded.uid, 5, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next, function(course) {
+									course.info.sort({dateOfComment: -1});
+									res.status(200).json(course);
+								});
+							}
 						});
+						
 					}
 				});
 			});

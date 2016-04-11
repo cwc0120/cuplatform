@@ -58,13 +58,20 @@ router.route('/:cid')
 						name: req.body.name,
 						description: req.body.description,
 						uploader: req.decoded.uid,
+						icon: req.decoded.icon,
 						link: req.file.filename,
 						dateOfUpload: Date.now(),
 					}, function(err) {
 						if (err) {
 							return next(err);
 						} else {
-							findResList(req, res, next);
+							utils.addPoint(req.decoded.uid, 10, function(err) {
+								if (err) {
+									return next(err);
+								} else {
+									findResList(req, res, next);
+								}
+							});
 						}
 					});
 				}
@@ -84,6 +91,7 @@ router.route('/info/:resid')
 		// post comment there
 		var comment = {
 			author: req.decoded.uid,
+			icon: req.decoded.icon,
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
@@ -128,7 +136,13 @@ router.route('/info/:resid')
 			find(req, res, next, function(resource) {
 				req.params.cid = resource.courseCode;
 				resource.remove();
-				findResList(req, res, next);
+				utils.deductPoint(req.decoded.uid, 10, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						findResList(req, res, next);
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a resource!"});
@@ -138,13 +152,20 @@ router.route('/info/:resid')
 router.route('/file/:resid')
 	.get(function(req, res, next) {
 		var file = './uploads/' + req.params.resid;
-		res.download(file, function(err) {
+		utils.deductPoint(req.decoded.uid, 5, function(err) {
 			if (err) {
 				return next(err);
 			} else {
-				console.log('success!');
+				res.download(file, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						console.log('success!');
+					}
+				});
 			}
 		});
+		
 	});
 
 router.route('/info/:resid/:cmid')

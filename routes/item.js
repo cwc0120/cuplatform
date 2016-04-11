@@ -53,6 +53,7 @@ router.route('/')
 				Item.create({
 					category: category,
 					seller: req.decoded.uid,
+					icon: req.decoded.icon,
 					name: req.body.name,
 					description: req.body.description,
 					img: req.file.filename,
@@ -137,7 +138,7 @@ router.route('/request/:itemid')
 	.post(function(req, res, next) {
 		find(req, res, next, function(item) {
 			if (item.seller !== req.decoded.uid) {
-				item.update({$push: {buyer: req.decoded.uid}}, function(err) {
+				item.update({$push: {buyer: {uid: req.decoded.uid, icon: req.decoded.icon}}}, function(err) {
 					if (err) {
 						return next(err);
 					} else {
@@ -245,7 +246,7 @@ router.route('/request/:itemid')
 	// uninterest item: delete the record 
 	.delete(function(req, res, next) {
 		find(req, res, next, function(item) {
-			item.update({$pull: {buyer: req.decoded.uid}}, function(err) {
+			item.update({$pull: {buyer: {uid: req.decoded.uid, icon: req.decoded.icon}}}, function(err) {
 				if (err) {
 					return next(err);
 				} else {

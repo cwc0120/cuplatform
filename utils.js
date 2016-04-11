@@ -11,8 +11,6 @@ module.exports = {
 					return res.status(401).json({error: err.name + ': ' + err.message});
 				} else {
 					req.decoded = decoded;
-					console.log("The following user has been verified:");
-					console.log(decoded);
 					next();
 				}
 			});
@@ -31,8 +29,6 @@ module.exports = {
 					return res.status(401).json({error: err.name + ': ' + err.message});
 				} else {
 					req.decoded = decoded;
-					console.log("The following user has been verified:");
-					console.log(decoded);
 					next();
 				}
 			});
@@ -42,7 +38,7 @@ module.exports = {
 	},
 
 	findUser: function(token, callback) {
-		var config = require('./config')
+		var config = require('./config');
 		var jwt = require('jsonwebtoken');
 
 		if (token) {
@@ -50,9 +46,33 @@ module.exports = {
 				if (err) {
 					callback(err);
 				} else {
-					callback(err, decoded.uid);
+					callback(err, decoded);
 				}
 			});
 		}
+	},
+
+	addPoint: function(uid, point, callback) {
+		var User = require('../models/user');
+
+		User.findOneAndUpdate({uid: uid}, {$inc: {points: point}}, function(err) {
+			if (err) {
+				callback(err);
+			} else {
+				callback();
+			}
+		});
+	},
+
+	deductPoint: function(uid, point, callback) {
+		var User = require('../models/user');
+
+		User.findOneAndUpdate({uid: uid}, {$inc: {points: -point}}, function(err) {
+			if (err) {
+				callback(err);
+			} else {
+				callback();
+			}
+		});
 	}
 };

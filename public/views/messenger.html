@@ -13,7 +13,7 @@
               <md-tabs md-dynamic-height="md-dynamic-height" md-border-bottom="md-border-bottom">
                 <md-tab label="User List">
                   <md-list flex="flex">
-                    <md-list-item ng-repeat="client in clients" ng-class="{selected: client.uid === selected}" ng-click="getChatRecord(client.uid)" class="md-2-line"><img ng-src="/images/user/{{client.uid}}.jpg" alt="{{client.uid}}" class="md-avatar"/>
+                    <md-list-item ng-repeat="client in clients" ng-class="{selected: client.uid === selected}" ng-click="getChatRecord(client.uid)" class="md-2-line">
                       <div class="md-list-item-text">
                         <h3>{{client.uid}}</h3>
                       </div>
@@ -22,7 +22,7 @@
                 </md-tab>
                 <md-tab label="Past record">
                   <md-list flex="flex">
-                    <md-list-item ng-repeat="client in pastList" ng-class="{selected: client === selected}" ng-click="getChatRecord(client)" class="md-2-line"><img ng-src="/images/user/{{client}}.jpg" alt="{{client}}" class="md-avatar"/>
+                    <md-list-item ng-repeat="client in pastList" ng-class="{selected: client === selected}" ng-click="getChatRecord(client)" class="md-2-line">
                       <div class="md-list-item-text">
                         <h3>{{client}}</h3>
                       </div>
@@ -70,12 +70,13 @@
                 <md-subheader ng-show="offline" class="md-no-sticky">{{selected}} is currently offline.</md-subheader>
                 <md-subheader ng-show="chat.error" class="md-no-sticky">{{chat.error}}</md-subheader>
                 <md-virtual-repeat-container id="container" flex="flex" ng-show="chat.messages" md-auto-shrink="md-auto-shrink">
-                  <md-list-item md-virtual-repeat="message in chat.messages" md-item-size="73" class="md-2-line repeated-item"><img ng-src="/images/user/{{message.sender}}.jpg" alt="{{cm.author}}" class="md-avatar"/>
+                  <md-list-item md-virtual-repeat="message in chat.messages" md-item-size="73" class="md-2-line repeated-item"><img ng-src="/images/user/{{message.icon}}" alt="{{message.sender}}" class="md-avatar"/>
                     <div class="md-list-item-text">
                       <div layout="row">
                         <h3>{{message.sender}}</h3><span flex="flex"></span>
                         <p>{{message.date | date: 'd/M/yyyy h:mma'}}</p>
-                      </div><span>{{message.content}}</span>
+                      </div>
+                      <p>{{message.content}}</p>
                     </div>
                   </md-list-item>
                 </md-virtual-repeat-container>

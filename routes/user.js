@@ -28,7 +28,7 @@ var storage = multer.diskStorage({
 var upload = multer({
 	storage: storage,
 	fileFilter: function(req, file, cb) {
-		if (file.mimetype === 'image/jpeg') {
+		if (file.mimetype.slice(0,5) === 'image') {
 			cb(null, true);
 		} else {
 			cb(new Error('Not an image file!'));

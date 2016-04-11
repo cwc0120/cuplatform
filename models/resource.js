@@ -8,10 +8,12 @@ var Resource = new Schema({
 	name: String,
 	description: String,
 	uploader: {type: String, ref: 'User'},
+	icon: String,
 	link: String,
 	dateOfUpload: Date,
 	comment: [{
 		author: {type: String, ref: 'User'},
+		icon: String,
 		content: String,
 		dateOfComment: Date
 	}]

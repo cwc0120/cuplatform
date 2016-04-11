@@ -16,6 +16,7 @@ var Course = new Schema({
 	prof: String,
 	info: [{
 		author: {type: String, ref: 'User'},
+		icon: String,
 		rating: Number,
 		outline: String,
 		assessMethod: String,
