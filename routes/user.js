@@ -7,6 +7,7 @@ var User = require('../models/user');
 var Item = require('../models/item');
 var Transaction = require('../models/transaction');
 var utils = require('../utils');
+var Course = require('../models/course');
 
 router.use(function(req, res, next) {
 	utils.validateToken(req, res, next);
@@ -104,7 +105,7 @@ router.route('/pwd/:uid')
 				} else {
 					var salt = user.salt;
 					var hash = crypto.pbkdf2Sync(req.body.oldPwd, salt, 10000, 512);
-					if (hash != user.hash) {
+					if (hash !== user.hash) {
 						res.status(400).json({error: 'Incorrect password'});
 					} else if (req.body.newPwd1 !== req.body.newPwd2) {
 						res.status(400).json({error: 'Password unmatched.'});
@@ -156,20 +157,71 @@ router.get('/buylist', function(req, res, next) {
 	});	
 });	
 
-// router.route('/timetable/:id')
-// 	// see a user's timetable
-// 	.get(function(req, res, next) {
-// 		// return a list of lessons
-// 	})
+router.route('/timetable/:uid')
+// see a user's timetable
+	.get(function(req, res, next) {
+// return a list of lessons
+		User.findOne({uid: req.params.uid})
+			.populate('coursesTaken')
+			.select('courseCode courseName schedule')
+			.exec(function(err, courses){
+				if(err){
+					return next(err);
+				} else {
+					res.status(200).json(courses);
+				}
+			});
+ 	})
 
-// 	// edit user's timetable
-// 	.put(function(req, res, next) {
-// 		if (req.params.id === req.decoded.uid) {
-// 			// update the user's timetable by $set
-// 		} else {
-// 			res.status(401).json({error: "You are not authorized to edit user information!"});
-// 		}
-// 	});
+// edit user's timetable (add course, delete course)
+ 	.put(function(req, res, next) {
+ 		if (req.params.id === req.decoded.uid) {
+// update the user's timetable by $set
+			var clash = false;
+			Course.find({courseCode:{$in: req.body.timetable}})
+				.select('schedule')
+				.exec(function(err,courses){
+					if(err){
+						return next(err);
+					} else {
+						var combinedSchedule = [];
+						for(var i = 0; i<courses.length;i++){
+							combinedSchedule = combinedSchedule.concat(courses[i].schedule);
+						}
+						for(var j=0;j<combinedSchedule.length-1;j++){
+							for (var k=j+1;k<combinedSchedule;k++){
+								if(combinedSchedule[j].day ===combinedSchedule[k].day && combinedSchedule[j].time ===combinedSchedule[k].time){
+									clash = true;
+								}
+							}
+						}
+						if(clash === true){
+							res.status(403).json({error: "Time clash occured!"});
+						} else {
+							Course.find({courseCode:{$in: req.body.timetable}}, function(err,addcourses){
+								if(err){
+									return next(err);
+								} else{
+									find(req, res, next, function(user) {
+									user.update({$set: {
+										coursesTaken: addcourses,
+									}}, function(err) {
+										if (err) {
+											return next(err);
+										} else {
+											find(req, res, next, function(result) {
+												res.status(200).json(result);
+											});
+										}});
+									});
+								}
+							});
+						}
+					}});	
+ 		} else {
+ 			res.status(401).json({error: "You are not authorized to edit user information!"});
+ 		}
+ 	});
  	
 function find(req, res, next, callback) {
 	User.findOne({uid: req.params.uid})
