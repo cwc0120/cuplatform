@@ -53,6 +53,7 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, $mdToas
 				Auth.isLogged = true;
 				Auth.setToken(res);
 				$location.path('/');
+				Socket.connect();
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -68,7 +69,13 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, $mdToas
 		};
 
 		$scope.createUser = function() {
-			Auth.register($scope.newUser).success(function(result) {
+			var fd = new FormData();
+			fd.append('img', $scope.img);
+			fd.append('uid', $scope.newUser.uid);
+			fd.append('email', $scope.newUser.email);
+			fd.append('pwd1', $scope.newUser.pwd1);
+			fd.append('pwd2', $scope.newUser.pwd2);
+			Auth.register(fd).success(function(result) {
 				$mdDialog.hide($scope.newUser);
 			}).error(function(err) {
 				$scope.registerMessage = err.error;

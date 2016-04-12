@@ -62,7 +62,7 @@ html(ng-app='CUP')
 						span.md-subhead Please log in
 				div(ng-show='isLogged' class='md-toolbar-tools-bottom inset' layout='column')
 					div(layout='row' layout-align='start start')
-						img.avatar(ng-src='/images/user/{{uid}}.jpg' alt='{{uid}}')
+						img.avatar(ng-src='/images/user/{{icon}}' alt='{{uid}}')
 						span(flex)
 						md-button.md-icon-button(ng-click = 'refresh()' aria-label='Refresh')
 							md-icon.material-icons refresh

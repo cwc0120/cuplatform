@@ -21,6 +21,11 @@ md-dialog(aria-label='Registration' ng-cloak flex='95' flex-gt-sm='60')
 					input(type='text' name='email' ng-model='newUser.email' required ng-pattern="/@link.cuhk.edu.hk$/")
 					div(ng-messages='registerForm.email.$error')
 						div(ng-message-exp="['required', 'pattern']") CUHK e-mail required.
+				md-input-container.md-block.md-input-has-placeholder
+					label Avatar
+					input(type='file' name='img' file-model='img' required)
+					div(ng-messages='registerForm.img.$error')
+						div(ng-message='required') Avatar missing.
 				md-input-container.md-block
 					label Password
 					input(type='password' name='pwd1' ng-model='newUser.pwd1' required minlength='7')

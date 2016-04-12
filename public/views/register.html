@@ -27,6 +27,13 @@
             <div ng-message-exp="['required', 'pattern']">CUHK e-mail required.</div>
           </div>
         </md-input-container>
+        <md-input-container class="md-block md-input-has-placeholder">
+          <label>Avatar</label>
+          <input type="file" name="img" file-model="img" required="required"/>
+          <div ng-messages="registerForm.img.$error">
+            <div ng-message="required">Avatar missing.</div>
+          </div>
+        </md-input-container>
         <md-input-container class="md-block">
           <label>Password</label>
           <input type="password" name="pwd1" ng-model="newUser.pwd1" required="required" minlength="7"/>

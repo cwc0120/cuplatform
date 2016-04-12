@@ -12,7 +12,10 @@ angular.module('CUPServices', [])
 		}
 		
 		Auth.register = function(req) {
-			return $http.post('/api/register', req);
+			return $http.post('/api/register', req, {
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				});
 		};
 
 		Auth.login = function(req) {

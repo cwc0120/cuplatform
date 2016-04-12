@@ -61,6 +61,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 			$scope.userMenu[0].link = '/user/profile/' + $scope.uid;
 			User.find($scope.uid).success(function(user) {
 				$scope.point = user.points;
+				$scope.icon = user.icon;
 			});
 		}
 	});
