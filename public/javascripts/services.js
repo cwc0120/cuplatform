@@ -251,11 +251,40 @@ angular.module('CUPServices', [])
 			delete: function(itemid) {
 				return $http.delete('/api/item/' + itemid);
 			},
-			buy: function(itemid) {
-				return $http.get('/api/item/buyrequest/' + itemid);
+			interest: function(itemid) {
+				return $http.post('/api/item/request/' + itemid);
 			},
 			transact: function(itemid, uid) {
-				return $http.get('api/item/transactrequest/' + itemid + '/' + uid);
+				return $http.put('/api/item/request/' + itemid, {uid: uid});
+			},
+			uninterest: function(itemid) {
+				return $http.delete('/api/item/request/' + itemid);
+			}		
+		};
+	})
+
+	.factory('User', function($http) {
+		return {
+			find: function(uid) {
+				return $http.get('/api/user/profile/' + uid);
+			},
+			editProfile: function(uid, data) {
+				return $http.put('/api/user/profile/' + uid, data);
+			},
+			uploadIcon: function(uid, data) {
+				return $http.post('/api/user/icon/' + uid, data, {
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				});
+			},
+			changePwd: function(uid, data) {
+				return $http.put('/api/user/pwd/' + uid, data);
+			},
+			getSellList: function() {
+				return $http.get('/api/user/selllist');
+			},
+			getBuyList: function() {
+				return $http.get('/api/user/buylist');
 			}
 		};
 	})

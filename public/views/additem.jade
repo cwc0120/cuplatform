@@ -8,32 +8,30 @@ md-dialog(aria-label='Sell Item' ng-cloak flex='95' flex-gt-sm='60')
 					md-icon.material-icons clear
 		md-dialog-content
 			div.md-dialog-content(layout='column')
-				md-input-container.md-block
-					label Item name
-					input(type='text' name='name' ng-model='name' required)
-					div(ng-messages='addItemForm.name.$error')
-						div(ng-message='required') Name missing.
-				div(layout='row', layout-xs='column')
-					md-input-container(flex-gt-xs='30')
-						label Department code (optional)
-						input(type='text' name='deptCode' ng-model='deptCode')
+				div(layout='row', layout-xs='column' layout-align='start center')
 					md-input-container(flex-gt-xs='70')
-						label Course code (optional)
-						input(type='text' name='courseCode' ng-model='courseCode')
-				div(layout='row', layout-xs='column')
+						label Item name
+						input(type='text' name='name' ng-model='name' required)
+						div(ng-messages='addItemForm.name.$error')
+							div(ng-message='required') Name missing.
+					md-input-container(flex-gt-xs='30')
+						label Category (e.g. MATH, CSCI3100)
+						input(type='text' name='code' ng-model='code' ng-pattern="/^(([A-Z]{4})|([A-Z]{4}[0-9]{4}))$/")
+						div(ng-messages='addItemForm.code.$error')
+							div(ng-message='pattern') Code format error.
+				div(layout='row', layout-xs='column' layout-align='start center')
 					md-input-container(flex-gt-xs='30')
 						label Price
 						input(type='number' name='price' ng-model='price' required)
 						div(ng-messages='addItemForm.price.$error')
 							div(ng-message='required') Pricing missing.
-					md-input-container(flex-gt-xs='70')
-						label Flexible price
-						input(type='checkbox' name='priceFlexible' ng-model='priceFlexible')
+					div(flex-gt-xs='70')
+						md-checkbox(ng-model='priceFlexible') Flexible price
 				md-input-container.md-block.md-input-has-placeholder
 					label Image
 					input(type='file' name='img' file-model='img' required)
 					div(ng-messages='addItemForm.img.$error')
-						div(ng-message='required') Iamge missing.
+						div(ng-message='required') Image missing.
 				text-angular(ng-model='htmlVariable' placeholder='Click to type description')
 		md-dialog-actions
 			md-button(type='submit' ng-click='addItem()' ng-disabled='addItemForm.$invalid') Upload

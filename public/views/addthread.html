@@ -1,0 +1,33 @@
+
+<md-dialog aria-label="Add Thread" ng-cloak="ng-cloak" flex="95" flex-gt-sm="60">
+  <form name="addThreadForm" enctype="multipart/form-data">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>New Thread</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <div layout="row" layout-xs="column" layout-align="start center">
+          <md-input-container flex-gt-xs="70">
+            <label>Topic</label>
+            <input type="text" name="topic" ng-model="newThread.topic" required="required"/>
+            <div ng-messages="addThreadForm.topic.$error">
+              <div ng-message="required">Name missing.</div>
+            </div>
+          </md-input-container>
+          <div flex-gt-xs="30">
+            <md-checkbox ng-model="newThread.annoymous">Secret?</md-checkbox>
+          </div>
+        </div>
+        <text-angular ng-model="htmlVariable" placeholder="Click to type content"></text-angular>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="addThread()" ng-disabled="addThreadForm.$invalid">Sumbit</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

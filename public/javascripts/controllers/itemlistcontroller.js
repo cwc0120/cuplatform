@@ -51,8 +51,7 @@ ctrl.controller('itemListController', function($scope, $window, $location, $mdDi
 			var fd = new FormData();
 			$scope.description = $scope.htmlVariable;
 			fd.append('name', $scope.name);
-			fd.append('deptCode', $scope.deptCode);
-			fd.append('courseCode', $scope.courseCode);
+			fd.append('code', $scope.code);
 			fd.append('img', $scope.img);
 			fd.append('price', $scope.price);
 			fd.append('priceFlexible', $scope.priceFlexible);

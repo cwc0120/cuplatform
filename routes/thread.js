@@ -144,7 +144,7 @@ router.route('/detail/:tid/:cmid')
 
 function findList(req, res, next) {
 	Thread.find({courseCode: req.params.cid.toUpperCase()})
-		.select('topic content author dateOfUpdate annoymous')
+		.select('topic author dateOfUpdate annoymous')
 		.exec(function(err, threads) {
 			if (err) {
 				return next(err);
@@ -152,9 +152,6 @@ function findList(req, res, next) {
 				for (var i = 0; i < threads.length; i++) {
 					if (threads[i].annoymous) {
 						threads[i].author = 'Annoymous';
-					}
-					if (threads[i].content.length > 100) {
-						threads[i].content = threads[i].content.slice(0,100) + '...';
 					}
 				}
 				res.status(200).json(threads);

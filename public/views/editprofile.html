@@ -1,0 +1,47 @@
+
+<md-dialog aria-label="Edit Profile" ng-cloak="ng-cloak" flex="95" flex-gt-sm="60">
+  <form name="editProfileForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Edit Profile</h2><span flex="flex"></span>
+        <md-button ng-click="cancel()" class="md-icon-button">
+          <md-icon class="material-icons">clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div layout="column" class="md-dialog-content">
+        <h3>Basic information</h3>
+        <div layout="row" layout-xs="column" layout-align="start center">
+          <md-input-container flex-gt-xs="30" class="md-block">
+            <label>User ID</label>
+            <input type="text" name="uid" ng-model="edit.uid" disabled="disabled"/>
+          </md-input-container><span>Gender: </span>
+          <md-radio-group flex="flex" ng-model="edit.gender" layout="row">
+            <md-radio-button value="Male">Male</md-radio-button>
+            <md-radio-button value="Female">Female</md-radio-button>
+          </md-radio-group>
+        </div>
+        <div layout="row" layout-xs="column" layout-align="start center">
+          <md-input-container flex-gt-xs="flex-gt-xs" class="md-block">
+            <label>Major</label>
+            <input type="text" name="major" ng-model="edit.major" required="required"/>
+            <div ng-messages="editProfileForm.major.$error">
+              <div ng-message="required">Major missing.</div>
+            </div>
+          </md-input-container>
+          <md-datepicker ng-model="edit.birthday" name="birthday" md-placeholder="birthday" required="required">
+            <div ng-messages="editProfileForm.birthday.$error">
+              <div ng-message="required">Birthday missing.</div>
+            </div>
+          </md-datepicker>
+        </div>
+        <h3>Introduction</h3>
+        <text-angular ng-model="htmlVariable" placeholder="Click to type description"></text-angular>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button type="submit" ng-click="editProfile()" ng-disabled="editProfileForm.$invalid">Submit</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

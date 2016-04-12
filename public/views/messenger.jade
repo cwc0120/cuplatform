@@ -1,33 +1,65 @@
 div(layout='column')
 	div.inset(layout='row' layout-align='center center')
 		div(flex='95' flex-gt-sm='80')
-			div(ng-show='success')
+			div(ng-hide='success')
 				h3 {{errorMessage}}
 				md-button.md-primary(ng-click='back()') Return
-			div(ng-hide='success' layout='column' layout-gt-sm='row')
-				div(flex='30' show-gt-sm)
-					md-card
-						md-card-title
-							span.md-headline User List
-						md-card-content
-							md-list(flex)
-								md-list-item.md-2-line(ng-repeat='client in clients')
-									div.md-list-item-text
-										h3 {{client.uid}}
-				div(flex='70')
-					md-card
-						md-card-title
-							span.md-headline Testing
-						md-list(flex)
-							md-list-item.md-2-line(ng-repeat='message in messages | limitTo: 10: messages.length-10>0?messages.length-10:0')
-								div.md-list-item-text
-									h3 {{message.uid}}
-									p {{message.content}}
-						md-divider
-							md-toolbar.md-table-toolbar.md-default
+			div(ng-show='success')
+				div(layout='column' layout-gt-sm='row')
+					div(flex='30' show-gt-sm)
+						md-card
+							md-tabs(md-dynamic-height md-border-bottom)
+								md-tab(label='User List')
+									md-list(flex)
+										md-list-item.md-2-line(ng-repeat='client in clients' ng-class='{selected: client.uid === selected}' ng-click='getChatRecord(client.uid)')
+											img.md-avatar(ng-src='/images/user/{{client.uid}}.jpg' alt='{{client.uid}}')
+											div.md-list-item-text
+												h3 {{client.uid}}
+								md-tab(label='Past record')
+									md-list(flex)
+										md-list-item.md-2-line(ng-repeat='client in pastList' ng-class='{selected: client === selected}' ng-click='getChatRecord(client)')
+											img.md-avatar(ng-src='/images/user/{{client}}.jpg' alt='{{client}}')
+											div.md-list-item-text
+												h3 {{client}}
+
+					div(flex='70')
+						md-card
+							md-card-title
+								md-card-title-text
+									span.md-headline Messenger
+
+							md-toolbar.md-table-toolbar.md-default(ng-hide='selected')
 								form
-									div.md-toolbar-tools(flex layout='row' layout-align='end center')
+									div.md-toolbar-tools(flex layout='row' layout-align='start center')
 										md-input-container(flex md-no-float)
-											input(flex type='text' ng-model='message' placeholder='New Message' autocomplete='off')
-										md-button.md-icon-button(type='submit' ng-click='newMessage()' aria-label='Comment')
+											input(flex type='text' ng-model='newUser' placeholder='Find user' autocomplete='off')
+										md-button.md-icon-button(type='submit' ng-click='searchUser()' aria-label='Search user')
+											md-icon.material-icons search
+							md-subheader.md-no-sticky(ng-show='searchError') {{searchError}}
+
+							md-toolbar.md-table-toolbar.md-default(ng-show='selected')
+								form
+									div.md-toolbar-tools(flex layout='row' layout-align='start center')
+										md-input-container(flex md-no-float)
+											input(flex type='text' ng-model='message' placeholder='To {{selected}}' autocomplete='off')
+										md-button.md-icon-button(type='submit' ng-click='newMessage()' aria-label='New message')
 											md-icon.material-icons comment
+										md-button.md-icon-button(ng-click='selected=""' aria-label='Back')
+											md-icon.material-icons clear
+							
+							md-list(ng-show='selected')
+								md-divider
+								md-subheader.md-no-sticky(ng-show='offline') {{selected}} is currently offline.
+								md-subheader.md-no-sticky(ng-show='chat.error') {{chat.error}}
+								md-virtual-repeat-container#container(flex ng-show='chat.messages' md-auto-shrink)
+									md-list-item.md-2-line.repeated-item(md-virtual-repeat='message in chat.messages' md-item-size='73')
+										img.md-avatar(ng-src='/images/user/{{message.sender}}.jpg' alt='{{cm.author}}')
+										div.md-list-item-text
+											div(layout='row')
+												h3 {{message.sender}}
+												span(flex)
+												p {{message.date | date: 'd/M/yyyy h:mma'}}
+											span {{message.content}}
+					
+							
+						

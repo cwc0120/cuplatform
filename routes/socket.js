@@ -1,133 +1,198 @@
 'use strict';
 var utils = require('../utils');
+var Chat = require('../models/chat');
 
-var client = (function() {
-	var onlineList = [];
-	var messages = [];
+var chatroom = (function() {
+	var onlineList = {};
 
 	var getList = function() {
-		return onlineList;
+		var list = [];
+		for (var key in onlineList) {
+			if (onlineList.hasOwnProperty(key)) {
+				list.push({
+					uid: key,
+					id: onlineList[key]
+				});
+			}		
+		}
+		return list;
 	};
 
-	var getMessages = function() {
-		return messages;
+	var getID = function(uid) {
+		return onlineList[uid];
+	};
+
+	var getMessages = function(user1, user2, callback) {
+		Chat.findOne({$or: 
+			[{
+				user1: user1, 
+				user2: user2
+			}, {
+				user1: user2,
+				user2: user1
+			}]
+		}, function(err, chat) {
+			if (err) {
+				callback({error: 'Error occurred.'});
+			} else if (!chat) {
+				callback({error: 'Empty record. Want to chat?'});
+			} else {
+				callback(chat);
+			}
+		});
+	};
+
+	var getPastName = function(user, callback) {
+		Chat.find({$or:
+			[{
+				user1: user
+			}, {
+				user2: user
+			}]
+		}, function(err, chat) {
+			if (err) {
+				callback({error: 'Error occurred.'});
+			} else {
+				var list = [];
+				for (var i = 0; i < chat.length; i++) {
+					if (chat[i].user1 === user) {
+						list.push(chat[i].user2);
+					} else {
+						list.push(chat[i].user1);
+					}
+				}
+				callback(list);
+			}
+		});
+	};
+
+	var newMessage = function(sender, recipient, content, callback) {
+		Chat.findOne({$or: 
+			[{
+				user1: sender, 
+				user2: recipient
+			}, {
+				user1: recipient,
+				user2: sender
+			}]
+		}, function(err, chat) {
+			if (err) {
+				callback({error: 'Error occurred.'});
+			} else if (!chat) {
+				Chat.create({
+					user1: sender,
+					user2: recipient,
+					messages:[{
+						sender: sender,
+						content: content,
+						date: Date.now()
+					}]
+				}, function(err) {
+					if (!err) {
+						callback();
+					}
+				});
+			} else {
+				chat.update({$push: {messages: {
+					sender: sender,
+					content: content,
+					date: Date.now()
+				}}}, function(err) {
+					if (!err) {
+						callback();
+					}
+				});
+			}
+		});
 	};
 
 	var newClient = function(uid, socket) {
-		onlineList.push({
-			uid: uid,
-			id: socket.id
-		});
+		onlineList[uid] = socket.id;
 	};
 
-	var free = function(uid) {
-		for (var i = 0; i < onlineList.length; i++) {
-			if (onlineList[i].uid === uid) {
-				onlineList.splice(i, 1);
-				break;
-			}
-		}
-	};
-
-	var newMessage = function(uid, data) {
-		messages.push({
-			uid: uid,
-			content: data
-		});
+	var freeClient = function(uid) {
+		delete onlineList[uid];
 	};
 
 	var existClient = function(uid) {
-		for (var i = 0; i < onlineList.length; i++) {
-			if (uid === onlineList[i].uid) {
-				return i;
-			}
+		if (onlineList[uid] !== undefined) {
+			return true;
 		}
 		return false;
 	};
 
+	var replaceClient = function(uid, socket) {
+		onlineList[uid] = socket.id;
+	};
+
 	return {
 		getList: getList,
+		getID: getID,
 		getMessages: getMessages,
-		newClient: newClient,
-		free: free,
+		getPastName: getPastName,
 		newMessage: newMessage,
-		existClient: existClient
+		newClient: newClient,
+		freeClient: freeClient,
+		existClient: existClient,
+		replaceClient: replaceClient
 	};
 }());
 
-module.exports = function (socket) {
-	var user = {};
+module.exports = function (io) {
+	io.on('connection', function(socket) {
+		var user = {};
 
-	socket.on('auth', function(data) {
-		utils.findUser(data.token, function(err, res) {
-			if (err) {
-				console.log('Not a User!');
-			} else {
-				if (client.existClient(res) !== false) {
-					client.free(res);
-					client.newClient(res, socket);
-					user.uid = res;
+		socket.on('auth', function(data) {
+			utils.findUser(data.token, function(err, res) {
+				if (err) {
+					console.log('Not a User!');
 				} else {
-					client.newClient(res, socket);
+					if (chatroom.existClient(res) !== false) {
+						chatroom.replaceClient(res, socket);
+					} else {
+						chatroom.newClient(res, socket);
+					}
 					user.uid = res;
+					io.emit('clientList', chatroom.getList());
+					chatroom.getPastName(user.uid, function(res) {
+						socket.emit('pastName', res);
+					});
 				}
-				socket.broadcast.emit('clientList', client.getList());
-				socket.emit('clientList', client.getList());
-				socket.broadcast.emit('messageList', client.getMessages());
-				socket.emit('messageList', client.getMessages());
-			}
+			});
 		});
-	});
 
-	socket.on('message', function(msg) {
-		client.newMessage(user.uid, msg);
-		socket.broadcast.emit('messageList', client.getMessages());
-		socket.emit('messageList', client.getMessages());
-	});
+		socket.on('getChatRecord', function(data) {
+			chatroom.getMessages(user.uid, data.uid, function(res) {
+				socket.emit('chatRecord', res);
+			});
+		});
 
-	socket.on('disconnect', function() {
-		client.free(user.uid);
-		socket.broadcast.emit('clientList', client.getList());
-		socket.emit('clientList', client.getList());
-	});
+		socket.on('getPastName', function() {
+			chatroom.getPastName(user.uid, function(res) {
+				socket.emit('pastName', res);
+			});
+		});
+
+		socket.on('sendNewMessage', function(msg) {
+			chatroom.newMessage(user.uid, msg.recipient, msg.content, function() {
+				if (chatroom.existClient(msg.recipient)) {
+					io.to(chatroom.getID(msg.recipient)).emit('newMessage', {
+						sender: user.uid,
+						content: msg.content,
+						date: Date.now()
+					});
+				}
+				socket.emit('newMessage', {
+					sender: user.uid,
+					content: msg.content,
+					date: Date.now()
+				});
+			});
+		});
+
+		socket.on('disconnect', function() {
+			chatroom.freeClient(user.uid);
+			io.emit('clientList', chatroom.getList());
+		});
+	});	
 };
-/*// notify other clients that a new user has joined
-socket.broadcast.emit('user:join', {
-name: name
-});
-
-// broadcast a user's message to other users
-socket.on('send:message', function (data) {
-socket.broadcast.emit('send:message', {
-user: name,
-text: data.message
-});
-});
-
-// validate a user's name change, and broadcast it on success
-socket.on('change:name', function (data, fn) {
-if (userNames.claim(data.name)) {
-var oldName = name;
-userNames.free(oldName);
-
-name = data.name;
-
-socket.broadcast.emit('change:name', {
-oldName: oldName,
-newName: name
-});
-
-fn(true);
-} else {
-fn(false);
-}
-});
-
-// clean up when a user leaves, and broadcast it to other users
-socket.on('disconnect', function () {
-socket.broadcast.emit('user:left', {
-name: name
-});
-userNames.free(name);
-});
-};*/

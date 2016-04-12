@@ -43,13 +43,14 @@
     <script type="text/javascript" src="/javascripts/controllers/threadlistcontroller.js"></script>
     <script type="text/javascript" src="/javascripts/controllers/threadcontroller.js"></script>
     <script type="text/javascript" src="/javascripts/controllers/messengercontroller.js"></script>
+    <script type="text/javascript" src="/javascripts/controllers/tradingrecordcontroller.js"></script>
+    <script type="text/javascript" src="/javascripts/controllers/profilecontroller.js"></script>
     <!-- content-->
     <md-sidenav md-component-id="menu" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4" class="md-sidenav-left">
-      <md-toolbar md-whiteframe="4" layout-padding class="md-tall md-accent md-hue-2"><span flex></span>
+      <md-toolbar md-whiteframe="4" class="md-tall md-accent md-hue-2">
         <div ng-hide="isLogged" class="md-toolbar-tools md-toolbar-tools-bottom"><span>Visitor</span></div>
-        <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset">
-          <div>{{uid}}</div>
-          <div>hihi</div>
+        <div ng-show="isLogged" layout="column" class="md-toolbar-tools-bottom inset"><img ng-src="/images/user/{{uid}}.jpg" alt="{{uid}}" class="avatar">
+          <div><span class="md-headline">{{uid}}</span><br><span class="md-subhead">Welcome!</span></div>
         </div>
       </md-toolbar>
       <div ng-hide="isLogged" layout-padding>
@@ -58,6 +59,14 @@
       <div ng-show="isLogged">
         <md-list>
           <md-list-item md-ink-ripple layout="row" ng-click="$location.path(item.link);toggleMenu()" ng-repeat="item in menu">
+            <div class="inset">
+              <md-icon class="material-icons">{{item.icon}}</md-icon>
+            </div>
+            <div class="inset">{{item.title}}</div>
+          </md-list-item>
+          <md-divider></md-divider>
+          <md-subheader>User</md-subheader>
+          <md-list-item md-ink-ripple layout="row" ng-click="$location.path(item.link);toggleMenu()" ng-repeat="item in userMenu">
             <div class="inset">
               <md-icon class="material-icons">{{item.icon}}</md-icon>
             </div>

@@ -470,5 +470,34 @@ Output:
 - An updated thread object
 - error
 
-### Messenger
-User can send messages and receive messages from other users using DataChannel.js.
+## Messenger (preliminary)
+User can send messages and receive messages from other users using socket.io.
+### Authentication
+Emit: `auth`
+
+Parameter: an object containing `token`
+
+Output: an updated online user list `clientList` will be broadcasted.
+
+### Get chat record with a particular online user
+Emit: `getChatRecord`
+
+Parameter: an object containing `uid` of the user
+
+Output: a chat record `chatRecord` is retrieved from database and is sent to the caller.
+
+### Send a new message
+Emit: `sendNewMessage`
+
+Parameter: an object containing
+- `recipient`: recipient's `uid`
+- `content`: message's content
+
+Output: a message object `newMessage` is sent to recipient and caller.
+
+### Disconnect
+Emit: `disconnect`
+
+Parameter: none
+
+Output: an updated online user list `clientList` will be broadcasted.

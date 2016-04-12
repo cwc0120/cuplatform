@@ -1,0 +1,15 @@
+md-dialog(aria-label='New Message' ng-cloak flex='95' flex-gt-sm='40')
+	form(name='newMessageForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 New Message
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content
+				md-input-container.md-block
+					label Message
+					textarea(type='text' ng-model='message' rows='3')
+		md-dialog-actions
+			md-button(type='submit' ng-click='send()') Send

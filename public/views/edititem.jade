@@ -13,15 +13,14 @@ md-dialog(aria-label='Edit Item' ng-cloak flex='95' flex-gt-sm='60')
 					input(type='text' name='name' ng-model='edit.name' required)
 					div(ng-messages='editItemForm.name.$error')
 						div(ng-message='required') Name missing.
-				div(layout='row', layout-xs='column')
+				div(layout='row', layout-xs='column' layout-align='start center')
 					md-input-container(flex-gt-xs='30')
 						label Price
 						input(type='number' name='price' ng-model='edit.price' required)
 						div(ng-messages='editItemForm.price.$error')
 							div(ng-message='required') Pricing missing.
-					md-input-container(flex-gt-xs='70')
-						label Flexible price
-						input(type='checkbox' name='priceFlexible' ng-model='edit.priceFlexible')
+					div(flex-gt-xs='70')
+						md-checkbox(ng-model='edit.priceFlexible') Flexible price
 				text-angular(ng-model='htmlVariable' placeholder='Click to type description')
 		md-dialog-actions
 			md-button(type='submit' ng-click='editItem()' ng-disabled='editItemForm.$invalid') Submit

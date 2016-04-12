@@ -1,42 +1,46 @@
-div(ng-hide='success')
-	h3 {{errorMessage}}
-	button(ng-click='$route.reload()') Return
-div(ng-show='success')
-	h1 {{thread.topic}}
-	p Author: {{thread.author}}
-	p(ng-bind-html='thread.content')
-	p Date: {{thread.dateOfThread | date:'d/M/yyyy h:mma'}}
-	p
-		button(ng-show='uid === thread.author' ng-click='enableEdit()') Edit Content
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				md-card
+					md-card-header
+						md-card-avatar
+							img.md-user-avatar(ng-src='/images/user/{{thread.author}}.jpg')
+						md-card-header-text
+							span.md-title {{thread.author}}
+							span.md-subhead {{thread.dateOfThread | date:'d/M/yyyy h:mma'}}
+						span(flex)
+						md-button.md-icon-button(ng-show='uid === thread.author' ng-click='editThreadDialog($event)' aria-label='Edit thread')
+							md-icon.material-icons mode_edit
+					md-card-title
+						md-card-title-text
+							span.md-headline {{thread.topic}}
+					md-card-content
+						section(layout-wrap)
+							span(ng-bind-html='thread.content')
 
-	div(ng-show='editing')
-		form 
-			p Content:
-			p
-				text-angular(ng-model='htmlVariable')
-			p
-				button(type='submit' ng-click='editThread()') Sumbit
+					md-toolbar.md-table-toolbar.md-default
+						form
+							div.md-toolbar-tools(layout='row' layout-align='end center')
+								md-input-container(flex md-no-float)
+									input(flex type='text' ng-model='newComment' placeholder='New Comment')
+								md-button.md-icon-button(type='submit' ng-click='addComment()' aria-label='Comment')
+									md-icon.material-icons comment
 
-	table
-		tr(ng-repeat='cm in thread.comment')
-			td
-				p
-					strong {{cm.author}}:
-					br 
-					| {{cm.content}} 
-					br
-					i {{cm.dateOfComment | date:'d/M/yyyy h:mma'}}
-			td
-				button(ng-show='admin' ng-click='deleteComment(cm._id)') Delete
-
-	p
-		button(ng-show='!adding' ng-click='enableAdd()') Add Comment
-
-	div(ng-show='adding')
-		form
-			p Comment:
-			p 
-				textarea(rows='3' cols='50' ng-model='newComment')
-			button(type='submit' ng-click='addComment()') Confirm
-	p
-		button(ng-click='$location.path("/discussion/" + thread.courseCode)') Back
+					md-list(flex)
+						md-subheader.md-no-sticky {{thread.comment.length}} comment(s)
+						md-divider
+						md-virtual-repeat-container#container(flex md-auto-shrink)
+							md-list-item.md-2-line.repeated-item(md-virtual-repeat='cm in thread.comment' md-item-size='73')
+								img.md-avatar(ng-src='/images/user/{{cm.author}}.jpg' alt='{{cm.author}}')
+								div.md-list-item-text
+									div(layout='row')
+										h3 {{cm.author}}
+										span(flex)
+										p {{cm.dateOfComment | date:'d/M/yyyy h:mma'}}
+									p {{cm.content}}
+								md-button.md-secondary.md-icon-button(ng-show='admin' ng-click='deleteComment(cm._id)' aria-label='Delete Comment')
+									md-icon.material-icons delete

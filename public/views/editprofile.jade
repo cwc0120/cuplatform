@@ -1,0 +1,32 @@
+md-dialog(aria-label='Edit Profile' ng-cloak flex='95' flex-gt-sm='60')
+	form(name='editProfileForm')
+		md-toolbar
+			div.md-toolbar-tools
+				h2 Edit Profile
+				span(flex)
+				md-button.md-icon-button(ng-click='cancel()')
+					md-icon.material-icons clear
+		md-dialog-content
+			div.md-dialog-content(layout='column')
+				h3 Basic information
+				div(layout='row' layout-xs='column' layout-align='start center')
+					md-input-container.md-block(flex-gt-xs='30')
+						label User ID
+						input(type='text' name='uid' ng-model='edit.uid' disabled)
+					span Gender: 
+					md-radio-group(flex ng-model='edit.gender' layout='row')
+						md-radio-button(value='Male') Male
+						md-radio-button(value='Female') Female
+				div(layout='row' layout-xs='column' layout-align='start center')
+					md-input-container.md-block(flex-gt-xs)
+						label Major
+						input(type='text' name='major' ng-model='edit.major' required)
+						div(ng-messages='editProfileForm.major.$error')
+							div(ng-message='required') Major missing.
+					md-datepicker(ng-model='edit.birthday' name='birthday' md-placeholder='birthday' required)
+						div(ng-messages='editProfileForm.birthday.$error')
+							div(ng-message='required') Birthday missing.
+				h3 Introduction
+				text-angular(ng-model='htmlVariable' placeholder='Click to type description')
+		md-dialog-actions
+			md-button(type='submit' ng-click='editProfile()' ng-disabled='editProfileForm.$invalid') Submit
