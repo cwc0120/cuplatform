@@ -33,15 +33,15 @@ div(layout='column')
 								md-icon.material-icons delete
 							
 					md-table-container
-						table(md-table md-row-select='admin' ng-model='selected')
+						table.threadlist(md-table md-row-select='admin' ng-model='selected')
 							thead(md-head md-order='order')
 								tr(md-row)
-									th(md-column md-order-by='topic') Topic
+									th.fixed(md-column md-order-by='topic') Topic
 									th(md-column md-order-by='author') Author
 									th(md-column md-order-by='dateOfUpdate') Date of Update
 							tbody(md-body)
 								tr(md-row ng-repeat='thread in threads | filter: searchThread | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='thread')
-									td(md-cell)
+									td.fixed(md-cell)
 										a(ng-href='#/thread/{{thread._id}}') {{thread.topic}}
 									td(md-cell) {{thread.author}}
 									td(md-cell) {{thread.dateOfUpdate | date:'d/M/yyyy h:mma'}}

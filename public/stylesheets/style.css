@@ -91,3 +91,175 @@ md-virtual-repeat-container#commentContainer {
 .repeated-item {
 	border-bottom: 1px solid #ddd;
 }
+
+.timeslot {
+	border: 4px solid #ff0000;
+}
+
+.normal {
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+
+.normal1 {
+	border-top: 1px solid #ddd;
+}
+
+table.timetable {
+	width: 100%;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+table.timetable > thead > tr {
+	height: 56px;
+}
+
+table.timetable > tbody > tr {
+	height: 48px;
+}
+
+table.timetable > thead > tr > th {
+	color: rgba(0, 0, 0, 54%);
+	font-size: 12px;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+table.timetable > tbody > tr > td.index {
+	width: 15px;
+	padding: 0 4px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+table.timetable > tbody > tr > td:nth-child(2) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+}
+table.timetable > tbody > tr > td:nth-child(3) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+}
+table.timetable > tbody > tr > td:nth-child(4) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+}
+table.timetable > tbody > tr > td:nth-child(5) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+}
+table.timetable > tbody > tr > td:nth-child(6) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+}
+
+table.timetableHome {
+	width: 100%;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+table.timetableHome > thead > tr {
+	height: 42px;
+}
+
+table.timetableHome > tbody > tr {
+	height: 36px;
+}
+
+table.timetableHome > thead > tr > th {
+	color: rgba(0, 0, 0, 54%);
+	font-size: 12px;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+table.timetableHome > tbody > tr > td.index {
+	width: 15px;
+	padding: 0 4px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+table.timetableHome > tbody > tr > td:nth-child(2) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+table.timetableHome > tbody > tr > td:nth-child(3) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+table.timetableHome > tbody > tr > td:nth-child(4) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+table.timetableHome > tbody > tr > td:nth-child(5) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+table.timetableHome > tbody > tr > td:nth-child(6) {
+	min-width: 70px;
+	padding: 0 8px;
+	text-align: center;
+	word-wrap: break-word;
+	border-top: 1px solid #ddd;
+}
+
+table.deptcourselist[md-table] > thead > tr > th.fixed,
+table.deptcourselist[md-table] > tbody > tr > td.fixed {
+	width: 20%;
+	word-wrap: break-word;
+}
+
+table.itemlist[md-table] > thead > tr > th.fixed,
+table.itemlist[md-table] > tbody > tr > td.fixed {
+	min-width: 200px;
+	word-wrap: break-word;
+}
+
+table.reslist[md-table] > thead > tr > th.fixed,
+table.reslist[md-table] > tbody > tr > td.fixed {
+	width: 50%;
+	word-wrap: break-word;
+}
+
+table.threadlist[md-table] > thead > tr > th.fixed,
+table.threadlist[md-table] > tbody > tr > td.fixed {
+	width: 50%;
+	word-wrap: break-word;
+}
+
+table.recordlist[md-table] > thead > tr > th.fixed,
+table.recordlist[md-table] > tbody > tr > td.fixed {
+	width: 50%;
+	word-wrap: break-word;
+}

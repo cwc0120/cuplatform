@@ -35,7 +35,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		icon: 'account_circle'
 	},
 	{
-		link: '/user/timetable',
+		link: '/user/timetable/' + $scope.uid,
 		title: 'Timetable',
 		icon: 'date_range'
 	},
@@ -59,6 +59,7 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		if(typeof newVal !== 'undefined') {
 			$scope.uid = Auth.uid;
 			$scope.userMenu[0].link = '/user/profile/' + $scope.uid;
+			$scope.userMenu[1].link = '/user/timetable/' + $scope.uid;
 			User.find($scope.uid).success(function(user) {
 				$scope.point = user.points;
 				$scope.icon = user.icon;

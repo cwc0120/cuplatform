@@ -37,19 +37,19 @@
             </div>
           </md-toolbar>
           <md-table-container>
-            <table md-table="md-table" md-row-select="admin" ng-model="selected">
+            <table md-table="md-table" md-row-select="admin" ng-model="selected" class="reslist">
               <thead md-head="md-head" md-order="order">
                 <tr md-row="md-row">
-                  <th md-column="md-column" md-order-by="name">Resource</th>
-                  <th md-column="md-column" md-order-by="uploader" hide-xs="hide-xs">Uploader</th>
-                  <th md-column="md-column" md-order-by="dateOfUpload" hide-xs="hide-xs">Date of Upload</th>
+                  <th md-column="md-column" md-order-by="name" class="fixed">Resource</th>
+                  <th md-column="md-column" md-order-by="uploader">Uploader</th>
+                  <th md-column="md-column" md-order-by="dateOfUpload">Date of Upload</th>
                 </tr>
               </thead>
               <tbody md-body="md-body">
                 <tr md-row="md-row" ng-repeat="res in ress | filter: searchRes | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="res">
-                  <td md-cell="md-cell"><a ng-click="check(res._id)" class="link">{{res.name}}</a></td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{res.uploader}}</td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
+                  <td md-cell="md-cell" class="fixed"><a ng-click="check(res._id)" class="link">{{res.name}}</a></td>
+                  <td md-cell="md-cell">{{res.uploader}}</td>
+                  <td md-cell="md-cell">{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
                 </tr>
               </tbody>
             </table>

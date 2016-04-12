@@ -51,6 +51,33 @@
 <div ng-show="isLogged" layout="column">
   <div layout="row" layout-align="center center" class="inset">
     <div flex="95" flex-gt-md="80">
+      <h1 layout-padding="layout-padding">Overview</h1>
+      <md-card>
+        <md-table-container>
+          <table class="timetableHome">
+            <thead>
+              <tr>
+                <th class="index"></th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="row in timetable">
+                <td class="index">{{$index + 1}}</td>
+                <td> <a ng-href="#/course/{{row[0].name}}">{{row[0].name}}</a></td>
+                <td> <a ng-href="#/course/{{row[1].name}}">{{row[1].name}}</a></td>
+                <td> <a ng-href="#/course/{{row[2].name}}">{{row[2].name}}</a></td>
+                <td> <a ng-href="#/course/{{row[3].name}}">{{row[3].name}}</a></td>
+                <td> <a ng-href="#/course/{{row[4].name}}">{{row[4].name}}</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </md-table-container>
+      </md-card>
       <h1 layout-padding="layout-padding">Update Center</h1>
       <md-card>
         <md-list>

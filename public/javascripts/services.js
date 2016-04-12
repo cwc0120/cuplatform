@@ -299,6 +299,12 @@ angular.module('CUPServices', [])
 			},
 			getBuyList: function() {
 				return $http.get('/api/user/buylist');
+			},
+			getTimetable: function(uid) {
+				return $http.get('/api/user/timetable/' + uid);
+			},
+			editTimetable: function(uid, data) {
+				return $http.put('/api/user/timetable/' + uid, data);
 			}
 		};
 	})

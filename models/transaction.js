@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Transaction = new Schema({
-	seller: {type: String, ref: 'User'},
-	buyer: {type: String, ref: 'User'},
+	seller: String,
+	buyer: String,
 	item: {type: Schema.Types.ObjectId, ref: 'Item'},
 	status: String,
 	// interested, transacted(success, failed), cancelled

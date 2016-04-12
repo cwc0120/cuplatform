@@ -8,10 +8,10 @@ var Item = new Schema({
 	name: String,
 	description: String,
 	img: String,
-	seller: {type: String, ref: 'User'},
+	seller: String,
 	icon: String,
 	buyer: [{
-		uid: {type: String, ref: 'User'},
+		uid: String,
 		icon: String
 	}],
 	date: Date,

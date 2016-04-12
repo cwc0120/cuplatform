@@ -49,9 +49,18 @@ router.route('/:did')
 router.route('/info/:cid')
 	.get(function(req, res, next) {
 		// check course info
-		find(req, res, next, function(course) {
-			course.info.sort({dateOfComment: -1});
-			res.status(200).json(course);
+		Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
+			if (err) {
+				return next(err);
+			} else if (!course) {
+				res.status(400).json({error: "Course not found!"});
+			} else {
+				// TODO: Confirm visitor or student
+				// if yes: course.visitor = true;
+				// if not: course.visitor = false;
+				course.info.sort({dateOfComment: -1});
+				res.status(200).json(course);
+			}
 		});
 	})
 
@@ -164,7 +173,7 @@ router.route('/info/:cid/:cmid')
 
 function findList(req, res, next) {
 	Course.find({deptCode: req.params.did.toUpperCase()})
-		.select('courseCode courseName')
+		.select('courseCode courseName schedule')
 		.exec(function(err, courses) {
 			if (err) {
 				return next(err);

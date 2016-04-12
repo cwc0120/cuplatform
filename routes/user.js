@@ -185,10 +185,13 @@ router.route('/timetable/:uid')
 	.get(function(req, res, next) {
 	// return a list of lessons
 		User.findOne({uid: req.params.uid})
-			.populate('coursesTaken')
-			.select('courseCode courseName schedule')
-			.exec(function(err, courses){
-				if(err){
+			.populate({
+				path: 'coursesTaken',
+				select: 'courseCode courseName schedule'
+			})
+			.select('coursesTaken')
+			.exec(function(err, courses) {
+				if (err){
 					return next(err);
 				} else {
 					res.status(200).json(courses);
@@ -198,49 +201,59 @@ router.route('/timetable/:uid')
 
 	// edit user's timetable (add course, delete course)
  	.put(function(req, res, next) {
- 		if (req.params.id === req.decoded.uid) {
+ 		if (req.params.uid === req.decoded.uid) {
 	// update the user's timetable by $set
 			var clash = false;
-			Course.find({courseCode:{$in: req.body.timetable}})
+			console.log(req.body.timetable);
+			Course.find({_id: {$in: req.body.timetable}})
 				.select('schedule')
-				.exec(function(err,courses){
-					if(err){
+				.exec(function(err, courses) {
+					if (err) {
 						return next(err);
 					} else {
 						var combinedSchedule = [];
-						for(var i = 0; i<courses.length;i++){
+						for (var i = 0; i < courses.length; i++) {
 							combinedSchedule = combinedSchedule.concat(courses[i].schedule);
 						}
-						for(var j=0;j<combinedSchedule.length-1;j++){
-							for (var k=j+1;k<combinedSchedule;k++){
-								if(combinedSchedule[j].day ===combinedSchedule[k].day && combinedSchedule[j].time ===combinedSchedule[k].time){
+						for (var j = 0; j < combinedSchedule.length - 1; j++) {
+							for (var k = j + 1; k < combinedSchedule.length - 1; k++) {
+								if (combinedSchedule[j].day === combinedSchedule[k].day && combinedSchedule[j].time === combinedSchedule[k].time){
 									clash = true;
 								}
 							}
 						}
-						if(clash === true){
+						if (clash) {
 							res.status(400).json({error: "Time clash occured!"});
 						} else {
-							Course.find({courseCode:{$in: req.body.timetable}}, function(err,addcourses){
-								if(err){
+							console.log(courses);
+							var selected = [];
+							for (var i = 0; i < courses.length; i++) {
+								selected.push(courses[i]._id);
+							}
+							User.findOneAndUpdate({uid: req.params.uid}, {
+								$set: {coursesTaken: selected}
+							}, function(err) {
+								if (err) {
 									return next(err);
-								} else{
-									find(req, res, next, function(user) {
-									user.update({$set: {
-										coursesTaken: addcourses,
-									}}, function(err) {
-										if (err) {
+								} else {
+									User.findOne({uid: req.params.uid})
+									.populate({
+										path: 'coursesTaken',
+										select: 'courseCode courseName schedule'
+									})
+									.select('coursesTaken')
+									.exec(function(err, courses) {
+										if (err){
 											return next(err);
 										} else {
-											find(req, res, next, function(result) {
-												res.status(200).json(result);
-											});
-										}});
+											res.status(200).json(courses);
+										}
 									});
 								}
 							});
 						}
-					}});	
+					}
+				});	
  		} else {
  			res.status(400).json({error: "You are not authorized to edit user information!"});
  		}

@@ -38,16 +38,16 @@
             </div>
           </md-toolbar>
           <md-table-container>
-            <table md-table="md-table">
+            <table md-table="md-table" class="deptcourselist">
               <thead md-head="md-head" md-order="order">
                 <tr md-row="md-row">
-                  <th md-column="md-column" md-order-by="deptCode">Department Code</th>
+                  <th md-column="md-column" md-order-by="deptCode" class="fixed">Department Code</th>
                   <th md-column="md-column" md-order-by="deptName" hide-xs="hide-xs">Department Name</th>
                 </tr>
               </thead>
               <tbody md-body="md-body">
                 <tr md-row="md-row" ng-repeat="dept in depts | filter: searchDept | orderBy: order | limitTo: limit: (page - 1) * limit">
-                  <td md-cell="md-cell"><a ng-href="#/visitor/dept/{{dept.deptCode}}">{{dept.deptCode}}</a></td>
+                  <td md-cell="md-cell" class="fixed"><a ng-href="#/visitor/dept/{{dept.deptCode}}">{{dept.deptCode}}</a></td>
                   <td md-cell="md-cell">{{dept.deptName}}</td>
                 </tr>
               </tbody>

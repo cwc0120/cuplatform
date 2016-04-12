@@ -1,0 +1,83 @@
+div(layout='column')
+	div.inset(layout='row' layout-align='center center')
+		div(flex='95' flex-gt-sm='80')
+			div(ng-hide='success')
+				h3 {{errorMessage}}
+				md-button.md-primary(ng-click='back()') Return
+			div(ng-show='success')
+				div(layout='column' ng-show='visituid === uid')
+					h1(layout-padding) {{visituid}}'s Timetable
+					div(layout='column' layout-gt-sm='row')
+						div(flex='40')
+							md-card
+								md-toolbar.md-table-toolbar.md-default
+									div.md-toolbar-tools
+										span Selected List
+								md-list
+									md-list-item(md-ink-ripple='false' ng-repeat='select in selected')
+										div.md-list-item-text
+											span {{select.courseCode}}
+										md-button.md-secondary.md-icon-button(ng-click='pop($index)' aria-label='Delete')
+											md-icon.material-icons delete
+								md-card-actions(layout='row' layout-align='end center')
+									md-button(ng-click='submit()') Sumbit timetable
+							md-card
+								form(ng-submit='search()')
+									div.md-toolbar-tools
+										md-input-container(flex md-no-float)
+											md-icon.material-icons search
+											input(type='text' ng-model='deptCode' placeholder='Department code' autocomplete='off')
+								md-table-container
+									table.deptcourselist(md-table)
+										thead(md-head ng-show='courses')
+											tr(md-row)
+												th.fixed(md-column) Course Code
+												th(md-column) Course Name
+										tbody(md-body)
+											tr(md-row ng-repeat='course in courses' ng-mouseover='active($index)'
+											ng-mouseleave='deactive()' ng-click='push($index)')
+												td.fixed(md-cell) {{course.courseCode}}
+												td(md-cell) {{course.courseName}}
+						div(flex='60')
+							md-card
+								md-table-container
+									table.timetable
+										thead
+											tr
+												th.index
+												th Mon
+												th Tue
+												th Wed
+												th Thu
+												th Fri
+										tbody
+											tr(ng-repeat='row in timetable')
+												td.index {{$index + 1}}
+												td(ng-class='{timeslot: row[0].active, normal: !row[0].active}') {{row[0].name}}
+												td(ng-class='{timeslot: row[1].active, normal: !row[1].active}') {{row[1].name}}
+												td(ng-class='{timeslot: row[2].active, normal: !row[2].active}') {{row[2].name}}
+												td(ng-class='{timeslot: row[3].active, normal: !row[3].active}') {{row[3].name}}
+												td(ng-class='{timeslot: row[4].active, normal1: !row[4].active}') {{row[4].name}}
+
+				div(layout='column' ng-show='visituid !== uid')
+					h1(layout-padding) {{visituid}}'s Timetable
+					div(flex)
+						md-card
+							md-table-container
+								table.timetable
+									thead
+										tr
+											th.index
+											th Mon
+											th Tue
+											th Wed
+											th Thu
+											th Fri
+									tbody
+										tr(ng-repeat='row in timetable')
+											td.index {{$index + 1}}
+											td(ng-class='{timeslot: row[0].active, normal: !row[0].active}') {{row[0].name}}
+											td(ng-class='{timeslot: row[1].active, normal: !row[1].active}') {{row[1].name}}
+											td(ng-class='{timeslot: row[2].active, normal: !row[2].active}') {{row[2].name}}
+											td(ng-class='{timeslot: row[3].active, normal: !row[3].active}') {{row[3].name}}
+											td(ng-class='{timeslot: row[4].active, normal1: !row[4].active}') {{row[4].name}}

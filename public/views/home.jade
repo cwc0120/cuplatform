@@ -37,8 +37,33 @@ div(ng-hide='isLogged' layout='column')
 div(ng-show='isLogged' layout='column')
 	div.inset(layout='row' layout-align='center center')
 		div(flex='95' flex-gt-md='80')
-			h1(layout-padding) Update Center
+			h1(layout-padding) Overview
+			md-card
+				md-table-container
+					table.timetableHome
+						thead
+							tr
+								th.index
+								th Mon
+								th Tue
+								th Wed
+								th Thu
+								th Fri
+						tbody
+							tr(ng-repeat='row in timetable')
+								td.index {{$index + 1}}
+								td 
+									a(ng-href='#/course/{{row[0].name}}') {{row[0].name}}
+								td 
+									a(ng-href='#/course/{{row[1].name}}') {{row[1].name}}
+								td 
+									a(ng-href='#/course/{{row[2].name}}') {{row[2].name}}
+								td 
+									a(ng-href='#/course/{{row[3].name}}') {{row[3].name}}
+								td 
+									a(ng-href='#/course/{{row[4].name}}') {{row[4].name}}
 
+			h1(layout-padding) Update Center
 			md-card
 				md-list
 					md-subheader.md-no-sticky You have {{updates.length}} updates.

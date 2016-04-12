@@ -4,15 +4,15 @@ var fs = require('fs');
 var Schema = mongoose.Schema;
 
 var Resource = new Schema({
-	courseCode: {type: String, ref: 'Course'},
+	courseCode: String,
 	name: String,
 	description: String,
-	uploader: {type: String, ref: 'User'},
+	uploader: String,
 	icon: String,
 	link: String,
 	dateOfUpload: Date,
 	comment: [{
-		author: {type: String, ref: 'User'},
+		author: String,
 		icon: String,
 		content: String,
 		dateOfComment: Date

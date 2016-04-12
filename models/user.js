@@ -13,7 +13,7 @@ var User = new Schema({
 	major: String,
 	intro: String,
 	points: Number,
-	coursesTaken: [{type: String, ref: 'Course'}],
+	coursesTaken: [{type: Schema.Types.ObjectId, ref: 'Course'}],
 	admin: Boolean,
 	updates: [{
 		topic: String,

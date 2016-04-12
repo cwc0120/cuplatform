@@ -81,6 +81,12 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				requiredLogin: true
 			})
 
+			.when('/user/timetable/:uid', {
+				templateUrl: '/views/timetable.html',
+				controller: 'timetableController',
+				requiredLogin: true
+			})
+
 			.when('/visitor/dept', {
 				templateUrl: '/views/deptlistv.html',
 				controller: 'deptListController',

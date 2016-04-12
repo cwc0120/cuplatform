@@ -36,16 +36,16 @@
             </div>
           </md-toolbar>
           <md-table-container>
-            <table md-table="md-table">
+            <table md-table="md-table" class="deptcourselist">
               <thead md-head="md-head" md-order="order">
                 <tr md-row="md-row">
-                  <th md-column="md-column" md-order-by="courseCode">Course Code</th>
+                  <th md-column="md-column" md-order-by="courseCode" class="fixed">Course Code</th>
                   <th md-column="md-column" md-order-by="courseName" hide-xs="hide-xs">Course Name</th>
                 </tr>
               </thead>
               <tbody md-body="md-body">
                 <tr md-row="md-row" ng-repeat="course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit">
-                  <td md-cell="md-cell"><a ng-href="#/visitor/course/{{course.courseCode}}">{{course.courseCode}}</a></td>
+                  <td md-cell="md-cell" class="fixed"><a ng-href="#/visitor/course/{{course.courseCode}}">{{course.courseCode}}</a></td>
                   <td md-cell="md-cell" hide-xs="hide-xs">{{course.courseName}}</td>
                 </tr>
               </tbody>

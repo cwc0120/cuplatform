@@ -30,14 +30,14 @@ div(layout='column')
 								md-icon.material-icons clear
 							
 					md-table-container
-						table(md-table)
+						table.deptcourselist(md-table)
 							thead(md-head md-order='order')
 								tr(md-row)
-									th(md-column md-order-by='courseCode') Course Code
+									th.fixed(md-column md-order-by='courseCode') Course Code
 									th(md-column md-order-by='courseName' hide-xs) Course Name
 							tbody(md-body)
 								tr(md-row ng-repeat='course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit')
-									td(md-cell)
+									td.fixed(md-cell)
 										a(ng-href='#/visitor/course/{{course.courseCode}}') {{course.courseCode}}
 									td(md-cell hide-xs) {{course.courseName}}
 					md-table-pagination(md-limit='limit' md-page='page' md-total='{{courses.length}}')

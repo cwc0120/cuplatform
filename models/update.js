@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Update = new Schema({
-	uid: {type: String, ref: 'User'},
+	uid: String,
 	updates: [{
 		topic: String,
 		content: String,

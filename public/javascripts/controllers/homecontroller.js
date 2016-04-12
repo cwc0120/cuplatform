@@ -4,6 +4,41 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, $mdToas
 	$scope.disable = true;
 	$scope.$location = $location;
 
+	if (Auth.isLogged) {
+		User.getTimetable(Auth.uid).success(function(res) {
+			$scope.success = true;
+			if (res !== null) {
+				$scope.selected = res.coursesTaken;
+				$scope.timetable = new Array(13);
+				for (var k = 0; k < 13; k++) {
+					$scope.timetable[k] = new Array(5);
+					for (var h = 0; h < 5; h++) {
+						$scope.timetable[k][h] = {};
+					}
+				}
+				for (var i = 0; i < $scope.selected.length; i++) {
+					for (var j = 0; j < $scope.selected[i].schedule.length; j++) {
+						if ($scope.selected[i].schedule[j].day-1 < 5) {
+							$scope.timetable[$scope.selected[i].schedule[j].time-1][$scope.selected[i].schedule[j].day-1].name = $scope.selected[i].courseCode;
+						}	
+					}
+				}
+			} else {
+				$scope.selected = [];
+				$scope.timetable = new Array(13);
+				for (var k = 0; k < 13; k++) {
+					$scope.timetable[k] = new Array(5);
+					for (var h = 0; h < 5; h++) {
+						$scope.timetable[k][h] = {};
+					}
+				}
+			}
+		}).error (function(res) {
+			$scope.success = false;
+			$scope.errorMessage = res.error;
+		});
+	}
+
 	$scope.$watch(function() {
 		return Auth.isLogged;
 	}, function(newVal, oldVal) {
@@ -33,6 +68,38 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, $mdToas
 				Auth.setToken(res);
 				$location.path('/');
 				Socket.connect();
+				User.getTimetable(Auth.uid).success(function(res) {
+					$scope.success = true;
+					if (res !== null) {
+						$scope.selected = res.coursesTaken;
+						$scope.timetable = new Array(13);
+						for (var k = 0; k < 13; k++) {
+							$scope.timetable[k] = new Array(5);
+							for (var h = 0; h < 5; h++) {
+								$scope.timetable[k][h] = {};
+							}
+						}
+						for (var i = 0; i < $scope.selected.length; i++) {
+							for (var j = 0; j < $scope.selected[i].schedule.length; j++) {
+								if ($scope.selected[i].schedule[j].day-1 < 5) {
+									$scope.timetable[$scope.selected[i].schedule[j].time-1][$scope.selected[i].schedule[j].day-1].name = $scope.selected[i].courseCode;
+								}	
+							}
+						}
+					} else {
+						$scope.selected = [];
+						$scope.timetable = new Array(13);
+						for (var k = 0; k < 13; k++) {
+							$scope.timetable[k] = new Array(5);
+							for (var h = 0; h < 5; h++) {
+								$scope.timetable[k][h] = {};
+							}
+						}
+					}
+				}).error (function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
 			}).error(function(err) {
 				$scope.loginMessage = err.error;
 			});
