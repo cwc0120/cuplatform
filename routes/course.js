@@ -6,7 +6,7 @@ var Dept = require('../models/dept');
 var utils = require('../utils');
 
 router.use(function(req, res, next) {
-	utils.validateToken(req, res, next);
+	utils.validateTokenPartial(req, res, next);
 });
 
 router.route('/:did')
@@ -49,9 +49,18 @@ router.route('/:did')
 router.route('/info/:cid')
 	.get(function(req, res, next) {
 		// check course info
-		find(req, res, next, function(course) {
-			course.info.sort({dateOfComment: -1});
-			res.status(200).json(course);
+		Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
+			if (err) {
+				return next(err);
+			} else if (!course) {
+				res.status(400).json({error: "Course not found!"});
+			} else {
+				// TODO: Confirm visitor or student
+				// if yes: course.visitor = true;
+				// if not: course.visitor = false;
+				course.info.sort({dateOfComment: -1});
+				res.status(200).json(course);
+			}
 		});
 	})
 
@@ -59,6 +68,7 @@ router.route('/info/:cid')
 		// add comment
 		var info = {
 			author: req.decoded.uid,
+			icon: req.decoded.icon,
 			rating: req.body.rating,
 			outline: req.body.outline,
 			assessMethod: req.body.assessMethod,
@@ -78,9 +88,15 @@ router.route('/info/:cid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next, function(course) {
-							course.info.sort({dateOfComment: -1});
-							res.status(200).json(course);
+						utils.addPoint(req.decoded.uid, 5, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next, function(course) {
+									course.info.sort({dateOfComment: -1});
+									res.status(200).json(course);
+								});
+							}
 						});
 					}
 				});
@@ -136,10 +152,17 @@ router.route('/info/:cid/:cmid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next, function(course) {
-							course.info.sort({dateOfComment: -1});
-							res.status(200).json(course);
+						utils.deductPoint(req.decoded.uid, 5, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next, function(course) {
+									course.info.sort({dateOfComment: -1});
+									res.status(200).json(course);
+								});
+							}
 						});
+						
 					}
 				});
 			});
@@ -150,7 +173,7 @@ router.route('/info/:cid/:cmid')
 
 function findList(req, res, next) {
 	Course.find({deptCode: req.params.did.toUpperCase()})
-		.select('courseCode courseName')
+		.select('courseCode courseName schedule')
 		.exec(function(err, courses) {
 			if (err) {
 				return next(err);

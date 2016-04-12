@@ -6,7 +6,7 @@ var Thread = require('./thread');
 var Course = new Schema({
 	courseCode: {type: String, unique: true, required: true},
 	courseName: String,
-	deptCode: {type: String, ref: 'Dept', required: true},
+	deptCode: String,
 	schedule: [{
 		day: Number,
 		time: Number,
@@ -15,14 +15,15 @@ var Course = new Schema({
 	cred: Number,
 	prof: String,
 	info: [{
-		author: {type: String, ref: 'User'},
+		author: String,
+		icon: String,
 		rating: Number,
 		outline: String,
 		assessMethod: String,
 		comment: String,
 		dateOfComment: Date
 	}],
-	students: [{type: String, ref: 'User'}]
+	students: [{type: String}]
 });
 
 Course.pre('remove', function(next) {

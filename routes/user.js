@@ -29,7 +29,7 @@ var storage = multer.diskStorage({
 var upload = multer({
 	storage: storage,
 	fileFilter: function(req, file, cb) {
-		if (file.mimetype === 'image/jpeg') {
+		if (file.mimetype.slice(0,5) === 'image') {
 			cb(null, true);
 		} else {
 			cb(new Error('Not an image file!'));
@@ -53,7 +53,8 @@ router.route('/profile/:uid')
 				user.update({$set: {
 					gender: req.body.gender,
 					major: req.body.major,
-					intro: req.body.intro
+					intro: req.body.intro,
+					birthday: req.body.birthday
 				}}, function(err) {
 					if (err) {
 						return next(err);
@@ -65,7 +66,7 @@ router.route('/profile/:uid')
 				});
 			});
 		} else {
-			res.status(400).json({error: "You are not authorized to edit user information!"});
+			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
@@ -89,7 +90,7 @@ router.route('/icon/:uid')
 				});
 			});
 		} else {
-			res.status(400).json({error: "You are not authorized to edit user information!"});
+			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
 	});
 
@@ -126,8 +127,30 @@ router.route('/pwd/:uid')
 				}
 			});
 		} else {
-			res.status(400).json({error: "You are not authorized to edit user information!"});
+			res.status(401).json({error: "You are not authorized to edit user information!"});
 		}
+	});
+
+router.route('/update/:updateid')
+	.delete(function(req, res, next) {
+		User.findOne({uid: req.decoded.uid}, function(err, user) {
+			if (err) {
+				return next(err);
+			} else if (user === null) {
+				res.status(400).json({error: "User not found!"});
+			} else {
+				user.update({$pull: {updates: {_id: req.params.updateid}}}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						req.params.uid = req.decoded.uid;
+						find(req, res, next, function(user) {
+							res.status(200).json(user);
+						});
+					}
+				});
+			}
+		});
 	});
 
 // return a list of items by searching items by seller's id
@@ -158,14 +181,17 @@ router.get('/buylist', function(req, res, next) {
 });	
 
 router.route('/timetable/:uid')
-// see a user's timetable
+	// see a user's timetable
 	.get(function(req, res, next) {
-// return a list of lessons
+	// return a list of lessons
 		User.findOne({uid: req.params.uid})
-			.populate('coursesTaken')
-			.select('courseCode courseName schedule')
-			.exec(function(err, courses){
-				if(err){
+			.populate({
+				path: 'coursesTaken',
+				select: 'courseCode courseName schedule'
+			})
+			.select('coursesTaken')
+			.exec(function(err, courses) {
+				if (err){
 					return next(err);
 				} else {
 					res.status(200).json(courses);
@@ -173,59 +199,69 @@ router.route('/timetable/:uid')
 			});
  	})
 
-// edit user's timetable (add course, delete course)
+	// edit user's timetable (add course, delete course)
  	.put(function(req, res, next) {
- 		if (req.params.id === req.decoded.uid) {
-// update the user's timetable by $set
+ 		if (req.params.uid === req.decoded.uid) {
+	// update the user's timetable by $set
 			var clash = false;
-			Course.find({courseCode:{$in: req.body.timetable}})
+			console.log(req.body.timetable);
+			Course.find({_id: {$in: req.body.timetable}})
 				.select('schedule')
-				.exec(function(err,courses){
-					if(err){
+				.exec(function(err, courses) {
+					if (err) {
 						return next(err);
 					} else {
 						var combinedSchedule = [];
-						for(var i = 0; i<courses.length;i++){
+						for (var i = 0; i < courses.length; i++) {
 							combinedSchedule = combinedSchedule.concat(courses[i].schedule);
 						}
-						for(var j=0;j<combinedSchedule.length-1;j++){
-							for (var k=j+1;k<combinedSchedule;k++){
-								if(combinedSchedule[j].day ===combinedSchedule[k].day && combinedSchedule[j].time ===combinedSchedule[k].time){
+						for (var j = 0; j < combinedSchedule.length - 1; j++) {
+							for (var k = j + 1; k < combinedSchedule.length - 1; k++) {
+								if (combinedSchedule[j].day === combinedSchedule[k].day && combinedSchedule[j].time === combinedSchedule[k].time){
 									clash = true;
 								}
 							}
 						}
-						if(clash === true){
-							res.status(403).json({error: "Time clash occured!"});
+						if (clash) {
+							res.status(400).json({error: "Time clash occured!"});
 						} else {
-							Course.find({courseCode:{$in: req.body.timetable}}, function(err,addcourses){
-								if(err){
+							console.log(courses);
+							var selected = [];
+							for (var i = 0; i < courses.length; i++) {
+								selected.push(courses[i]._id);
+							}
+							User.findOneAndUpdate({uid: req.params.uid}, {
+								$set: {coursesTaken: selected}
+							}, function(err) {
+								if (err) {
 									return next(err);
-								} else{
-									find(req, res, next, function(user) {
-									user.update({$set: {
-										coursesTaken: addcourses,
-									}}, function(err) {
-										if (err) {
+								} else {
+									User.findOne({uid: req.params.uid})
+									.populate({
+										path: 'coursesTaken',
+										select: 'courseCode courseName schedule'
+									})
+									.select('coursesTaken')
+									.exec(function(err, courses) {
+										if (err){
 											return next(err);
 										} else {
-											find(req, res, next, function(result) {
-												res.status(200).json(result);
-											});
-										}});
+											res.status(200).json(courses);
+										}
 									});
 								}
 							});
 						}
-					}});	
+					}
+				});	
  		} else {
- 			res.status(401).json({error: "You are not authorized to edit user information!"});
+ 			res.status(400).json({error: "You are not authorized to edit user information!"});
  		}
  	});
  	
 function find(req, res, next, callback) {
 	User.findOne({uid: req.params.uid})
-		.select('uid admin email icon gender birthday major intro points')
+		.select('uid admin email icon gender birthday major intro points updates')
 		.exec(function(err, user) {
 			if (err) {
 				return next(err);

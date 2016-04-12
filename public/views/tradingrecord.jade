@@ -25,10 +25,10 @@ div(layout='column')
 										md-icon.material-icons clear
 
 							md-table-container
-								table(md-table)
+								table.recordlist(md-table)
 									thead(md-head md-order='orderBuy')
 										tr(md-row)
-											th(md-column md-order-by='name') Item name
+											th.fixed(md-column md-order-by='name') Item name
 											th(md-column md-order-by='category' hide show-gt-sm) Category
 											th(md-column md-order-by='price') Price
 											th(md-column md-order-by='seller' hide show-gt-md) Seller
@@ -36,7 +36,7 @@ div(layout='column')
 											th(md-column md-order-by='date' hide show-gt-md) Date of update
 									tbody(md-body)
 										tr(md-row ng-repeat='item in buylist | filter: searchBuyRecord | orderBy: orderBuy | limitTo: limit: (page - 1) * limit')
-											td(md-cell)
+											td.fixed(md-cell)
 												a(ng-href='#/item/{{item.item._id}}') {{item.item.name}}
 											td(md-cell hide show-gt-sm) {{item.item.category}}
 											td(md-cell) {{item.item.price | currency}}
@@ -61,16 +61,16 @@ div(layout='column')
 										md-icon.material-icons clear
 
 							md-table-container
-								table(md-table)
+								table.recordlist(md-table)
 									thead(md-head md-order='orderSell')
 										tr(md-row)
-											th(md-column md-order-by='name') Item name
+											th.fixed(md-column md-order-by='name') Item name
 											th(md-column md-order-by='category' hide show-gt-sm) Category
 											th(md-column md-order-by='price') Price
 											th(md-column md-order-by='status') Status
 											th(md-column md-order-by='date' hide show-gt-md) Date of update
 									tbody(md-body)
-										tr(md-row ng-repeat='item in selllist | filter: searchSellRecord | orderBy: orderSell | limitTo: limit: (page - 1) * limit')
+										tr.fixed(md-row ng-repeat='item in selllist | filter: searchSellRecord | orderBy: orderSell | limitTo: limit: (page - 1) * limit')
 											td(md-cell)
 												a(ng-href='#/item/{{item._id}}') {{item.name}}
 											td(md-cell hide show-gt-sm) {{item.category}}

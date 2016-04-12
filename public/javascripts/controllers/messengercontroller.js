@@ -14,6 +14,7 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth, U
 			}
 		}
 		$scope.clients = clients;
+		console.log(clients);
 		$scope.offline = true;
 		if ($scope.selected !== '') {
 			for (var j = 0; j < $scope.clients.length; j++) {

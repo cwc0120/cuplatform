@@ -37,31 +37,34 @@
             </div>
           </md-toolbar>
           <md-table-container>
-            <table md-table="md-table" md-row-select="admin" ng-model="selected">
+            <table md-table="md-table" md-row-select="admin" ng-model="selected" class="reslist">
               <thead md-head="md-head" md-order="order">
                 <tr md-row="md-row">
-                  <th md-column="md-column" md-order-by="name">Resource</th>
-                  <th md-column="md-column" md-order-by="uploader" hide-xs="hide-xs">Uploader</th>
-                  <th md-column="md-column" md-order-by="dateOfUpload" hide-xs="hide-xs">Date of Upload</th>
+                  <th md-column="md-column" md-order-by="name" class="fixed">Resource</th>
+                  <th md-column="md-column" md-order-by="uploader">Uploader</th>
+                  <th md-column="md-column" md-order-by="dateOfUpload">Date of Upload</th>
                 </tr>
               </thead>
               <tbody md-body="md-body">
                 <tr md-row="md-row" ng-repeat="res in ress | filter: searchRes | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="res">
-                  <td md-cell="md-cell"><a ng-click="check(res._id)" class="link">{{res.name}}</a></td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{res.uploader}}</td>
-                  <td md-cell="md-cell" hide-xs="hide-xs">{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
+                  <td md-cell="md-cell" class="fixed"><a ng-click="check(res._id)" class="link">{{res.name}}</a></td>
+                  <td md-cell="md-cell">{{res.uploader}}</td>
+                  <td md-cell="md-cell">{{res.dateOfUpload | date:'d/M/yyyy'}}</td>
                 </tr>
               </tbody>
             </table>
           </md-table-container>
           <md-table-pagination md-limit="limit" md-page="page" md-total="{{ress.length}}"></md-table-pagination>
         </md-card>
-        <md-card ng-show="resource &amp;&amp; !selected.length">
+        <md-card ng-show="resource &amp;&amp; !selected.length &amp;&amp; !deleted">
           <md-card-header>
-            <md-card-avatar><img ng-src="/images/user/{{resource.uploader}}.jpg" class="md-user-avatar"/></md-card-avatar>
+            <md-card-avatar><img ng-src="/images/user/{{resource.icon}}" class="md-user-avatar"/></md-card-avatar>
             <md-card-header-text><span class="md-title">{{resource.uploader}}</span><span class="md-subhead">{{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
             <md-button ng-show="uid === resource.uploader" ng-click="editResDialog($event)" aria-label="Edit resource" class="md-icon-button">
               <md-icon class="material-icons">mode_edit</md-icon>
+            </md-button>
+            <md-button ng-click="reportDialog($event)" aria-label="report" class="md-icon-button">
+              <md-icon class="material-icons">report</md-icon>
             </md-button>
           </md-card-header>
           <md-card-content>
@@ -88,7 +91,7 @@
             <md-subheader class="md-no-sticky">{{resource.comment.length}} comment(s)</md-subheader>
             <md-divider></md-divider>
             <md-virtual-repeat-container id="container" flex="flex" md-auto-shrink="md-auto-shrink">
-              <md-list-item md-virtual-repeat="cm in resource.comment" md-item-size="73" class="md-2-line repeated-item"><img ng-src="/images/user/{{cm.author}}.jpg" alt="{{cm.author}}" class="md-avatar"/>
+              <md-list-item md-virtual-repeat="cm in resource.comment" md-item-size="73" class="md-2-line repeated-item"><img ng-src="/images/user/{{cm.icon}}" alt="{{cm.author}}" class="md-avatar"/>
                 <div class="md-list-item-text">
                   <div layout="row">
                     <h3>{{cm.author}}</h3><span flex="flex"></span>

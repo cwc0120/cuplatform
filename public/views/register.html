@@ -1,5 +1,5 @@
 
-<md-dialog aria-label="Registration" ng-cloak="ng-cloak" flex="95">
+<md-dialog aria-label="Registration" ng-cloak="ng-cloak" flex="95" flex-gt-sm="60">
   <form name="registerForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
@@ -10,7 +10,8 @@
       </div>
     </md-toolbar>
     <md-dialog-content>
-      <div layout="column" class="md-dialog-content"><span class="error">{{registerMessage}}</span>
+      <div layout="column" class="md-dialog-content">
+        <h3>Just a simple step to join us!</h3><span class="error">{{registerMessage}}</span>
         <md-input-container class="md-block">
           <label>User ID</label>
           <input type="text" name="userID" ng-model="newUser.uid" required="required" ng-pattern="/^[a-zA-Z0-9]*$/"/>
@@ -24,6 +25,13 @@
           <input type="text" name="email" ng-model="newUser.email" required="required" ng-pattern="/@link.cuhk.edu.hk$/"/>
           <div ng-messages="registerForm.email.$error">
             <div ng-message-exp="['required', 'pattern']">CUHK e-mail required.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block md-input-has-placeholder">
+          <label>Avatar</label>
+          <input type="file" name="img" file-model="img" required="required"/>
+          <div ng-messages="registerForm.img.$error">
+            <div ng-message="required">Avatar missing.</div>
           </div>
         </md-input-container>
         <md-input-container class="md-block">

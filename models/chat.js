@@ -3,10 +3,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Chat = new Schema({
-	user1: {type: String, ref: 'User'},
-	user2: {type: String, ref: 'User'},
+	user1: String,
+	user2: String,
 	messages: [{
-		sender: {type: String, ref: 'User'},
+		sender: String,
+		icon: String,
 		content: String,
 		date: Date
 	}]

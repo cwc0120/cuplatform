@@ -81,6 +81,30 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				requiredLogin: true
 			})
 
+			.when('/user/timetable/:uid', {
+				templateUrl: '/views/timetable.html',
+				controller: 'timetableController',
+				requiredLogin: true
+			})
+
+			.when('/visitor/dept', {
+				templateUrl: '/views/deptlistv.html',
+				controller: 'deptListController',
+				requiredLogin: false
+			})
+
+			.when('/visitor/dept/:id', {
+				templateUrl: '/views/deptcourselistv.html',
+				controller: 'deptCourseListController',
+				requiredLogin: false
+			})
+
+			.when('/visitor/course/:id', {
+				templateUrl: '/views/courseinfov.html',
+				controller: 'courseInfoController',
+				requiredLogin: false
+			})
+
 			.otherwise({
 				redirectTo: '/'
 			});
@@ -105,6 +129,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 				responseError: function(rejection) {
 					if (rejection != undefined && rejection.status == 401) {
 						$window.localStorage.removeItem('uid');
+						$window.localStorage.removeItem('icon');
 						$window.localStorage.removeItem('admin');
 						$window.localStorage.removeItem('cupToken');
 						$location.path('/');

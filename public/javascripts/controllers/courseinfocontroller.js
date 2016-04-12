@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('courseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Course) {
+ctrl.controller('courseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, Course) {
 	$scope.$location = $location;
 	$scope.days = Course.days;
 	$scope.times = Course.times;
@@ -93,6 +93,7 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 				$scope.posted = true;
 				$scope.course = res;
 				calculate();
+				$mdToast.show($mdToast.simple().textContent('You earn 5 points.'));
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -114,6 +115,7 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		Course.deleteInfo(courseCode, cmid).success(function(res) {
 			$scope.course = res;
 			calculate();
+			$mdToast.show($mdToast.simple().textContent('5 points are deducted from the author.'));
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;
@@ -132,5 +134,42 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 			$scope.avgRating /= $scope.course.info.length;
 			$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
 		}
+	}
+
+	$scope.registerDialog = function(event) {
+			$mdDialog.show({
+				controller: registerController,
+				templateUrl: '/views/register.html',
+				parent: angular.element(document.body),
+				targetEvent: event,
+				clickOutsideToClose: true
+			})
+			.then(function(newUser) {
+				Auth.login({uid: newUser.uid, pwd: newUser.pwd1}).success(function(res) {
+					Auth.uid = res.uid;
+					Auth.isLogged = true;
+					Auth.setToken(res);
+					$location.path('/');
+				}).error(function(res) {
+					$scope.success = false;
+					$scope.errorMessage = res.error;
+				});
+			});
+		};
+
+	function registerController($scope, $mdDialog, Auth) {
+		$scope.newUser = {};
+
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.createUser = function() {
+			Auth.register($scope.newUser).success(function(result) {
+				$mdDialog.hide($scope.newUser);
+			}).error(function(err) {
+				$scope.registerMessage = err.error;
+			});
+		};
 	}
 });

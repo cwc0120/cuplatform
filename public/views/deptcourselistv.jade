@@ -14,39 +14,30 @@ div(layout='column')
 							p Department Name: {{dept.deptName}}
 				
 				md-card
-					md-toolbar.md-table-toolbar.md-default(ng-hide='selected.length || search')
+					md-toolbar.md-table-toolbar.md-default(ng-hide='search')
 						div.md-toolbar-tools
 							span Course List under {{dept.deptName}}
 							span(flex)
-							md-button.md-icon-button(ng-show='admin' ng-click='addCourseDialog($event)' aria-label='Add')
-								md-icon.material-icons add
 							md-button.md-icon-button(ng-click='search = !search' aria-label='Search')
 								md-icon.material-icons search
 
-					md-toolbar.md-table-toolbar.md-default(ng-show='search && !selected.length')
+					md-toolbar.md-table-toolbar.md-default(ng-show='search')
 						div.md-toolbar-tools
 							md-input-container(flex md-no-float)
 								md-icon.material-icons search
 								input(type='text' ng-model='searchCourse' placeholder='Search Course')
 							md-button.md-icon-button(ng-click='search = !search' aria-label='Back')
 								md-icon.material-icons clear
-
-					md-toolbar.md-table-toolbar.md-accent.md-hue-1(ng-show='selected.length')
-						div.md-toolbar-tools
-							span {{selected.length}} course(s) selected
-							span(flex)
-							md-button.md-icon-button(ng-click='delete()' aria-label='Delete')
-								md-icon.material-icons delete
 							
 					md-table-container
-						table.deptcourselist(md-table md-row-select='admin' ng-model='selected')
+						table.deptcourselist(md-table)
 							thead(md-head md-order='order')
 								tr(md-row)
 									th.fixed(md-column md-order-by='courseCode') Course Code
 									th(md-column md-order-by='courseName' hide-xs) Course Name
 							tbody(md-body)
-								tr(md-row ng-repeat='course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='course')
+								tr(md-row ng-repeat='course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit')
 									td.fixed(md-cell)
-										a(ng-href='#/course/{{course.courseCode}}') {{course.courseCode}}
+										a(ng-href='#/visitor/course/{{course.courseCode}}') {{course.courseCode}}
 									td(md-cell hide-xs) {{course.courseName}}
 					md-table-pagination(md-limit='limit' md-page='page' md-total='{{courses.length}}')

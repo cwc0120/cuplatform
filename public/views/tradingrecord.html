@@ -30,10 +30,10 @@
                 </div>
               </md-toolbar>
               <md-table-container>
-                <table md-table="md-table">
+                <table md-table="md-table" class="recordlist">
                   <thead md-head="md-head" md-order="orderBuy">
                     <tr md-row="md-row">
-                      <th md-column="md-column" md-order-by="name">Item name</th>
+                      <th md-column="md-column" md-order-by="name" class="fixed">Item name</th>
                       <th md-column="md-column" md-order-by="category" hide="hide" show-gt-sm="show-gt-sm">Category</th>
                       <th md-column="md-column" md-order-by="price">Price</th>
                       <th md-column="md-column" md-order-by="seller" hide="hide" show-gt-md="show-gt-md">Seller</th>
@@ -43,7 +43,7 @@
                   </thead>
                   <tbody md-body="md-body">
                     <tr md-row="md-row" ng-repeat="item in buylist | filter: searchBuyRecord | orderBy: orderBuy | limitTo: limit: (page - 1) * limit">
-                      <td md-cell="md-cell"><a ng-href="#/item/{{item.item._id}}">{{item.item.name}}</a></td>
+                      <td md-cell="md-cell" class="fixed"><a ng-href="#/item/{{item.item._id}}">{{item.item.name}}</a></td>
                       <td md-cell="md-cell" hide="hide" show-gt-sm="show-gt-sm">{{item.item.category}}</td>
                       <td md-cell="md-cell">{{item.item.price | currency}}</td>
                       <td md-cell="md-cell" hide="hide" show-gt-md="show-gt-md">{{item.item.seller}}</td>
@@ -75,10 +75,10 @@
                 </div>
               </md-toolbar>
               <md-table-container>
-                <table md-table="md-table">
+                <table md-table="md-table" class="recordlist">
                   <thead md-head="md-head" md-order="orderSell">
                     <tr md-row="md-row">
-                      <th md-column="md-column" md-order-by="name">Item name</th>
+                      <th md-column="md-column" md-order-by="name" class="fixed">Item name</th>
                       <th md-column="md-column" md-order-by="category" hide="hide" show-gt-sm="show-gt-sm">Category</th>
                       <th md-column="md-column" md-order-by="price">Price</th>
                       <th md-column="md-column" md-order-by="status">Status</th>
@@ -86,7 +86,7 @@
                     </tr>
                   </thead>
                   <tbody md-body="md-body">
-                    <tr md-row="md-row" ng-repeat="item in selllist | filter: searchSellRecord | orderBy: orderSell | limitTo: limit: (page - 1) * limit">
+                    <tr md-row="md-row" ng-repeat="item in selllist | filter: searchSellRecord | orderBy: orderSell | limitTo: limit: (page - 1) * limit" class="fixed">
                       <td md-cell="md-cell"><a ng-href="#/item/{{item._id}}">{{item.name}}</a></td>
                       <td md-cell="md-cell" hide="hide" show-gt-sm="show-gt-sm">{{item.category}}</td>
                       <td md-cell="md-cell">{{item.price | currency}}</td>

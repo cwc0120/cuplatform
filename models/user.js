@@ -13,8 +13,13 @@ var User = new Schema({
 	major: String,
 	intro: String,
 	points: Number,
-	coursesTaken: [{type: String, ref: 'Course'}],
-	admin: Boolean
+	coursesTaken: [{type: Schema.Types.ObjectId, ref: 'Course'}],
+	admin: Boolean,
+	updates: [{
+		topic: String,
+		content: String,
+		date: Date
+	}]
 });
 
 module.exports = mongoose.model('User', User);

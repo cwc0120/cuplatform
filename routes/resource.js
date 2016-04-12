@@ -4,6 +4,7 @@ var multer = require('multer');
 var router = express.Router();
 var Resource = require('../models/resource');
 var Course = require('../models/course');
+var User = require('../models/user');
 var utils = require('../utils');
 
 var storage = multer.diskStorage({
@@ -58,13 +59,20 @@ router.route('/:cid')
 						name: req.body.name,
 						description: req.body.description,
 						uploader: req.decoded.uid,
+						icon: req.decoded.icon,
 						link: req.file.filename,
 						dateOfUpload: Date.now(),
 					}, function(err) {
 						if (err) {
 							return next(err);
 						} else {
-							findResList(req, res, next);
+							utils.addPoint(req.decoded.uid, 10, function(err) {
+								if (err) {
+									return next(err);
+								} else {
+									findResList(req, res, next);
+								}
+							});
 						}
 					});
 				}
@@ -84,6 +92,7 @@ router.route('/info/:resid')
 		// post comment there
 		var comment = {
 			author: req.decoded.uid,
+			icon: req.decoded.icon,
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
@@ -92,8 +101,18 @@ router.route('/info/:resid')
 				if (err) {
 					return next(err);
 				} else {
-					find(req, res, next, function(resource) {
-						res.status(200).json(resource);
+					utils.informUser(resource.uploader, {
+						topic: 'Resource ' + resource.name + ' at ' + resource.courseCode,
+						content: req.decoded.uid + ' has made a comment on your resource.',
+						date: Date.now()
+					}, function(err) {
+						if (err) {
+							return next(err);
+						} else {
+							find(req, res, next, function(resource) {
+								res.status(200).json(resource);
+							});
+						}
 					});
 				}
 			});
@@ -128,7 +147,13 @@ router.route('/info/:resid')
 			find(req, res, next, function(resource) {
 				req.params.cid = resource.courseCode;
 				resource.remove();
-				findResList(req, res, next);
+				utils.deductPoint(req.decoded.uid, 10, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						findResList(req, res, next);
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a resource!"});
@@ -138,13 +163,31 @@ router.route('/info/:resid')
 router.route('/file/:resid')
 	.get(function(req, res, next) {
 		var file = './uploads/' + req.params.resid;
-		res.download(file, function(err) {
+		User.findOne({uid: req.decoded.uid}, function(err, user) {
 			if (err) {
 				return next(err);
+			} else if (user === null) {
+				res.status(400).json({error: "User not found!"});
 			} else {
-				console.log('success!');
+				if (user.points >= 3) {
+					utils.deductPoint(req.decoded.uid, 3, function(err) {
+						if (err) {
+							return next(err);
+						} else {
+							res.download(file, function(err) {
+								if (err) {
+									return next(err);
+								} else {
+									console.log('success!');
+								}
+							});
+						}
+					});
+				} else {
+					res.status(400).json({error: "You don't have enough points!"});
+				}
 			}
-		});
+		});	
 	});
 
 router.route('/info/:resid/:cmid')
@@ -165,6 +208,23 @@ router.route('/info/:resid/:cmid')
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
 		}	
+	});
+
+router.route('/report/:resid')
+	.post(function(req, res, next) {
+		find(req, res, next, function(resource) {
+			utils.informAdmin({
+				topic: 'ADMIN: Resource ' + resource.name + ' at ' + resource.courseCode,
+				content: req.body.content,
+				date: Date.now()
+			}, function(err) {
+				if (err) {
+					return next(err);
+				} else {
+					res.status(200).end();
+				}
+			});
+		});
 	});
 
 function findResList(req, res, next) {
