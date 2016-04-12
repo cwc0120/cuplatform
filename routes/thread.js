@@ -12,7 +12,17 @@ router.use(function(req, res, next) {
 router.route('/:cid')
 	.get(function(req, res, next) {
 		// get all threads under a course
-		findList(req, res, next);
+		var courseStudent = false;
+		for (var i=0; i<req.decoded.courseTaken.length; i++){
+			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i].courseCode){
+				courseStudent = true;
+			}
+		}
+		if (courseStudent){
+			findList(req, res, next);
+		} else {
+			res.status(401).json({error: "You are not taking this course!"});
+		}
 	})
 
 	.post(function(req, res, next) {
@@ -36,8 +46,15 @@ router.route('/:cid')
 						findList(req, res, next);
 					}
 				});
-			} else {		
-				Thread.create({
+			} else {
+				var courseStudent = false;
+				for (var i=0; i<req.decoded.courseTaken.length; i++){
+					if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i].courseCode){
+						courseStudent = true;
+					}
+				}
+				if (courseStudent){
+					Thread.create({
 					courseCode: course.courseCode,
 					author: req.decoded.uid,
 					annoymous: req.body.annoymous,
@@ -45,13 +62,17 @@ router.route('/:cid')
 					content: req.body.content,
 					dateOfThread: Date.now(),
 					dateOfUpdate: Date.now()
-				}, function(err) {
+					}, function(err) {
 					if (err) {
 						return next(err);
 					} else {
 						findList(req, res, next);
 					}
-				});
+					});
+				} else {
+					res.status(401).json({error: "You are not taking this course!"});
+				}		
+				
 			}
 		});
 	});
@@ -60,7 +81,22 @@ router.route('/detail/:tid')
 	.get(function(req, res, next) {
 		// get detail of a thread
 		find(req, res, next, function(thread) {
-			res.status(200).json(thread);
+			var courseStudent = false;
+			if (thread.courseCode === 'GENERAL'){
+				courseStudent = true;
+			} else {
+				for (var i=0; i<req.decoded.courseTaken.length; i++){
+					if(thread.courseCode === req.decoded.courseTaken[i].courseCode){
+						courseStudent = true;
+					}
+				}
+			}
+			if (courseStudent){
+				res.status(200).json(thread);
+			} else {
+				res.status(401).json({error: "You are not taking this course!"});
+			}
+			
 		});
 	})
 
@@ -72,18 +108,33 @@ router.route('/detail/:tid')
 			dateOfComment: Date.now()
 		};
 		find(req, res, next, function(thread) {
-			thread.update({
-				$push: {comment: comment},
-				$set: {dateOfUpdate: Date.now()}
-			}, function(err) {
-				if (err) {
-					return next(err);
-				} else {
-					find(req, res, next, function(thread) {
-						res.status(200).json(thread);
-					});
+			var courseStudent = false;
+			if (thread.courseCode === 'GENERAL'){
+				courseStudent = true;
+			} else {
+				for (var i=0; i<req.decoded.courseTaken.length; i++){
+					if(thread.courseCode === req.decoded.courseTaken[i].courseCode){
+						courseStudent = true;
+					}
 				}
-			});
+			}
+			if (courseStudent){
+				thread.update({
+					$push: {comment: comment},
+					$set: {dateOfUpdate: Date.now()}
+				}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						find(req, res, next, function(thread) {
+							res.status(200).json(thread);
+						});
+					}
+				});
+			} else {
+				res.status(401).json({error: "You are not taking this course!"});
+			}
+			
 		});
 	})
 
