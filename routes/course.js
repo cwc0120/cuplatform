@@ -57,7 +57,7 @@ router.route('/info/:cid')
 		} else {
 			course.visitor = true;
 			for (var i=0; i<req.decoded.courseTaken.length; i++){
-				if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i].courseCode){
+				if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
 					course.visitor = false;
 				}
 			}
@@ -82,7 +82,7 @@ router.route('/info/:cid')
 		find(req, res, next, function(course) {
 			var courseStudent = false;
 			for (var i=0; i<req.decoded.courseTaken.length; i++){
-				if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i].courseCode){
+				if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
 					courseStudent = true;
 				}
 			}
