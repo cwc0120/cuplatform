@@ -54,7 +54,7 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 	}
 
 	$scope.addComment = function() {
-		if ($scope.newComment !== '') {
+		if ($scope.newComment.length >= 15) {
 			Thread.postComment(threadID, {content: $scope.newComment}).success(function(res) {
 				$scope.newComment = '';
 				$scope.thread = res;

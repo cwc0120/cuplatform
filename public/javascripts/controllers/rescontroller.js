@@ -156,7 +156,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 	};
 
 	$scope.addComment = function() {
-		if ($scope.newComment !== '') {
+		if ($scope.newComment.length >= 15) {
 			Resource.postComment($scope.resource._id, {content: $scope.newComment}).success(function(res) {
 				$scope.newComment = '';
 				$scope.resource = res;
