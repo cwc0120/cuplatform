@@ -73,7 +73,7 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth, U
 	};
 
 	$scope.searchUser = function() {
-		if ($scope.newUser !== $scope.uid)
+		if ($scope.newUser !== $scope.uid) {
 			User.find($scope.newUser).success(function(res) {
 				$scope.searchError = '';
 				$scope.newUser = '';
