@@ -41,7 +41,7 @@
           <md-list flex="flex" ng-show="uid === item.seller">
             <md-subheader class="md-no-sticky">{{item.buyer.length}} person(s) interested.</md-subheader>
             <md-divider></md-divider>
-            <md-list-item ng-repeat="buyer in item.buyer" ng-click="sellDialog($event, buyer)" class="md-2-line"><img ng-src="/images/user/{{buyer.icon}}" alt="{{buyer.uid}}" class="md-avatar"/>
+            <md-list-item ng-repeat="buyer in item.buyer" ng-click="sellDialog($event, buyer.uids)" class="md-2-line"><img ng-src="/images/user/{{buyer.icon}}" alt="{{buyer.uid}}" class="md-avatar"/>
               <div class="md-list-item-text">
                 <h3>{{buyer.uid}}</h3>
               </div>
