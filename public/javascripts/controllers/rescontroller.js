@@ -143,7 +143,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 		var a = document.createElement("a");
 		document.body.appendChild(a);
 		a.style = "display: none";
-		Resource.getRes($scope.resource.link).then(function (result) {
+		Resource.getRes($scope.resource._id).then(function (result) {
 			var file = new Blob([result.data], {type: result.data.type});
 			var fileURL = window.URL.createObjectURL(file);
 			a.href = fileURL;

@@ -209,8 +209,9 @@ router.route('/file/:resid')
 					courseStudent = true;
 				}
 			}
+			
 			if (courseStudent || req.decoded.admin) {
-				var file = './uploads/' + req.params.resid;
+				var file = './uploads/' + resource.link;
 				User.findOne({uid: req.decoded.uid}, function(err, user) {
 					if (err) {
 						return next(err);
