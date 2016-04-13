@@ -14,7 +14,7 @@ div(ng-hide='isLogged' layout='column')
 								span.error {{loginMessage}}
 								md-input-container.md-block
 									label User ID
-									input(type='text' name='userID' ng-model='user.uid' required)
+									input(type='text' name='userID' ng-model='user.uid' required autocomplete='off')
 								md-input-container.md-block
 									label Password
 									input(type='password' name='password' ng-model='user.pwd' required)
