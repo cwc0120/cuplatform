@@ -7,7 +7,7 @@ div(layout='column')
 			div(ng-show='success')
 				md-card
 					md-card-header
-						md-card-avatar(ng-hide='thread.author === "Annoymous"')
+						md-card-avatar(ng-hide='thread.author === "Anonymous"')
 							img.icon(ng-src='/images/user/{{thread.icon}}')
 						md-card-header-text
 							a.md-title(ng-href='#/user/profile/{{thread.author}}') {{thread.author}}
