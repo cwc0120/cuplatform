@@ -14,8 +14,9 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	// Initialization
 	Course.getOne(courseCode).success(function(res) {
 		$scope.success = true;
-		$scope.course = res;
-		$scope.lessons = res.schedule;
+		$scope.course = res.course;
+		$scope.visitor = res.visitor;
+		$scope.lessons = res.course.schedule;
 		calculate();
 	}).error(function(res) {
 		$scope.success = false;
@@ -41,7 +42,7 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		})
 		.then(function(edit) {
 			Course.edit(courseCode, edit).success(function(res) {
-				$scope.course = res;
+				$scope.course = res.course;
 				$scope.lessons = res.schedule;
 			}).error(function(res) {
 				$scope.success = false;
@@ -156,6 +157,10 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 				});
 			});
 		};
+
+	$scope.invalid = function() {
+		$mdToast.show($mdToast.simple().textContent('You are not taking this course. Please add this course to your timetable to access this page.'));
+	}
 
 	function registerController($scope, $mdDialog, Auth) {
 		$scope.newUser = {};

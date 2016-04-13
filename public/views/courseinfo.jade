@@ -37,9 +37,12 @@ div(layout='column')
 												td(md-cell) {{days[lesson.day-1].val}}
 												td(md-cell) {{times[lesson.time-1].val}}
 												td(md-cell) {{lesson.venue}}
-					md-card-actions(layout='row' layout-align='end center')
+					md-card-actions(ng-hide='visitor' layout='row' layout-align='end center')
 						md-button(ng-click='$location.path("/resource/" + course.courseCode.slice(0, 8))') Resources
 						md-button(ng-click='$location.path("/discussion/" + course.courseCode.slice(0, 8))') Discussion
+					md-card-actions(ng-show='visitor' layout='row' layout-align='end center')
+						md-button(ng-click='invalid()') Resources
+						md-button(ng-click='invalid()') Discussion
 
 				md-card
 					div.md-toolbar-tools
@@ -51,7 +54,7 @@ div(layout='column')
 				md-card(ng-repeat='info in course.info | orderBy: "-_id"')
 					md-card-header
 						md-card-avatar
-							img.md-user-avatar(ng-src='/images/user/{{info.icon}}')
+							img.icon(ng-src='/images/user/{{info.icon}}')
 						md-card-header-text
 							span.md-title {{info.author}}
 							span.md-subhead \#{{course.info.length - $index}}: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}

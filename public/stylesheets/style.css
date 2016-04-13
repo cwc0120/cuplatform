@@ -61,6 +61,18 @@ img.avatar {
     float: left;
 }
 
+img.icon {
+	width: 40px;
+    height: 40px;
+    -webkit-border-radius: 40px;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 40px;
+    -moz-background-clip: padding;
+    border-radius: 40px;
+    background-clip: padding-box;
+    float: left;
+}
+
 .gridListdemoDynamicTiles md-grid-tile-footer figcaption {
 	width: 100%; 
 }

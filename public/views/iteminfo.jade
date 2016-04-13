@@ -8,7 +8,7 @@ div(layout='column')
 				md-card
 					md-card-header
 						md-card-avatar
-							img.md-user-avatar(ng-src='/images/user/{{item.icon}}')
+							img.icon(ng-src='/images/user/{{item.icon}}')
 						md-card-header-text
 							span.md-title {{item.seller}}
 							span.md-subhead {{item.date | date:'d/M/yyyy h:mma'}}
