@@ -9,6 +9,7 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 	}
 
 	var threadID = $routeParams.id;
+	$scope.newComment = '';
 
 	Thread.getOne(threadID).success(function(res) {
 		$scope.success = true;

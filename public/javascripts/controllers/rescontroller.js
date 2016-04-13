@@ -13,6 +13,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 	$scope.limit = 5;
 	$scope.page = 1;
 	$scope.selected = [];
+	$scope.newComment = '';
 
 	Resource.get($scope.courseCode).success(function(res) {
 		$scope.success = true;
