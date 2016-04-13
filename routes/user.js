@@ -22,7 +22,8 @@ var storage = multer.diskStorage({
 		// use user name as file name
 		var originalName = file.originalname;
 		var ext = originalName.split('.');
-		cb(null, req.decoded.uid + '.' + ext[ext.length-1]);
+		var name = req.decoded.icon.split('.');
+		cb(null, name[0] + '.' + ext[ext.length-1]);
 	}
 });
 
@@ -76,18 +77,8 @@ router.route('/icon/:uid')
 		if (!req.file) {
 			res.status(400).json({error: 'No image uploaded.'});
 		} else if (req.params.uid === req.decoded.uid) {
-			find(req, res, next, function(user) {
-				user.update({$set: {
-					icon: req.file.filename
-				}}, function(err) {
-					if (err) {
-						return next(err);
-					} else {
-						find(req, res, next, function(result) {
-							res.status(200).json(result);
-						});
-					}
-				});
+			find(req, res, next, function(result) {
+				res.status(200).json(result);
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to edit user information!"});
