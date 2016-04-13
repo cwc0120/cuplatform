@@ -31,6 +31,7 @@
             <md-button ng-show="uid === user.uid" ng-click="changePwdDialog($event)">Change password</md-button>
             <md-button ng-show="uid === user.uid" ng-click="editProfileDialog($event)">Edit profile</md-button>
             <md-button ng-show="uid === user.uid" ng-click="uploadIconDialog($event)">Upload avatar</md-button>
+            <md-button ng-click="$location.path(&quot;/user/timetable&quot; + user.uid)">Timetable</md-button>
           </md-card-actions>
         </md-card>
       </div>
