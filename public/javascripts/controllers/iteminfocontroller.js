@@ -15,7 +15,7 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 		$scope.success = true;
 		$scope.item = res;
 		for (var i = 0; i < $scope.item.buyer.length; i++) {
-			if ($scope.item.buyer[i] === $scope.uid) {
+			if ($scope.item.buyer[i].uid === $scope.uid) {
 				$scope.bought = true;
 			}
 		}
