@@ -73,13 +73,15 @@ ctrl.controller('messengerController', function($scope, $window, Socket, Auth, U
 	};
 
 	$scope.searchUser = function() {
-		User.find($scope.newUser).success(function(res) {
-			$scope.searchError = '';
-			$scope.newUser = '';
-			$scope.selected = res.uid;
-			Socket.emit('getChatRecord', {uid: res.uid});
-		}).error(function(res) {
-			$scope.searchError = res.error;
-		});
+		if ($scope.newUser !== $scope.uid)
+			User.find($scope.newUser).success(function(res) {
+				$scope.searchError = '';
+				$scope.newUser = '';
+				$scope.selected = res.uid;
+				Socket.emit('getChatRecord', {uid: res.uid});
+			}).error(function(res) {
+				$scope.searchError = res.error;
+			});
+		}
 	};
 });
