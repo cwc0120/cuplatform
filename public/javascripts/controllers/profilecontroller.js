@@ -60,7 +60,7 @@ ctrl.controller('profileController', function($scope, $window, $location, $route
 			clickOutsideToClose: true
 		}).then(function(fd) {
 			User.uploadIcon(uid, fd).success(function(res) {
-				$mdToast.show($mdToast.simple().textContent('Password is changed. Please log in again.'));
+				$mdToast.show($mdToast.simple().textContent('Your avatar is uploaded successfully.'));
 				$scope.user = res;
 			}).error(function(res) {
 				$scope.success = false;
