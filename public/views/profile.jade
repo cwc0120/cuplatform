@@ -30,4 +30,4 @@ div(layout='column')
 						md-button(ng-show='uid === user.uid' ng-click='changePwdDialog($event)') Change password
 						md-button(ng-show='uid === user.uid' ng-click='editProfileDialog($event)') Edit profile
 						md-button(ng-show='uid === user.uid' ng-click='uploadIconDialog($event)') Upload avatar
-						md-button(ng-click='$location.path("/user/timetable" + user.uid)') Timetable
+						md-button(ng-click='$location.path("/user/timetable/" + user.uid)') Timetable
