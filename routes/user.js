@@ -106,7 +106,7 @@ router.route('/pwd/:uid')
 				} else {
 					var salt = user.salt;
 					var hash = crypto.pbkdf2Sync(req.body.oldPwd, salt, 10000, 512);
-					if (hash !== user.hash) {
+					if (hash != user.hash) {
 						res.status(400).json({error: 'Incorrect password'});
 					} else if (req.body.newPwd1 !== req.body.newPwd2) {
 						res.status(400).json({error: 'Password unmatched.'});
