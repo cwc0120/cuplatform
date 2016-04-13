@@ -9,7 +9,7 @@
       <div ng-show="success">
         <md-card>
           <md-card-header>
-            <md-card-avatar ng-hide="thread.author === &quot;Annoymous&quot;"><img ng-src="/images/user/{{thread.icon}}" class="md-user-avatar"/></md-card-avatar>
+            <md-card-avatar ng-hide="thread.author === &quot;Annoymous&quot;"><img ng-src="/images/user/{{thread.icon}}" class="icon"/></md-card-avatar>
             <md-card-header-text><span class="md-title">{{thread.author}}</span><span class="md-subhead">{{thread.dateOfThread | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
             <md-button ng-show="uid === thread.author" ng-click="editThreadDialog($event)" aria-label="Edit thread" class="md-icon-button">
               <md-icon class="material-icons">mode_edit</md-icon>

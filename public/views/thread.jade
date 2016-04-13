@@ -8,7 +8,7 @@ div(layout='column')
 				md-card
 					md-card-header
 						md-card-avatar(ng-hide='thread.author === "Annoymous"')
-							img.md-user-avatar(ng-src='/images/user/{{thread.icon}}')
+							img.icon(ng-src='/images/user/{{thread.icon}}')
 						md-card-header-text
 							span.md-title {{thread.author}}
 							span.md-subhead {{thread.dateOfThread | date:'d/M/yyyy h:mma'}}

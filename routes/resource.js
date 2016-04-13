@@ -42,26 +42,26 @@ router.route('/:cid')
 	.get(function(req, res, next) {
 		// see resources under course
 		var courseStudent = false;
-		for (var i=0; i<req.decoded.courseTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+		for (var i=0; i<req.decoded.coursesTaken.length; i++){
+			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
 				courseStudent = true;
 			}
 		}
-		if (courseStudent){
+		if (courseStudent || req.decoded.admin){
 			findResList(req, res, next);
 		} else {
-			res.status(401).json({error: "You are not taking this course!"});
+			res.status(400).json({error: "You are not taking this course!"});
 		}
 	})
 
 	.post(upload.single('file'), function(req, res, next) {
 		var courseStudent = false;
-		for (var i=0; i<req.decoded.courseTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+		for (var i=0; i<req.decoded.coursesTaken.length; i++){
+			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
 				courseStudent = true;
 			}
 		}
-		if (courseStudent) {
+		if (courseStudent || req.decoded.admin) {
 			if (!req.file) {
 				res.status(400).json({error: 'No file uploaded.'});
 			} else {
@@ -96,7 +96,7 @@ router.route('/:cid')
 				});
 			}
 		} else {
-			res.status(401).json({error: "You are not taking this course!"});
+			res.status(400).json({error: "You are not taking this course!"});
 		}		
 	});
 
@@ -105,15 +105,15 @@ router.route('/info/:resid')
 		// check resource info
 		find(req, res, next, function(resource) {
 			var courseStudent = false;
-			for (var i=0; i<req.decoded.courseTaken.length; i++){
-				if(resource.courseCode === req.decoded.courseTaken[i]){
+			for (var i=0; i<req.decoded.coursesTaken.length; i++){
+				if(resource.courseCode === req.decoded.coursesTaken[i]){
 					courseStudent = true;
 				}
 			}
-			if (courseStudent){
+			if (courseStudent || req.decoded.admin){
 				res.status(200).json(resource);
 			} else {
-				res.status(401).json({error: "You are not taking this course!"});
+				res.status(400).json({error: "You are not taking this course!"});
 			}	
 		});
 	})
@@ -128,12 +128,12 @@ router.route('/info/:resid')
 		};
 		find(req, res, next, function(resource) {
 			var courseStudent = false;
-			for (var i=0; i<req.decoded.courseTaken.length; i++) {
-				if (resource.courseCode === req.decoded.courseTaken[i]) {
+			for (var i=0; i<req.decoded.coursesTaken.length; i++) {
+				if (resource.courseCode === req.decoded.coursesTaken[i]) {
 					courseStudent = true;
 				}
 			}
-			if (courseStudent) {
+			if (courseStudent || req.decoded.admin) {
 				resource.update({$push: {comment: comment}}, function(err) {
 					if (err) {
 						return next(err);
@@ -204,12 +204,12 @@ router.route('/file/:resid')
 	.get(function(req, res, next) {
 		find(req, res, next, function(resource) {
 			var courseStudent = false;
-			for (var i=0; i<req.decoded.courseTaken.length; i++){
-				if(resource.courseCode === req.decoded.courseTaken[i]){
+			for (var i=0; i<req.decoded.coursesTaken.length; i++){
+				if(resource.courseCode === req.decoded.coursesTaken[i]){
 					courseStudent = true;
 				}
 			}
-			if (courseStudent) {
+			if (courseStudent || req.decoded.admin) {
 				var file = './uploads/' + req.params.resid;
 				User.findOne({uid: req.decoded.uid}, function(err, user) {
 					if (err) {
@@ -237,7 +237,7 @@ router.route('/file/:resid')
 					}
 				});
 			} else {
-				res.status(401).json({error: "You are not taking this course!"});
+				res.status(400).json({error: "You are not taking this course!"});
 			}	
 		});
 	});

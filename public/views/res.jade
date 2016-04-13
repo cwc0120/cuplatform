@@ -48,7 +48,7 @@ div(layout='column')
 				md-card(ng-show='resource && !selected.length && !deleted')
 					md-card-header
 						md-card-avatar
-							img.md-user-avatar(ng-src='/images/user/{{resource.icon}}')
+							img.icon(ng-src='/images/user/{{resource.icon}}')
 						md-card-header-text
 							span.md-title {{resource.uploader}}
 							span.md-subhead {{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}

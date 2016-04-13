@@ -13,15 +13,15 @@ router.route('/:cid')
 	.get(function(req, res, next) {
 		// get all threads under a course
 		var courseStudent = false;
-		for (var i = 0; i < req.decoded.courseTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]) {
+		for (var i = 0; i < req.decoded.coursesTaken.length; i++){
+			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]) {
 				courseStudent = true;
 			}
 		}
-		if (courseStudent) {
+		if (courseStudent || req.decoded.admin || req.params.cid === 'General') {
 			findList(req, res, next);
 		} else {
-			res.status(401).json({error: "You are not taking this course!"});
+			res.status(400).json({error: "You are not taking this course!"});
 		}
 	})
 
@@ -55,12 +55,12 @@ router.route('/:cid')
 				});
 			} else {
 				var courseStudent = false;
-				for (var i=0; i<req.decoded.courseTaken.length; i++){
-					if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+				for (var i=0; i<req.decoded.coursesTaken.length; i++){
+					if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
 						courseStudent = true;
 					}
 				}
-				if (courseStudent){
+				if (courseStudent || req.decoded.admin) {
 					Thread.create({
 					courseCode: course.courseCode,
 					author: req.decoded.uid,
@@ -84,7 +84,7 @@ router.route('/:cid')
 					}
 					});
 				} else {
-					res.status(401).json({error: "You are not taking this course!"});
+					res.status(400).json({error: "You are not taking this course!"});
 				}		
 				
 			}
@@ -99,16 +99,16 @@ router.route('/detail/:tid')
 			if (thread.courseCode === 'GENERAL'){
 				courseStudent = true;
 			} else {
-				for (var i=0; i<req.decoded.courseTaken.length; i++){
-					if(thread.courseCode === req.decoded.courseTaken[i]){
+				for (var i=0; i<req.decoded.coursesTaken.length; i++){
+					if(thread.courseCode === req.decoded.coursesTaken[i]){
 						courseStudent = true;
 					}
 				}
 			}
-			if (courseStudent){
+			if (courseStudent || req.decoded.admin){
 				res.status(200).json(thread);
 			} else {
-				res.status(401).json({error: "You are not taking this course!"});
+				res.status(400).json({error: "You are not taking this course!"});
 			}
 			
 		});
@@ -127,13 +127,13 @@ router.route('/detail/:tid')
 			if (thread.courseCode === 'GENERAL'){
 				courseStudent = true;
 			} else {
-				for (var i = 0; i < req.decoded.courseTaken.length; i++) {
-					if(thread.courseCode === req.decoded.courseTaken[i]) {
+				for (var i = 0; i < req.decoded.coursesTaken.length; i++) {
+					if(thread.courseCode === req.decoded.coursesTaken[i]) {
 						courseStudent = true;
 					}
 				}
 			}
-			if (courseStudent) {
+			if (courseStudent || req.decoded.admin) {
 				thread.update({
 					$push: {comment: comment},
 					$set: {dateOfUpdate: Date.now()}
@@ -163,7 +163,7 @@ router.route('/detail/:tid')
 					}
 				});
 			} else {
-				res.status(401).json({error: "You are not taking this course!"});
+				res.status(400).json({error: "You are not taking this course!"});
 			}		
 		});
 	})

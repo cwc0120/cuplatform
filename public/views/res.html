@@ -58,7 +58,7 @@
         </md-card>
         <md-card ng-show="resource &amp;&amp; !selected.length &amp;&amp; !deleted">
           <md-card-header>
-            <md-card-avatar><img ng-src="/images/user/{{resource.icon}}" class="md-user-avatar"/></md-card-avatar>
+            <md-card-avatar><img ng-src="/images/user/{{resource.icon}}" class="icon"/></md-card-avatar>
             <md-card-header-text><span class="md-title">{{resource.uploader}}</span><span class="md-subhead">{{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
             <md-button ng-show="uid === resource.uploader" ng-click="editResDialog($event)" aria-label="Edit resource" class="md-icon-button">
               <md-icon class="material-icons">mode_edit</md-icon>
