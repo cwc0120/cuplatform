@@ -10,7 +10,7 @@ div(layout='column')
 						md-card-avatar
 							img.icon(ng-src='/images/user/{{item.icon}}')
 						md-card-header-text
-							span.md-title {{item.seller}}
+							a.md-title(ng-href='#/user/profile/{{item.seller}}') {{item.seller}}
 							span.md-subhead {{item.date | date:'d/M/yyyy h:mma'}}
 						span(flex)
 						md-button.md-icon-button(ng-show='uid === item.seller && item.active' ng-click='editItemDialog($event)' aria-label='Edit item')

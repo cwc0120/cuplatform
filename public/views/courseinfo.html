@@ -68,7 +68,7 @@
         <md-card ng-repeat="info in course.info | orderBy: &quot;-_id&quot;">
           <md-card-header>
             <md-card-avatar><img ng-src="/images/user/{{info.icon}}" class="icon"/></md-card-avatar>
-            <md-card-header-text><span class="md-title">{{info.author}}</span><span class="md-subhead">#{{course.info.length - $index}}: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
+            <md-card-header-text><a ng-href="#/user/profile/{{info.author}}" class="md-title">{{info.author}}</a><span class="md-subhead">#{{course.info.length - $index}}: {{info.dateOfComment | date:'d/M/yyyy h:mma'}}</span></md-card-header-text><span flex="flex"></span>
             <md-button ng-show="admin" ng-click="deleteInfo(info._id)" aria-label="Delete Comment" class="md-icon-button">
               <md-icon class="material-icons">delete</md-icon>
             </md-button>
