@@ -66,7 +66,7 @@ var chatroom = (function() {
 		});
 	};
 
-	var newMessage = function(sender, recipient, content, callback) {
+	var newMessage = function(sender, recipient, icon, content, callback) {
 		Chat.findOne({$or: 
 			[{
 				user1: sender, 
@@ -84,6 +84,7 @@ var chatroom = (function() {
 					user2: recipient,
 					messages:[{
 						sender: sender,
+						icon: icon,
 						content: content,
 						date: Date.now()
 					}]
@@ -95,6 +96,7 @@ var chatroom = (function() {
 			} else {
 				chat.update({$push: {messages: {
 					sender: sender,
+					icon: icon,
 					content: content,
 					date: Date.now()
 				}}}, function(err) {
@@ -147,12 +149,13 @@ module.exports = function (io) {
 				if (err) {
 					console.log('Not a User!');
 				} else {
-					if (chatroom.existClient(res) !== false) {
-						chatroom.replaceClient(res, socket);
+					if (chatroom.existClient(res.uid) !== false) {
+						chatroom.replaceClient(res.uid, socket);
 					} else {
-						chatroom.newClient(res, socket);
+						chatroom.newClient(res.uid, socket);
 					}
-					user.uid = res;
+					user.uid = res.uid;
+					user.icon = res.icon;
 					io.emit('clientList', chatroom.getList());
 					chatroom.getPastName(user.uid, function(res) {
 						socket.emit('pastName', res);
@@ -174,16 +177,18 @@ module.exports = function (io) {
 		});
 
 		socket.on('sendNewMessage', function(msg) {
-			chatroom.newMessage(user.uid, msg.recipient, msg.content, function() {
+			chatroom.newMessage(user.uid, msg.recipient, user.icon, msg.content, function() {
 				if (chatroom.existClient(msg.recipient)) {
 					io.to(chatroom.getID(msg.recipient)).emit('newMessage', {
 						sender: user.uid,
+						icon: user.icon,
 						content: msg.content,
 						date: Date.now()
 					});
 				}
 				socket.emit('newMessage', {
 					sender: user.uid,
+					icon: user.icon,
 					content: msg.content,
 					date: Date.now()
 				});
@@ -192,6 +197,7 @@ module.exports = function (io) {
 
 		socket.on('disconnect', function() {
 			chatroom.freeClient(user.uid);
+			user = {};
 			io.emit('clientList', chatroom.getList());
 		});
 	});	

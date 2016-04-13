@@ -23,6 +23,7 @@ router.post('/', function(req, res, next) {
 				// user id is found and password is right, create a token
 				var token = jwt.sign({
 					uid: user.uid,
+					icon: user.icon,
 					admin: user.admin
 				}, req.app.get('secret'), {
 					expiresIn: 14400
@@ -32,6 +33,7 @@ router.post('/', function(req, res, next) {
 				res.status(200).json({
 					token: token,
 					uid: user.uid,
+					icon: user.icon,
 					admin: user.admin,
 					message: 'Login successful.'
 				});

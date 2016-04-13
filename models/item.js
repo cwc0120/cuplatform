@@ -8,8 +8,12 @@ var Item = new Schema({
 	name: String,
 	description: String,
 	img: String,
-	seller: {type: String, ref: 'User'},
-	buyer: [{type: String, ref: 'User'}],
+	seller: String,
+	icon: String,
+	buyer: [{
+		uid: String,
+		icon: String
+	}],
 	date: Date,
 	price: Number,
 	priceFlexible: Boolean,

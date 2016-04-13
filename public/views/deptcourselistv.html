@@ -17,17 +17,14 @@
           </md-card-content>
         </md-card>
         <md-card>
-          <md-toolbar ng-hide="selected.length || search" class="md-table-toolbar md-default">
+          <md-toolbar ng-hide="search" class="md-table-toolbar md-default">
             <div class="md-toolbar-tools"><span>Course List under {{dept.deptName}}</span><span flex="flex"></span>
-              <md-button ng-show="admin" ng-click="addCourseDialog($event)" aria-label="Add" class="md-icon-button">
-                <md-icon class="material-icons">add</md-icon>
-              </md-button>
               <md-button ng-click="search = !search" aria-label="Search" class="md-icon-button">
                 <md-icon class="material-icons">search</md-icon>
               </md-button>
             </div>
           </md-toolbar>
-          <md-toolbar ng-show="search &amp;&amp; !selected.length" class="md-table-toolbar md-default">
+          <md-toolbar ng-show="search" class="md-table-toolbar md-default">
             <div class="md-toolbar-tools">
               <md-input-container flex="flex" md-no-float="md-no-float">
                 <md-icon class="material-icons">search</md-icon>
@@ -38,15 +35,8 @@
               </md-button>
             </div>
           </md-toolbar>
-          <md-toolbar ng-show="selected.length" class="md-table-toolbar md-accent md-hue-1">
-            <div class="md-toolbar-tools"><span>{{selected.length}} course(s) selected</span><span flex="flex"></span>
-              <md-button ng-click="delete()" aria-label="Delete" class="md-icon-button">
-                <md-icon class="material-icons">delete</md-icon>
-              </md-button>
-            </div>
-          </md-toolbar>
           <md-table-container>
-            <table md-table="md-table" md-row-select="admin" ng-model="selected" class="deptcourselist">
+            <table md-table="md-table" class="deptcourselist">
               <thead md-head="md-head" md-order="order">
                 <tr md-row="md-row">
                   <th md-column="md-column" md-order-by="courseCode" class="fixed">Course Code</th>
@@ -54,8 +44,8 @@
                 </tr>
               </thead>
               <tbody md-body="md-body">
-                <tr md-row="md-row" ng-repeat="course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit" md-select="course">
-                  <td md-cell="md-cell" class="fixed"><a ng-href="#/course/{{course.courseCode}}">{{course.courseCode}}</a></td>
+                <tr md-row="md-row" ng-repeat="course in courses | filter: searchCourse | orderBy: order | limitTo: limit: (page - 1) * limit">
+                  <td md-cell="md-cell" class="fixed"><a ng-href="#/visitor/course/{{course.courseCode}}">{{course.courseCode}}</a></td>
                   <td md-cell="md-cell" hide-xs="hide-xs">{{course.courseName}}</td>
                 </tr>
               </tbody>

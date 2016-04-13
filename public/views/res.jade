@@ -31,30 +31,32 @@ div(layout='column')
 								md-icon.material-icons delete
 							
 					md-table-container
-						table(md-table md-row-select='admin' ng-model='selected')
+						table.reslist(md-table md-row-select='admin' ng-model='selected')
 							thead(md-head md-order='order')
 								tr(md-row)
-									th(md-column md-order-by='name') Resource
-									th(md-column md-order-by='uploader' hide-xs) Uploader
-									th(md-column md-order-by='dateOfUpload' hide-xs) Date of Upload
+									th.fixed(md-column md-order-by='name') Resource
+									th(md-column md-order-by='uploader') Uploader
+									th(md-column md-order-by='dateOfUpload') Date of Upload
 							tbody(md-body)
 								tr(md-row ng-repeat='res in ress | filter: searchRes | orderBy: order | limitTo: limit: (page - 1) * limit' md-select='res')
-									td(md-cell)
+									td.fixed(md-cell)
 										a.link(ng-click='check(res._id)') {{res.name}}
-									td(md-cell hide-xs) {{res.uploader}}
-									td(md-cell hide-xs) {{res.dateOfUpload | date:'d/M/yyyy'}}
+									td(md-cell) {{res.uploader}}
+									td(md-cell) {{res.dateOfUpload | date:'d/M/yyyy'}}
 					md-table-pagination(md-limit='limit' md-page='page' md-total='{{ress.length}}')
 
-				md-card(ng-show='resource && !selected.length')
+				md-card(ng-show='resource && !selected.length && !deleted')
 					md-card-header
 						md-card-avatar
-							img.md-user-avatar(ng-src='/images/user/{{resource.uploader}}.jpg')
+							img.md-user-avatar(ng-src='/images/user/{{resource.icon}}')
 						md-card-header-text
 							span.md-title {{resource.uploader}}
 							span.md-subhead {{resource.dateOfUpload | date:'d/M/yyyy h:mma'}}
 						span(flex)
 						md-button.md-icon-button(ng-show='uid === resource.uploader' ng-click='editResDialog($event)' aria-label='Edit resource')
 							md-icon.material-icons mode_edit
+						md-button.md-icon-button(ng-click='reportDialog($event)' aria-label='report')
+							md-icon.material-icons report
 					md-card-content
 						p Resource name: {{resource.name}}
 						p 
@@ -76,7 +78,7 @@ div(layout='column')
 						md-divider
 						md-virtual-repeat-container#container(flex md-auto-shrink)
 							md-list-item.md-2-line.repeated-item(md-virtual-repeat='cm in resource.comment' md-item-size='73')
-								img.md-avatar(ng-src='/images/user/{{cm.author}}.jpg' alt='{{cm.author}}')
+								img.md-avatar(ng-src='/images/user/{{cm.icon}}' alt='{{cm.author}}')
 								div.md-list-item-text
 									div(layout='row')
 										h3 {{cm.author}}

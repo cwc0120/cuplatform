@@ -13,12 +13,12 @@ router.route('/:cid')
 	.get(function(req, res, next) {
 		// get all threads under a course
 		var courseStudent = false;
-		for (var i=0; i<req.decoded.courseTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+		for (var i = 0; i < req.decoded.courseTaken.length; i++){
+			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]) {
 				courseStudent = true;
 			}
 		}
-		if (courseStudent){
+		if (courseStudent) {
 			findList(req, res, next);
 		} else {
 			res.status(401).json({error: "You are not taking this course!"});
@@ -34,6 +34,7 @@ router.route('/:cid')
 				Thread.create({
 					courseCode: 'GENERAL',
 					author: req.decoded.uid,
+					icon: req.decoded.icon,
 					annoymous: req.body.annoymous,
 					topic: req.body.topic,
 					content: req.body.content,
@@ -43,7 +44,13 @@ router.route('/:cid')
 					if (err) {
 						return next(err);
 					} else {
-						findList(req, res, next);
+						utils.addPoint(req.decoded.uid, 1, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								findList(req, res, next);
+							}
+						});
 					}
 				});
 			} else {
@@ -57,6 +64,7 @@ router.route('/:cid')
 					Thread.create({
 					courseCode: course.courseCode,
 					author: req.decoded.uid,
+					icon: req.decoded.icon,
 					annoymous: req.body.annoymous,
 					topic: req.body.topic,
 					content: req.body.content,
@@ -66,7 +74,13 @@ router.route('/:cid')
 					if (err) {
 						return next(err);
 					} else {
-						findList(req, res, next);
+						utils.addPoint(req.decoded.uid, 1, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								findList(req, res, next);
+							}
+						});
 					}
 					});
 				} else {
@@ -104,6 +118,7 @@ router.route('/detail/:tid')
 		// post a comment
 		var comment = {
 			author: req.decoded.uid,
+			icon: req.decoded.icon,
 			content: req.body.content,
 			dateOfComment: Date.now()
 		};
@@ -112,13 +127,13 @@ router.route('/detail/:tid')
 			if (thread.courseCode === 'GENERAL'){
 				courseStudent = true;
 			} else {
-				for (var i=0; i<req.decoded.courseTaken.length; i++){
-					if(thread.courseCode === req.decoded.courseTaken[i]){
+				for (var i = 0; i < req.decoded.courseTaken.length; i++) {
+					if(thread.courseCode === req.decoded.courseTaken[i]) {
 						courseStudent = true;
 					}
 				}
 			}
-			if (courseStudent){
+			if (courseStudent) {
 				thread.update({
 					$push: {comment: comment},
 					$set: {dateOfUpdate: Date.now()}
@@ -126,15 +141,30 @@ router.route('/detail/:tid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next, function(thread) {
-							res.status(200).json(thread);
+						utils.addPoint(req.decoded.uid, 1, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								utils.informUser(thread.author, {
+									topic: 'Thread ' + thread.topic + ' at ' + thread.courseCode,
+									content: req.decoded.uid + ' has made a comment on your thread.',
+									date: Date.now()
+								}, function(err) {
+									if (err) {
+										return next(err);
+									} else {
+										find(req, res, next, function(thread) {
+											res.status(200).json(thread);
+										});
+									}
+								});
+							}
 						});
 					}
 				});
 			} else {
 				res.status(401).json({error: "You are not taking this course!"});
-			}
-			
+			}		
 		});
 	})
 
@@ -166,7 +196,13 @@ router.route('/detail/:tid')
 			find(req, res, next, function(thread) {
 				req.params.cid = thread.courseCode;
 				thread.remove();
-				findList(req, res, next);
+				utils.deductPoint(req.decoded.uid, 1, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						findList(req, res, next);
+					}
+				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a thread!"});
@@ -182,15 +218,39 @@ router.route('/detail/:tid/:cmid')
 					if (err) {
 						return next(err);
 					} else {
-						find(req, res, next, function(thread) {
-							res.status(200).json(thread);
-						});
+						utils.deductPoint(req.decoded.uid, 1, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								find(req, res, next, function(thread) {
+									res.status(200).json(thread);
+								});
+							}
+						});	
 					}
 				});
 			});
 		} else {
 			res.status(401).json({error: "You are not authorized to delete a comment!"});
 		}	
+	});
+
+router.route('/report/:tid')
+	.post(function(req, res, next) {
+		console.log(req.body.content);
+		find(req, res, next, function(thread) {
+			utils.informAdmin({
+				topic: 'ADMIN: Thread ' + thread.topic + ' at ' + thread.courseCode,
+				content: req.body.content,
+				date: Date.now()
+			}, function(err) {
+				if (err) {
+					return next(err);
+				} else {
+					res.status(200).end();
+				}
+			});
+		});
 	});
 
 function findList(req, res, next) {
@@ -219,6 +279,7 @@ function find(req, res, next, callback) {
 		} else {
 			if (thread.annoymous) {
 				thread.author = 'Annoymous';
+				thread.icon = '';
 			}
 			callback(thread);
 		}

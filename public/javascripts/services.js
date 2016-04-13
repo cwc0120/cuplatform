@@ -12,7 +12,10 @@ angular.module('CUPServices', [])
 		}
 		
 		Auth.register = function(req) {
-			return $http.post('/api/register', req);
+			return $http.post('/api/register', req, {
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				});
 		};
 
 		Auth.login = function(req) {
@@ -23,6 +26,7 @@ angular.module('CUPServices', [])
 			Auth.uid = '';
 			Auth.isLogged = false;
 			$window.localStorage.removeItem('uid');
+			$window.localStorage.removeItem('icon');
 			$window.localStorage.removeItem('admin');
 			$window.localStorage.removeItem('cupToken');
 			$location.path('/');
@@ -34,6 +38,7 @@ angular.module('CUPServices', [])
 
 		Auth.setToken = function(req) {
 			$window.localStorage['uid'] = req.uid;
+			$window.localStorage['icon'] = req.icon;
 			$window.localStorage['admin'] = req.admin;
 			$window.localStorage['cupToken'] = req.token;
 		};
@@ -202,6 +207,9 @@ angular.module('CUPServices', [])
 			deleteComment: function(resid, cmid) {
 				return $http.delete('/api/resource/info/' + resid + '/' + cmid);
 			},
+			report: function(resid, data) {
+				return $http.post('/api/resource/report/' + resid, data);
+			}
 		};
 	})
 
@@ -227,6 +235,9 @@ angular.module('CUPServices', [])
 			},
 			deleteComment: function(tid, cmid) {
 				return $http.delete('/api/thread/detail/' + tid + '/' + cmid);
+			},
+			report: function(tid, data) {
+				return $http.post('/api/thread/report/' + tid, data);
 			}
 		};
 	})
@@ -277,6 +288,9 @@ angular.module('CUPServices', [])
 					headers: {'Content-Type': undefined}
 				});
 			},
+			deleteUpdate: function(updateid) {
+				return $http.delete('/api/user/update/' + updateid);
+			},
 			changePwd: function(uid, data) {
 				return $http.put('/api/user/pwd/' + uid, data);
 			},
@@ -285,6 +299,12 @@ angular.module('CUPServices', [])
 			},
 			getBuyList: function() {
 				return $http.get('/api/user/buylist');
+			},
+			getTimetable: function(uid) {
+				return $http.get('/api/user/timetable/' + uid);
+			},
+			editTimetable: function(uid, data) {
+				return $http.put('/api/user/timetable/' + uid, data);
 			}
 		};
 	})

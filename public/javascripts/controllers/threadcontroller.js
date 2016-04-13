@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('threadController', function($scope, $window, $location, $routeParams, $mdDialog, Thread) {
+ctrl.controller('threadController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, Thread) {
 	$scope.$location = $location;
 	$scope.uid = $window.localStorage['uid'];
 	if ($window.localStorage['admin'] === 'true') {
@@ -58,6 +58,7 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 			Thread.postComment(threadID, {content: $scope.newComment}).success(function(res) {
 				$scope.newComment = '';
 				$scope.thread = res;
+				$mdToast.show($mdToast.simple().textContent('You earn 1 point.'));
 			}).error(function(res) {
 				$scope.success = false;
 				$scope.errorMessage = res.error;
@@ -68,9 +69,39 @@ ctrl.controller('threadController', function($scope, $window, $location, $routeP
 	$scope.deleteComment = function(cmid) {
 		Thread.deleteComment(threadID, cmid).success(function(res) {
 			$scope.thread = res;
+			$mdToast.show($mdToast.simple().textContent('1 point is deducted from the user.'));
 		}).error(function(res) {
 			$scope.success = false;
 			$scope.errorMessage = res.error;
 		});
 	};
+
+	$scope.reportDialog = function(event) {
+		$mdDialog.show({
+			controller: reportController,
+			templateUrl: '/views/report.html',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true
+		})
+		.then(function(report) {
+			console.log(report);
+			Thread.report($scope.thread._id, report).success(function() {
+				$mdToast.show($mdToast.simple().textContent('Reported to administrators.'));
+			}).error(function(res) {
+				$scope.success = false;
+				$scope.errorMessage = res.error;
+			});
+		});
+	};
+
+	function reportController($scope, $mdDialog) {
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+
+		$scope.confirm = function() {
+			$mdDialog.hide($scope.report);
+		};
+	}
 });

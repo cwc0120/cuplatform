@@ -53,6 +53,7 @@ router.route('/')
 				Item.create({
 					category: category,
 					seller: req.decoded.uid,
+					icon: req.decoded.icon,
 					name: req.body.name,
 					description: req.body.description,
 					img: req.file.filename,
@@ -137,12 +138,12 @@ router.route('/request/:itemid')
 	.post(function(req, res, next) {
 		find(req, res, next, function(item) {
 			if (item.seller !== req.decoded.uid) {
-				item.update({$push: {buyer: req.decoded.uid}}, function(err) {
+				item.update({$push: {buyer: {uid: req.decoded.uid, icon: req.decoded.icon}}}, function(err) {
 					if (err) {
 						return next(err);
 					} else {
 						Transaction.findOne({
-							item:req.params.itemid, 
+							item: req.params.itemid, 
 							buyer: req.decoded.uid
 						}, function(err, transaction) {
 							if (err){
@@ -158,8 +159,18 @@ router.route('/request/:itemid')
 									if (err) {
 										return next(err);
 									} else {
-										find(req, res, next, function(result) {
-											res.status(200).json(result);
+										utils.informUser(item.seller, {
+											topic: 'Item ' + item.name,
+											content: req.decoded.uid + ' is interested in your item. Check your item info page to contact him/her.',
+											date: Date.now()
+										}, function(err) {
+											if (err) {
+												return next(err);
+											} else {
+												find(req, res, next, function(result) {
+													res.status(200).json(result);
+												});
+											}
 										});
 									}
 								});
@@ -225,8 +236,18 @@ router.route('/request/:itemid')
 											if (err) {
 												return next(err);
 											} else {
-												find(req, res, next, function(result) {
-													res.status(200).json(result);
+												utils.informUser(req.body.uid, {
+													topic: 'Item ' + item.name,
+													content: 'Your transaction with ' + item.seller + ' is confirmed.',
+													date: Date.now()
+												}, function(err) {
+													if (err) {
+														return next(err);
+													} else {
+														find(req, res, next, function(result) {
+															res.status(200).json(result);
+														});
+													}
 												});
 											}
 										});
@@ -245,7 +266,7 @@ router.route('/request/:itemid')
 	// uninterest item: delete the record 
 	.delete(function(req, res, next) {
 		find(req, res, next, function(item) {
-			item.update({$pull: {buyer: req.decoded.uid}}, function(err) {
+			item.update({$pull: {buyer: {uid: req.decoded.uid, icon: req.decoded.icon}}}, function(err) {
 				if (err) {
 					return next(err);
 				} else {
