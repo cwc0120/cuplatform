@@ -12,7 +12,17 @@ router.use(function(req, res, next) {
 router.route('/:cid')
 	.get(function(req, res, next) {
 		// get all threads under a course
-		findList(req, res, next);
+		var courseStudent = false;
+		for (var i = 0; i < req.decoded.courseTaken.length; i++){
+			if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]) {
+				courseStudent = true;
+			}
+		}
+		if (courseStudent) {
+			findList(req, res, next);
+		} else {
+			res.status(401).json({error: "You are not taking this course!"});
+		}
 	})
 
 	.post(function(req, res, next) {
@@ -43,8 +53,15 @@ router.route('/:cid')
 						});
 					}
 				});
-			} else {		
-				Thread.create({
+			} else {
+				var courseStudent = false;
+				for (var i=0; i<req.decoded.courseTaken.length; i++){
+					if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+						courseStudent = true;
+					}
+				}
+				if (courseStudent){
+					Thread.create({
 					courseCode: course.courseCode,
 					author: req.decoded.uid,
 					icon: req.decoded.icon,
@@ -53,7 +70,7 @@ router.route('/:cid')
 					content: req.body.content,
 					dateOfThread: Date.now(),
 					dateOfUpdate: Date.now()
-				}, function(err) {
+					}, function(err) {
 					if (err) {
 						return next(err);
 					} else {
@@ -65,7 +82,11 @@ router.route('/:cid')
 							}
 						});
 					}
-				});
+					});
+				} else {
+					res.status(401).json({error: "You are not taking this course!"});
+				}		
+				
 			}
 		});
 	});
@@ -74,7 +95,22 @@ router.route('/detail/:tid')
 	.get(function(req, res, next) {
 		// get detail of a thread
 		find(req, res, next, function(thread) {
-			res.status(200).json(thread);
+			var courseStudent = false;
+			if (thread.courseCode === 'GENERAL'){
+				courseStudent = true;
+			} else {
+				for (var i=0; i<req.decoded.courseTaken.length; i++){
+					if(thread.courseCode === req.decoded.courseTaken[i]){
+						courseStudent = true;
+					}
+				}
+			}
+			if (courseStudent){
+				res.status(200).json(thread);
+			} else {
+				res.status(401).json({error: "You are not taking this course!"});
+			}
+			
 		});
 	})
 
@@ -87,34 +123,48 @@ router.route('/detail/:tid')
 			dateOfComment: Date.now()
 		};
 		find(req, res, next, function(thread) {
-			thread.update({
-				$push: {comment: comment},
-				$set: {dateOfUpdate: Date.now()}
-			}, function(err) {
-				if (err) {
-					return next(err);
-				} else {
-					utils.addPoint(req.decoded.uid, 1, function(err) {
-						if (err) {
-							return next(err);
-						} else {
-							utils.informUser(thread.author, {
-								topic: 'Thread ' + thread.topic + ' at ' + thread.courseCode,
-								content: req.decoded.uid + ' has made a comment on your thread.',
-								date: Date.now()
-							}, function(err) {
-								if (err) {
-									return next(err);
-								} else {
-									find(req, res, next, function(thread) {
-										res.status(200).json(thread);
-									});
-								}
-							});
-						}
-					});
+			var courseStudent = false;
+			if (thread.courseCode === 'GENERAL'){
+				courseStudent = true;
+			} else {
+				for (var i = 0; i < req.decoded.courseTaken.length; i++) {
+					if(thread.courseCode === req.decoded.courseTaken[i]) {
+						courseStudent = true;
+					}
 				}
-			});
+			}
+			if (courseStudent) {
+				thread.update({
+					$push: {comment: comment},
+					$set: {dateOfUpdate: Date.now()}
+				}, function(err) {
+					if (err) {
+						return next(err);
+					} else {
+						utils.addPoint(req.decoded.uid, 1, function(err) {
+							if (err) {
+								return next(err);
+							} else {
+								utils.informUser(thread.author, {
+									topic: 'Thread ' + thread.topic + ' at ' + thread.courseCode,
+									content: req.decoded.uid + ' has made a comment on your thread.',
+									date: Date.now()
+								}, function(err) {
+									if (err) {
+										return next(err);
+									} else {
+										find(req, res, next, function(thread) {
+											res.status(200).json(thread);
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			} else {
+				res.status(401).json({error: "You are not taking this course!"});
+			}		
 		});
 	})
 
