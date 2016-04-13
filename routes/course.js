@@ -55,17 +55,22 @@ router.route('/info/:cid')
 			} else if (!course) {
 				res.status(400).json({error: "Course not found!"});
 			} else {
-				var visitor = true;
-				for (var i = 0; i < req.decoded.coursesTaken.length; i++){
-					if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
+				if (req.decoded) {
+					var visitor = true;
+					for (var i = 0; i < req.decoded.coursesTaken.length; i++){
+						if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
+							visitor = false;
+						}
+					}
+					if (req.decoded.admin) {
 						visitor = false;
 					}
+					course.info.sort({dateOfComment: -1});
+					res.status(200).json({course: course, visitor: visitor});
+				} else {
+					course.info.sort({dateOfComment: -1});
+					res.status(200).json({course: course, visitor: false});
 				}
-				if (req.decoded.admin) {
-					visitor = false;
-				}
-				course.info.sort({dateOfComment: -1});
-				res.status(200).json({course: course, visitor: visitor});
 			}
 		});
 	})
