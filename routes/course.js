@@ -55,9 +55,12 @@ router.route('/info/:cid')
 			} else if (!course) {
 				res.status(400).json({error: "Course not found!"});
 			} else {
-				// TODO: Confirm visitor or student
-				// if yes: course.visitor = true;
-				// if not: course.visitor = false;
+				course.visitor = true;
+				for (var i = 0; i < req.decoded.courseTaken.length; i++){
+					if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+						course.visitor = false;
+					}
+				}
 				course.info.sort({dateOfComment: -1});
 				res.status(200).json(course);
 			}
@@ -77,32 +80,42 @@ router.route('/info/:cid')
 		};
 
 		find(req, res, next, function(course) {
-			var repeat = false;
-			course.info.forEach(function(c) {
-				if (c.author === req.decoded.uid) {
-					repeat = true;
+			var courseStudent = false;
+			for (var i=0; i<req.decoded.courseTaken.length; i++){
+				if(req.params.cid.toUpperCase() === req.decoded.courseTaken[i]){
+					courseStudent = true;
 				}
-			});
-			if (!repeat) {
-				course.update({$push: {info: info}}, function(err) {
-					if (err) {
-						return next(err);
-					} else {
-						utils.addPoint(req.decoded.uid, 5, function(err) {
-							if (err) {
-								return next(err);
-							} else {
-								find(req, res, next, function(course) {
-									course.info.sort({dateOfComment: -1});
-									res.status(200).json(course);
-								});
-							}
-						});
+			}
+			if (courseStudent) {
+				var repeat = false;
+				course.info.forEach(function(c) {
+					if (c.author === req.decoded.uid) {
+						repeat = true;
 					}
 				});
+				if (!repeat) {
+					course.update({$push: {info: info}}, function(err) {
+						if (err) {
+							return next(err);
+						} else {
+							utils.addPoint(req.decoded.uid, 5, function(err) {
+								if (err) {
+									return next(err);
+								} else {
+									find(req, res, next, function(course) {
+										course.info.sort({dateOfComment: -1});
+										res.status(200).json(course);
+									});
+								}
+							});
+						}
+					});
+				} else {
+					res.status(400).json({error: "You have made comment"});
+				}
 			} else {
-				res.status(400).json({error: "You have made comment"});
-			}
+				res.status(400).json({error: "You are not taking this course!"});
+			}	
 		});
 	})
 
