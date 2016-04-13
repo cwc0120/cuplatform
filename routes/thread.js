@@ -278,7 +278,7 @@ function find(req, res, next, callback) {
 			res.status(400).json({error: "Thread not found!"});
 		} else {
 			if (thread.annoymous) {
-				thread.author = 'Annoymous';
+				thread.author = 'Anonymous';
 				thread.icon = '';
 			}
 			callback(thread);
