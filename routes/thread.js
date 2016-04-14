@@ -27,7 +27,7 @@ router.route('/:cid')
 
 	.post(function(req, res, next) {
 		// post a new thread
-		Course.findOne({courseCode: req.params.cid.toUpperCase()}, function(err, course) {
+		Course.findOne({courseCode: new RegExp(req.params.cid.toUpperCase())}, function(err, course) {
 			if (err) {
 				return next(err);
 			} else if (course === null) {
@@ -62,7 +62,7 @@ router.route('/:cid')
 				}
 				if (courseStudent || req.decoded.admin) {
 					Thread.create({
-					courseCode: course.courseCode,
+					courseCode: req.params.cid.toUpperCase(),
 					author: req.decoded.uid,
 					icon: req.decoded.icon,
 					annoymous: req.body.annoymous,

@@ -195,7 +195,6 @@ router.route('/timetable/:uid')
  		if (req.params.uid === req.decoded.uid) {
 	// update the user's timetable by $set
 			var clash = false;
-			console.log(req.body.timetable);
 			Course.find({_id: {$in: req.body.timetable}})
 				.select('schedule')
 				.exec(function(err, courses) {
@@ -216,7 +215,6 @@ router.route('/timetable/:uid')
 						if (clash) {
 							res.status(400).json({error: "Time clash occured!"});
 						} else {
-							console.log(courses);
 							var selected = [];
 							for (var i = 0; i < courses.length; i++) {
 								selected.push(courses[i]._id);
