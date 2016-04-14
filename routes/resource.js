@@ -43,7 +43,7 @@ router.route('/:cid')
 		// see resources under course
 		var courseStudent = false;
 		for (var i=0; i<req.decoded.coursesTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
+			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i].slice(0, 8)){
 				courseStudent = true;
 			}
 		}
@@ -57,7 +57,7 @@ router.route('/:cid')
 	.post(upload.single('file'), function(req, res, next) {
 		var courseStudent = false;
 		for (var i=0; i<req.decoded.coursesTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
+			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i].slice(0, 8)){
 				courseStudent = true;
 			}
 		}
@@ -106,7 +106,7 @@ router.route('/info/:resid')
 		find(req, res, next, function(resource) {
 			var courseStudent = false;
 			for (var i=0; i<req.decoded.coursesTaken.length; i++){
-				if(resource.courseCode === req.decoded.coursesTaken[i]){
+				if(resource.courseCode === req.decoded.coursesTaken[i].slice(0, 8)){
 					courseStudent = true;
 				}
 			}
@@ -129,7 +129,7 @@ router.route('/info/:resid')
 		find(req, res, next, function(resource) {
 			var courseStudent = false;
 			for (var i=0; i<req.decoded.coursesTaken.length; i++) {
-				if (resource.courseCode === req.decoded.coursesTaken[i]) {
+				if (resource.courseCode === req.decoded.coursesTaken[i].slice(0, 8)) {
 					courseStudent = true;
 				}
 			}
@@ -205,7 +205,7 @@ router.route('/file/:resid')
 		find(req, res, next, function(resource) {
 			var courseStudent = false;
 			for (var i=0; i<req.decoded.coursesTaken.length; i++){
-				if(resource.courseCode === req.decoded.coursesTaken[i]){
+				if(resource.courseCode === req.decoded.coursesTaken[i].slice(0, 8)){
 					courseStudent = true;
 				}
 			}

@@ -14,7 +14,7 @@ router.route('/:cid')
 		// get all threads under a course
 		var courseStudent = false;
 		for (var i = 0; i < req.decoded.coursesTaken.length; i++){
-			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]) {
+			if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i].slice(0, 8)) {
 				courseStudent = true;
 			}
 		}
@@ -56,7 +56,7 @@ router.route('/:cid')
 			} else {
 				var courseStudent = false;
 				for (var i=0; i<req.decoded.coursesTaken.length; i++){
-					if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i]){
+					if(req.params.cid.toUpperCase() === req.decoded.coursesTaken[i].slice(0, 8)){
 						courseStudent = true;
 					}
 				}
@@ -100,7 +100,7 @@ router.route('/detail/:tid')
 				courseStudent = true;
 			} else {
 				for (var i=0; i<req.decoded.coursesTaken.length; i++){
-					if(thread.courseCode === req.decoded.coursesTaken[i]){
+					if(thread.courseCode === req.decoded.coursesTaken[i].slice(0, 8)){
 						courseStudent = true;
 					}
 				}
@@ -128,7 +128,7 @@ router.route('/detail/:tid')
 				courseStudent = true;
 			} else {
 				for (var i = 0; i < req.decoded.coursesTaken.length; i++) {
-					if(thread.courseCode === req.decoded.coursesTaken[i]) {
+					if(thread.courseCode === req.decoded.coursesTaken[i].slice(0, 8)) {
 						courseStudent = true;
 					}
 				}
