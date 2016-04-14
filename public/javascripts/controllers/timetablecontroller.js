@@ -1,5 +1,5 @@
 'use strict';
-ctrl.controller('timetableController', function($scope, $window, $location, $routeParams, $mdToast, User, Course) {
+ctrl.controller('timetableController', function($scope, $window, $location, $routeParams, $mdToast, User, Course, Auth) {
 	$scope.$location = $location;
 	$scope.uid = $window.localStorage['uid'];
 
@@ -132,7 +132,12 @@ ctrl.controller('timetableController', function($scope, $window, $location, $rou
 						}	
 					}
 				}
-				$mdToast.show($mdToast.simple().textContent('Your timetable is changed successfully.'));
+				Auth.refresh().success(function(res) {
+					Auth.setToken(res);
+					$mdToast.show($mdToast.simple().textContent('Your timetable is changed successfully.'));
+				}).error(function(res) {
+					$mdToast.show($mdToast.simple().textContent('Error: Update failed. Please re-login'));
+				});
 			}).error(function(res) {
 				$mdToast.show($mdToast.simple().textContent('Error: ' + res.error));
 			});

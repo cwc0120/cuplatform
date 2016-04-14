@@ -22,6 +22,10 @@ angular.module('CUPServices', [])
 			return $http.post('/api/auth', req);
 		};
 
+		Auth.refresh = function() {
+			return $http.put('/api/auth', {uid: $window.localStorage['uid']});
+		};
+
 		Auth.logout = function() {
 			Auth.uid = '';
 			Auth.isLogged = false;
