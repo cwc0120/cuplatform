@@ -1,5 +1,20 @@
 'use strict';
+
+// Module: CourseInfo
+// Purpose: 
+// 	This module is used to show course content in courseinfo.html and 
+// 	courseinfov.html using server data and provide methods to manipulate the 
+// 	data
+// Interfaces:
+// 	$scope.back: return to previous page if error occurs
+// 	$scope.editCourseDialog: edit course information (admin is required)
+// 	$scope.addInfoDialog: add a course comment
+// 	$scope.deleteInfo: delete a course comment (admin is required)
+// 	$scope.registerDialog: ask visitor to register
+// 	$scope.invalid: prompt user that he is not authorized to access further content 
+
 ctrl.controller('courseInfoController', function($scope, $window, $location, $routeParams, $mdDialog, $mdToast, Course) {
+	// Variables
 	$scope.$location = $location;
 	$scope.days = Course.days;
 	$scope.times = Course.times;
@@ -8,10 +23,11 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	} else {
 		$scope.admin = false;
 	}
-
 	var courseCode = $routeParams.id;
 
-	// Initialization
+	// Initialization: send a request to server and once it's successful, the 
+	// content is shown on the HTML page and average rating will be computed.
+	// Otherwise, an error message is shown.
 	Course.getOne(courseCode).success(function(res) {
 		$scope.success = true;
 		$scope.course = res.course;
@@ -23,12 +39,21 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		$scope.errorMessage = res.error;
 	});
 
-	// error return
+	//--------------------------------------------------------------------------
+	// Return to previous page if error occurs
 	$scope.back = function() {
 		window.history.back();
 	};
 
-	// Course basic module -----------------------------------------------
+	//--------------------------------------------------------------------------
+	// Edit course information (admin is required)
+	// Input: course id, course name, instructor, schedule (day, time and venue)
+	// Output: a updated course object
+	// Implementation:
+	// 	First show a dialog with editcourse.html for user's input. Once received 
+	// 	input, send the edit content to the server. The server will update the 
+	// 	course information and send back the edited course information which is 
+	// 	displayed on the webpage
 	$scope.editCourseDialog = function(event) {
 		$mdDialog.show({
 			controller: editCourseController,
@@ -51,16 +76,19 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		});
 	};
 
+	// controller of editcourse dialog
 	function editCourseController($scope, $mdDialog, Course, course) {
 		$scope.days = Course.days;
 		$scope.times = Course.times;
 		$scope.edit = course;
 		$scope.editLessons = course.schedule || [];
 
+		// quit this dialog
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
 
+		// add a new lesson input
 		$scope.addLesson = function() {
 			var newlesson = {
 				day: $scope.day,
@@ -70,17 +98,28 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 			$scope.editLessons.push(newlesson);
 		};
 
+		// delete a lesson input
 		$scope.removeLesson = function(index) {
 			$scope.editLessons.splice(index, 1);
 		};
 
+		// confirm edit and close the dialog
 		$scope.editCourse = function() {
 			$scope.edit.schedule = $scope.editLessons;
 			$mdDialog.hide($scope.edit);
 		};
 	}
 
-	// Course info module -----------------------------------------------
+	//--------------------------------------------------------------------------
+	// Add a course comment
+	// Input: course id, rating, outline, assessMethod, comment
+	// Output: a updated course object
+	// Implementation:
+	// 	First show a dialog with addcourseinfo.html for user's input. Once 
+	// 	received input, send the comment to the server. The server will push
+	// 	the new comment and send back the updated course information which is 
+	// 	displayed on the webpage. Then, average rating is computed and a Toast
+	// 	is shown that 5 points is added.
 	$scope.addInfoDialog = function(event) {
 		$mdDialog.show({
 			controller: addCourseInfoController,
@@ -102,16 +141,29 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		});
 	};
 
+	// controller of addcourseinfo dialog
 	function addCourseInfoController($scope, $mdDialog) {
+		// quit this dialog
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
 
+		// confirm adding and close the dialog
 		$scope.addCourseInfo= function() {
 			$mdDialog.hide($scope.newInfo);
 		};
 	}
 
+
+	//--------------------------------------------------------------------------
+	// Delete a course comment (admin is required)
+	// Input: course id, comment id
+	// Output: a updated course object
+	// Implementation:
+	// 	First send the request to the server. The server will delete comment 
+	// 	and send back the updated course information which is displayed on the 
+	// 	webpage. Then, average rating is computed and a Toast is shown that 
+	// 	5 points is deleted from the author of the comment.
 	$scope.deleteInfo = function(cmid) {
 		Course.deleteInfo(courseCode, cmid).success(function(res) {
 			$scope.course = res;
@@ -123,20 +175,14 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 		});
 	};
 
-	function calculate() {
-		$scope.avgRating = 0;
-		for (var i=0; i<$scope.course.info.length; i++) {
-			$scope.avgRating += $scope.course.info[i].rating;
-			if ($scope.course.info[i].author === $window.localStorage['uid']) {
-				$scope.posted = true;
-			}
-		}
-		if ($scope.course.info.length !== 0) {
-			$scope.avgRating /= $scope.course.info.length;
-			$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
-		}
-	}
-
+	//--------------------------------------------------------------------------
+	// Ask visitor to register
+	// Input: user id, email, password, password confirmation
+	// Output: a token if registration is successful
+	// Implementation:
+	// 	First show a dialog with register.html for visitor's input. Once 
+	// 	received input, send the new user information to the server. The server 
+	// 	add the new user and re-route the user to homepage.
 	$scope.registerDialog = function(event) {
 			$mdDialog.show({
 				controller: registerController,
@@ -158,17 +204,16 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 			});
 		};
 
-	$scope.invalid = function() {
-		$mdToast.show($mdToast.simple().textContent('You are not taking this course. Please add this course to your timetable to access this page.'));
-	}
-
+	// controller of register dialog
 	function registerController($scope, $mdDialog, Auth) {
 		$scope.newUser = {};
 
+		// quit this dialog
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
 
+		// send the user information to the server for registration
 		$scope.createUser = function() {
 			Auth.register($scope.newUser).success(function(result) {
 				$mdDialog.hide($scope.newUser);
@@ -176,5 +221,38 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 				$scope.registerMessage = err.error;
 			});
 		};
+	}
+
+	//--------------------------------------------------------------------------
+	// Prompt user that he is not authorized to access further content 
+	// Input: no input
+	// Output: no output
+	$scope.invalid = function() {
+		$mdToast.show($mdToast.simple().textContent('You are not taking this course. Please add this course to your timetable to access this page.'));
+	}
+
+	//--------------------------------------------------------------------------
+	// Inner component
+
+	// Name: calculate
+	// Input: no input
+	// Output: 
+	// 	posted: true if the user has posted a comment
+	// 	avgRating: average rating of the course
+	// Implementation:
+	// 	It computes the average ratings from all the course comment and check if
+	// 	the user has posted a comement
+	function calculate() {
+		$scope.avgRating = 0;
+		for (var i=0; i<$scope.course.info.length; i++) {
+			$scope.avgRating += $scope.course.info[i].rating;
+			if ($scope.course.info[i].author === $window.localStorage['uid']) {
+				$scope.posted = true;
+			}
+		}
+		if ($scope.course.info.length !== 0) {
+			$scope.avgRating /= $scope.course.info.length;
+			$scope.avgRating = Math.round($scope.avgRating * 100) / 100;
+		}
 	}
 });
