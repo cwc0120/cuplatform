@@ -9,21 +9,27 @@ var Course = require('../models/course');
 
 router.route('/')
 	.post(function(req, res, next) {
+		// allow user to login
+		// take input for uid and password from user
 		var uid = req.body.uid;
 		var pwd = req.body.pwd;
-
+		// find the corresponding user from the uid
 		User.findOne({uid: uid}, function (err, user) {
 			if (err) {
 				return next(err);
 			} else if (user === null) {
+				// raise error if the uid provided doesn't exist
 				res.status(400).json({error: 'User not found'});
 			} else {
+				// get the salt of the user if uid exist
 				var salt = user.salt;
+				// calculate the hash value from the salt and the password provided
 				var hash = crypto.pbkdf2Sync(pwd, salt, 10000, 512);
 				if (hash != user.hash) {
+					// raise error if the hash value doesn't match
 					res.status(400).json({error: 'Incorrect password'});
 				} else {
-					// user id is found and password is right, create a token
+					// user id is found and password is right, find the courses that the user is taking
 					var coursesTaken = [];
 					async.each(user.coursesTaken, function(courseID, callback) {
 						Course.findOne({_id: courseID}, function(err, course) {
@@ -38,6 +44,7 @@ router.route('/')
 						if (err) {
 							return next(err);
 						} else {
+							// create token for user, which expire in 4 hours
 							var token = jwt.sign({
 								uid: user.uid,
 								icon: user.icon,
@@ -63,14 +70,17 @@ router.route('/')
 	})
 
 	.put(function(req, res, next) {
+		// refreshing the token after making some amendments on the user profile, basically the same as above except no password validation
 		var uid = req.body.uid;
-
+		// find the corresponding user from the uid
 		User.findOne({uid: uid}, function (err, user) {
 			if (err) {
 				return next(err);
 			} else if (user === null) {
+				// raise error if user cannot be found
 				res.status(400).json({error: 'User not found'});
 			} else {
+				// user id is found, find the courses that the user is taking
 				var coursesTaken = [];
 				async.each(user.coursesTaken, function(courseID, callback) {
 					Course.findOne({_id: courseID}, function(err, course) {
@@ -85,6 +95,7 @@ router.route('/')
 					if (err) {
 						return next(err);
 					} else {
+						// create token for user, which expire in 4 hours
 						var token = jwt.sign({
 							uid: user.uid,
 							icon: user.icon,
