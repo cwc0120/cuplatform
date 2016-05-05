@@ -5,7 +5,7 @@
 // 	This module is used to show course content in courseinfo.html and 
 // 	courseinfov.html using server data and provide methods to manipulate the 
 // 	data
-// Interfaces:
+// Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.editCourseDialog: edit course information (admin is required)
 // 	$scope.addInfoDialog: add a course comment
