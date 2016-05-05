@@ -40,13 +40,15 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	});
 
 	//--------------------------------------------------------------------------
-	// Return to previous page if error occurs
+	// Name: $scope.back
+	// Purpose: return to previous page if error occurs
 	$scope.back = function() {
 		window.history.back();
 	};
 
 	//--------------------------------------------------------------------------
-	// Edit course information (admin is required)
+	// Name: $scope.editCourseDialog
+	// Purpose: edit course information (admin is required)
 	// Input: course id, course name, instructor, schedule (day, time and venue)
 	// Output: a updated course object
 	// Implementation:
@@ -111,7 +113,8 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	}
 
 	//--------------------------------------------------------------------------
-	// Add a course comment
+	// Name: $scope.addInfoDialog
+	// Purpose: add a course comment
 	// Input: course id, rating, outline, assessMethod, comment
 	// Output: a updated course object
 	// Implementation:
@@ -156,7 +159,8 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 
 
 	//--------------------------------------------------------------------------
-	// Delete a course comment (admin is required)
+	// Name: $scope.deleteInfo
+	// Purpose: delete a course comment (admin is required)
 	// Input: course id, comment id
 	// Output: a updated course object
 	// Implementation:
@@ -176,7 +180,8 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	};
 
 	//--------------------------------------------------------------------------
-	// Ask visitor to register
+	// Name: $scope.registerDialog
+	// Purpose: ask visitor to register
 	// Input: user id, email, password, password confirmation
 	// Output: a token if registration is successful
 	// Implementation:
@@ -224,7 +229,8 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	}
 
 	//--------------------------------------------------------------------------
-	// Prompt user that he is not authorized to access further content 
+	// Name: $scope.invalid
+	// Purpose: prompt user that he is not authorized to access further content 
 	// Input: no input
 	// Output: no output
 	$scope.invalid = function() {
