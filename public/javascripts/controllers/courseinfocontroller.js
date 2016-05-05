@@ -2,9 +2,9 @@
 
 // Module: CourseInfo
 // Purpose: 
-// 	This module is used to show course content in courseinfo.html and 
-// 	courseinfov.html using server data and provide methods to manipulate the 
-// 	data
+// 	This module is used to show course content in courseinfo.html (for user) and 
+// 	courseinfov.html (for visitor) using server data and provide methods to 
+// 	manipulate the data
 // Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.editCourseDialog: edit course information (admin is required)
