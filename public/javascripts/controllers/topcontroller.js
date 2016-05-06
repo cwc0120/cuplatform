@@ -1,8 +1,19 @@
 'use strict';
+
+// Module: Top
+// Purpose: 
+// 	This module is used to manage the action of sidebar and navigation bar
+// Interface:
+// 	$scope.refresh: refresh user's point
+// 	$scope.logout: logout
+// 	$scope.toggleMenu: toggle the side bar
+
 ctrl.controller('topController', function($scope, $location, $window, $mdSidenav, Auth, Socket, User) {
+	// Variables
 	$scope.user = {};
 	$scope.$location = $location;
 
+	// side bar content
 	$scope.menu = [{
 		link: '/',
 		title: 'Home',
@@ -45,6 +56,11 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		icon: 'history'
 	}]
 
+	// check the state of the user (logged-in or logged-out) to determine the
+	// content on the website.
+	// if the user is logged-in, side bar with courses, trading platform, etc is
+	// shown
+	// otherwise, 'please log in' is shown in side bar
 	$scope.$watch(function() {
 		return Auth.isLogged;
 	}, function(newVal, oldVal) {
@@ -53,6 +69,8 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		}
 	});
 
+	// check user id to set links to profile and timetable correctly
+	// and show user id and point in the side bar
 	$scope.$watch(function() {
 		return Auth.uid;
 	}, function(newVal, oldVal) {
@@ -67,17 +85,37 @@ ctrl.controller('topController', function($scope, $location, $window, $mdSidenav
 		}
 	});
 
+	//--------------------------------------------------------------------------
+	// Name: $scope.refresh
+	// Purpose: refresh user's point
+	// Input: user id
+	// Output: point updated
+	// Implementation:
+	// 	Send a request to the server. The server will find user record and send 
+	// 	back user's point which is displayed on the webpage.
 	$scope.refresh = function() {
 		User.find($scope.uid).success(function(user) {
 			$scope.point = user.points;
 		});
 	};
 
+	//--------------------------------------------------------------------------
+	// Name: $scope.logout
+	// Purpose: logout
+	// Input: none
+	// Output: none
+	// Implementation:
+	// 	clear all the localStorage in the browser and disconnect socket
 	$scope.logout = function() {
 		Auth.logout();
 		Socket.disconnect()
 	};
 
+	//--------------------------------------------------------------------------
+	// Name: $scope.toggleMenu
+	// Purpose: toggle the side bar
+	// Input: none
+	// Output: none
 	$scope.toggleMenu = function() {
 		$mdSidenav('menu').toggle();
 	};	
