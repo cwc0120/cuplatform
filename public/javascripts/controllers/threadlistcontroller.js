@@ -3,7 +3,7 @@
 // Module: ThreadList
 // Purpose: 
 // 	This module is used to show thread list in threadlist.html using server data. 
-// 	It also allows user/admin the edit thread, add/delete comment and report the
+// 	It also allows user/admin to edit thread, add/delete comment and report the
 // 	thread
 // Interface:
 // 	$scope.back: return to previous page if error occurs
