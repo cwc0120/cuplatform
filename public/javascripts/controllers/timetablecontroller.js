@@ -17,15 +17,7 @@
 ctrl.controller('timetableController', function($scope, $window, $location, $routeParams, $mdToast, User, Course, Auth) {
 	$scope.$location = $location;
 	$scope.uid = $window.localStorage['uid'];
-
 	$scope.visituid = $routeParams.uid;
-
-	//--------------------------------------------------------------------------
-	// Name: $scope.back
-	// Purpose: return to previous page if error occurs
-	$scope.back = function() {
-		window.history.back();
-	};
 
 	// Initialization:
 	// Send a request to server tto retrieve the timetable of the user.
@@ -62,6 +54,13 @@ ctrl.controller('timetableController', function($scope, $window, $location, $rou
 		$scope.success = false;
 		$scope.errorMessage = res.error;
 	});
+
+	//--------------------------------------------------------------------------
+	// Name: $scope.back
+	// Purpose: return to previous page if error occurs
+	$scope.back = function() {
+		window.history.back();
+	};
 
 	//--------------------------------------------------------------------------
 	// Name: $scope.search
