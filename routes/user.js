@@ -1,4 +1,29 @@
 "use strict";
+
+// Module: user
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the information about users. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/user/profile/:uid/
+//       get: get the details of an user
+//       put: edit the details of an user
+//    /api/user/icon/:uid/
+//       post: upload icon of the user
+//    /api/user/pwd/:uid/
+//       put: change password of an user
+//    /api/user/update/:updateid/
+//       delete: delete update message of the user
+//    /api/user/selllist/
+//       get: get the list of items that the user is selling
+//    /api/user/buylist/
+//       get: get the list of items that the user is interested in
+//    /api/user/timetable/:uid
+//       get: get the timetable of the user
+//       put: edit the timetable of the user
+
+
 var express = require('express');
 var multer = require('multer');
 var crypto = require('crypto');
@@ -149,7 +174,7 @@ router.route('/pwd/:uid')
 
 router.route('/update/:updateid')
 	.delete(function(req, res, next) {
-		// change user id
+		// delete an update message
 		// find the current user from the user id
 		User.findOne({uid: req.decoded.uid}, function(err, user) {
 			if (err) {
@@ -158,12 +183,12 @@ router.route('/update/:updateid')
 				// raise error if user is not found
 				res.status(400).json({error: "User not found!"});
 			} else {
-				//  remove the user id and update with the new one
+				//  remove the corresponding update message
 				user.update({$pull: {updates: {_id: req.params.updateid}}}, function(err) {
 					if (err) {
 						return next(err);
 					} else {
-						// return the user info using the new id
+						// return the user info
 						req.params.uid = req.decoded.uid;
 						find(req, res, next, function(user) {
 							res.status(200).json(user);

@@ -1,4 +1,14 @@
 "use strict";
+
+// Module: register
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the information about registration. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/register/
+//       post: create an account the a new user
+
 var express = require('express');
 var multer = require('multer');
 var crypto = require('crypto');
@@ -11,7 +21,7 @@ var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, './public/images/user/');
 	},
-	// use user name as the file name
+	// rename the file
 	filename: function (req, file, cb) {
 		var originalName = file.originalname;
 		var ext = originalName.split('.');
@@ -34,6 +44,20 @@ var upload = multer({
 	limits: {fileSize: 1048576}
 });
 
+// Purpose: Create an account for a new user
+// Input:
+//    uid: User ID, must be alphanumeric
+//    email: CUHK link email
+//    pwd1: User password, must be alphanumeric
+//    pwd2: Password confirmation
+// Output:
+//    none
+// Implementation:
+//    First check if an user icon is uploaded, if pwd1 and pwd are consistent and 
+//    if the email is a CUHK email. Then, find if there is no user with the same
+//    uid and email in the database. After that, generate a salt and calculate
+//    the hash. Create a new user using the details.
+
 router.route('/')
 	.post(upload.single('img'), function(req, res, next) {
 		// open an account
@@ -44,7 +68,8 @@ router.route('/')
 		var pwd2 = req.body.pwd2;
 
 		var emailPattern = new RegExp(/@link.cuhk.edu.hk$/);
-		// check if an image is uploaded, the password is retyped correctly and the email is a CUHK email
+		// check if an image is uploaded, the password is retyped correctly and 
+		// the email is a CUHK email
 		if (!req.file) {
 			// raise error if no image is uploaded
 			res.status(400).json({error: 'No image uploaded.'});

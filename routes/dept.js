@@ -1,4 +1,19 @@
 "use strict";
+
+// Module: department
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the information about departments. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/dept/
+//       get: return a list of departments
+//       post: add a new department
+//    /api/dept/:did/
+//       get: return the details of a department
+//       put: edit department details
+//       delete: remove a department
+
 var express = require('express');
 var router = express.Router();
 var Dept = require('../models/dept');

@@ -2,6 +2,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+// User is a model specifying the user details using the CUPlatform.
+//
+// An user has his user id, email, salt (for calculateing the hash), hash 
+// value, icon link, gender, birthday, major, introduction, points, course 
+// taken, admin authorization and array of update messages. 
+
 var User = new Schema({
 	uid: {type: String, required: true, unique: true},
 	email: {type: String, required: true},

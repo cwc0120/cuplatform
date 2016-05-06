@@ -1,4 +1,21 @@
 'use strict';
+
+// Module: socket
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the chat room. Different methods are procided
+//    for the clients.
+// Methods:
+//    getList: get a list of online user with uid and socket id
+//    getID: get the id of the socket given a uid
+// 	  getMessages: get the messages between 2 users
+// 	  getPastName: get the list of users that a user has previously chatted with
+//	  newMessage: send a new message
+//	  newClient: assign a socket id for new user going on the chat room
+//	  freeClient: remove the user from the online user list
+//	  existClient: return if the an user is online
+//	  replaceClient: reassign a socket id for an user
+
 var utils = require('../utils');
 var Chat = require('../models/chat');
 
@@ -122,12 +139,12 @@ var chatroom = (function() {
 		});
 	};
 
-	// assign a user with a socket
+	// assign a user with a socket id
 	var newClient = function(uid, socket) {
 		onlineList[uid] = socket.id;
 	};
 
-	// remove a user from the online lsit
+	// remove a user from the online list
 	var freeClient = function(uid) {
 		delete onlineList[uid];
 	};
@@ -140,7 +157,7 @@ var chatroom = (function() {
 		return false;
 	};
 
-	// replace a new socket for the user
+	// replace a new socket id for the user
 	var replaceClient = function(uid, socket) {
 		onlineList[uid] = socket.id;
 	};
@@ -159,9 +176,11 @@ var chatroom = (function() {
 }());
 
 module.exports = function (io) {
+	// receive connection from browser
 	io.on('connection', function(socket) {
 		var user = {};
 
+		// receive auth from the browser 
 		socket.on('auth', function(data) {
 			// let user establish a socket
 			// check if the user has a token
@@ -171,18 +190,18 @@ module.exports = function (io) {
 				} else {
 					// check if the user is currently online
 					if (chatroom.existClient(res.uid) !== false) {
-						// replace the user with a new socket if the user is online
+						// replace the user with a new socket id if the user is online
 						chatroom.replaceClient(res.uid, socket);
 					} else {
-						// assign user with a socket if he is new
+						// assign user with a socket id if he is new
 						chatroom.newClient(res.uid, socket);
 					}
 					// assign the user with his uid and icon
 					user.uid = res.uid;
 					user.icon = res.icon;
-					// get the list of online user
+					// send the list of online user to all users
 					io.emit('clientList', chatroom.getList());
-					// get the list of user that the user has previously chatted with
+					// send the list of user that the user has previously chatted with
 					chatroom.getPastName(user.uid, function(res) {
 						socket.emit('pastName', res);
 					});

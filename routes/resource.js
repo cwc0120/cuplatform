@@ -1,4 +1,26 @@
 "use strict";
+
+// Module: resource
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the information about course resources. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/resource/:cid/
+//       get: get a list of resources of the course
+//       post: create a resource
+//    /api/resource/info/:resid/
+//       get: get the details of a resource
+//       post: add comment on a resource
+//       put: edit the details of a resource
+//       delete: delete a resource
+//    /api/resource/file/:resid/
+//       get: download the resource file
+//    /api/resource/info/:resid/:cmid/
+//       delete: delete comment on a resource
+//    /api/resource/report/
+//       post: report inappropriate resource to admin
+
 var express = require('express');
 var multer = require('multer');
 var router = express.Router();

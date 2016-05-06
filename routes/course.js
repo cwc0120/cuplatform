@@ -1,4 +1,22 @@
 "use strict";
+
+// Module: course
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the information about courses. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/course/:did/
+//       get: return a list of courses under a department
+//       post: add a new course under a department
+//    /api/course/info/:cid/
+//       get: return the details of a course
+//       post: post comments to the course
+//       put: edit course details
+//       delete: remove a course
+//    /api/course/info/:cid/:cmid/
+//       delete: remove comment on a course
+
 var express = require('express');
 var router = express.Router();
 var Course = require('../models/course');

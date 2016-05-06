@@ -1,4 +1,23 @@
 "use strict";
+
+// Module: item
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the information about the items. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/item/
+//       get: return a list of unsold items
+//       post: post an item using the user's input then return a list of unsold items
+//    /api/item/:itemid/
+//       get: return the details of an item
+//       put: change the details of an item the return its details
+//       delete: change the status of an item to inactive
+//    /api/item/requestion/:itemid
+//       post: add an user to the interest list of an item by creating a new transaction
+//       put: allow seller to sell an item and update all transactions' status
+//       delete: remove an user from the interest list by deleting the transaction
+
 var express = require('express');
 var multer = require('multer');
 var async = require('async');
@@ -15,7 +34,7 @@ var storage = multer.diskStorage({
 		cb(null, './public/images/item/');
 	},
 	filename: function (req, file, cb) {
-		// use user name as file name
+		// rename the file
 		var originalName = file.originalname;
 		var ext = originalName.split('.');
 		cb(null, Date.now() + '.' + ext[ext.length-1]);
@@ -43,10 +62,37 @@ router.use(function(req, res, next) {
 });
 
 router.route('/')
+
+	// Purpose: get a list of the unsold items
+	// Input: none
+	// Output:
+	//    A list of item objects containing deptCode, courseCode, name,
+	//    price, priceFlexible, date, seller, img
+	// Implementation:
+	//    Find all the items with active=true and sold=false from the database 
+	//    and return the list
+	
 	.get(function(req, res, next) {
-		// see unsold the items
 		findUnsoldList(req, res, next);
 	})
+
+	// Purpose: upload an item and return a list of unsold items
+	// Input:
+	//    deptCode
+	//    courseCode
+	//    name
+	//    description
+	//    img
+	//    price
+	//    priceFlexible
+	// Output:
+	//    A list of item objects containing deptCode, courseCode, name,
+	//    price, priceFlexible, date, seller, img
+	// Implementation:
+	//    First check if there user has uploaded a file, then call the getCategory
+	//    method to interpret the category of the item. Then create a new item in
+	//    the database. At last return a list of unsold items by finding the
+	//    corresponding items in the data base.
 
 	.post(upload.single('img'), function(req, res, next) {
 		// post a new item
@@ -84,12 +130,34 @@ router.route('/')
 	});
 
 router.route('/:itemid')
+
+	// Purpose: get the info of an item
+	// Input:
+	//    itemid
+	// Output:
+	//    An item object
+	// Implementation:
+	//    Find the item from the database by looking for the corresponding item id
+
 	.get(function(req, res, next) {
-		// get the info of an item
 		find(req, res, next, function(item) {
 			res.status(200).json(item);
 		});
 	})
+
+	// Purpose: edit the info of an item
+	// Input:
+	//    itemid
+	//    name
+	//    description
+	//    price
+	//    priceFlexible
+	// Output:
+	//    An updated item object
+	// Implementation:
+	//    First find the corresponding item from the database using the item id,
+	//    then check if the user is the seller of the item. Update the database
+	//    with the new details and return the details of the updated item.
 
 	.put(function(req, res, next) {
 		// edit an item
@@ -119,6 +187,19 @@ router.route('/:itemid')
 			}
 		});
 	})
+
+	// Purpose: remove an item by setting its status to inactive
+	// Input:
+	//    itemid
+	// Output:
+	//    A list of item objects containing deptCode, courseCode, name,
+	//    price, priceFlexible, date, seller, img
+	// Implementation:
+	//    First find the corresponding item from the database using the item id,
+	//    then check if the user is the seller of the item or an admin. Update 
+	//    all the transactions of the item to set their status to cancel and set
+	//    the item status to inactive. Return a success message.
+
 
 	.delete(function(req, res, next) {
 		// remove an item
@@ -154,7 +235,20 @@ router.route('/:itemid')
 	});
 
 router.route('/request/:itemid')
-	// show interest in an item
+	
+	// Purpose: show interest in an item
+	// Input:
+	//    itemid
+	// Output:
+	//    An updated item object
+	// Implementation:
+	//    First find the corresponding item from the database using the item id,
+	//    then check if the user is not the seller of the item. Push the user id
+	//    and icon link to the buyer list in the item. Then, check if there is
+	//    not a transaction on this item with this user as buyer. Create a new
+	//    transaction after that. Inform the user by creating an update message.
+	//    Return the updated item.
+
 	.post(function(req, res, next) {
 		// find the corresponding item from the item id
 		find(req, res, next, function(item) {
@@ -214,6 +308,20 @@ router.route('/request/:itemid')
 			}
 		});
 	})
+
+	// Purpose: sell an item
+	// Input:
+	//    itemid
+	//    uid: buyer's uid
+	// Output:
+	//    An updated item object
+	// Implementation:
+	//    First find the corresponding item from the database using the item id,
+	//    then check if the user is the seller and check if the item is still 
+	//    active and not sold. Update the item status to sold and inactive, find
+	//    the transaction with buyer and set it as success, update other transactions
+	//    as failed. Inform the buyer by creating an update message. Return the 
+	//    updated item.
 
 	.put(function(req, res, next) {
 		// sell an item
@@ -303,6 +411,16 @@ router.route('/request/:itemid')
 			}
 		});
 	})
+
+	// Purpose: remove user from the interest list of an item
+	// Input:
+	//    itemid
+	// Output:
+	//    An updated item object
+	// Implementation:
+	//    First find the corresponding item from the database using the item id,
+	//    then remove the user from the item's buyer list in the database. Then, 
+	//    find the transaction of this buyer and remove it. Return the updated item.
 
 	.delete(function(req, res, next) {
 		// remove from the interest list of an item

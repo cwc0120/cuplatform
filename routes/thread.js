@@ -1,4 +1,24 @@
 "use strict";
+
+// Module: thread
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the discussion forum threads. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/thread/:cid/
+//       get: get a list threads under a course
+//       post: post a new thread under a course
+//    /api/thread/detail/:tid/
+//       get: get the details of a thread
+//       post: post a comment on a thread
+//       put: edit a thread
+//       delete: delete a thread
+//    /api/thread/detail/:tid/:cmid/
+//       delete: delete a comment
+//    /api/thread/report/:tid/
+//       post: report inappropriate thread to admin
+
 var express = require('express');
 var router = express.Router();
 var Thread = require('../models/thread');

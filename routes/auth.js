@@ -1,4 +1,15 @@
 'use strict';
+
+// Module: auth
+// Purpose:
+//    This module is used to facilitate the communication between the server and
+//    the database regarding the authentication process. Different methods
+//    are provided for the clients.
+// Routes:
+//    /api/auth/
+//       post: allow user to login
+//       put: refreshing token after making amendments on the user 
+
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
