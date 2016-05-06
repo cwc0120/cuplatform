@@ -179,7 +179,8 @@ ctrl.controller('homeController', function($scope, $location, $mdDialog, $mdToas
 			$mdDialog.cancel();
 		};
 
-		// send the user information to the server for registration
+		// append the input into a formdata, then send the formdata to the 
+		// server and close the dialog
 		$scope.createUser = function() {
 			var fd = new FormData();
 			fd.append('img', $scope.img);

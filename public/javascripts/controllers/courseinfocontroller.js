@@ -25,7 +25,8 @@ ctrl.controller('courseInfoController', function($scope, $window, $location, $ro
 	}
 	var courseCode = $routeParams.id;
 
-	// Initialization: send a request to server and once it's successful, the 
+	// Initialization: 
+	// send a request to server and once it's successful, the 
 	// content is shown on the HTML page and average rating will be computed.
 	// Otherwise, an error message is shown.
 	Course.getOne(courseCode).success(function(res) {

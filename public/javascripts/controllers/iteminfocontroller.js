@@ -25,7 +25,8 @@ ctrl.controller('itemInfoController', function($scope, $window, $location, $rout
 	}
 	var itemID = $routeParams.id;
 
-	// Initialization: send a request to server and once it's successful, the 
+	// Initialization: 
+	// send a request to server and once it's successful, the 
 	// item content is shown on the HTML page. Otherwise, an error message is 
 	// shown.
 	Item.getOne(itemID).success(function(res) {

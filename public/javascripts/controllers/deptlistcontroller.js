@@ -24,7 +24,8 @@ ctrl.controller('deptListController', function($scope, $window, $location, $mdDi
 	$scope.page = 1;
 	$scope.selected = [];
 
-	// Initialization: send a request to server and once it's successful, 
+	// Initialization: 
+	// send a request to server and once it's successful, 
 	// a department list is shown on the HTML page. 
 	// Otherwise, an error message is shown.
 	Dept.get().success(function(res){

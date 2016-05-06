@@ -24,7 +24,8 @@ ctrl.controller('deptCourseListController', function($scope, $window, $location,
 	$scope.selected = [];
 	var deptCode = $routeParams.id;
 
-	// Initialization: send a request to server and once it's successful, 
+	// Initialization: 
+	// send a request to server and once it's successful, 
 	// department information and its course list is shown on the HTML page.
 	// Otherwise, an error message is shown.
 	Dept.getOne(deptCode).success(function(res) {

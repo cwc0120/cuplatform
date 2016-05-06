@@ -22,7 +22,8 @@ ctrl.controller('itemListController', function($scope, $window, $location, $mdDi
 	$scope.page = 1;
 	$scope.selected = [];
 	
-	// Initialization: send a request to server and once it's successful, a 
+	// Initialization: 
+	// send a request to server and once it's successful, a 
 	// list of items is shown on the HTML page. Otherwise, an error message is 
 	// shown.
 	Item.get().success(function(res) {
