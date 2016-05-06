@@ -35,7 +35,7 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 
 	// Initialization
 	// send a request to server to find all the resource under a course
-	// if suucessful, display list of resources on the webpage
+	// if successful, display list of resources on the webpage
 	Resource.get($scope.courseCode).success(function(res) {
 		$scope.success = true;
 		$scope.ress = res;
@@ -278,6 +278,8 @@ ctrl.controller('resController', function($scope, $window, $location, $routePara
 	// 	First show a dialog with report.html for user's input. Once 
 	// 	received input, send the report to the server. The server will push the 
 	// 	report to admin's update center. Then, a Toast is poped up.
+	$scope.reportDialog = function(event) {
+		$mdDialog.show({	
 			controller: reportController,
 			templateUrl: '/views/report.html',
 			parent: angular.element(document.body),
