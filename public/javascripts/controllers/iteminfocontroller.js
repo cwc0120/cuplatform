@@ -2,7 +2,7 @@
 
 // Module: ItemInfo
 // Purpose: 
-// 	This module is used to show item information in iteminfo.html and 
+// 	This module is used to show item information in iteminfo.html 
 // 	using server data and provide methods to manipulate the data
 // Interface:
 // 	$scope.back: return to previous page if error occurs
@@ -12,6 +12,7 @@
 // 	$scope.interest: interest in the item (uninterested is required)
 // 	$scope.uninterest: uninterest in the item (interested is required)
 // 	$scope.delete: delete the item (seller or admin is required)
+
 ctrl.controller('itemInfoController', function($scope, $window, $location, $routeParams, $mdDialog, Item, Socket, Auth) {
 	// Variables
 	$scope.$location = $location;
