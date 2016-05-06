@@ -3,8 +3,8 @@
 // Module: DeptCourseList
 // Purpose: 
 // 	This module is used to show course list of a department in deptcourselist.html 
-// 	(for user) and deptcourselistv.html (for visitor) using server data and 
-// 	provide methods to manipulate the data
+// 	(for user) and deptcourselistv.html (for visitor) using server data. It also
+// 	allows admin to add/delete course
 // Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.addCourseDialog: add a new course (admin is required)

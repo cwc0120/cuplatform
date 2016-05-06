@@ -3,8 +3,8 @@
 // Module: CourseInfo
 // Purpose: 
 // 	This module is used to show course content in courseinfo.html (for user) and 
-// 	courseinfov.html (for visitor) using server data and provide methods to 
-// 	manipulate the data
+// 	courseinfov.html (for visitor) using server data. It also allows user/admin
+// 	to edit course, add/delete course comment
 // Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.editCourseDialog: edit course information (admin is required)

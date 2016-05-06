@@ -3,8 +3,8 @@
 // Module: DeptList
 // Purpose: 
 // 	This module is used to show department list in deptlist.html (for user) and 
-// 	deptlistv.html (for visitor) using server data and provide methods to 
-// 	manipulate the data
+// 	deptlistv.html (for visitor) using server data. It also allows user to add/
+// 	edit/delete department.
 // Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.addDeptDialog: add a new department (admin is required)

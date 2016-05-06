@@ -3,7 +3,7 @@
 // Module: ItemList
 // Purpose: 
 // 	This module is used to show list of items in itemlist.html 
-// 	using server data and provide methods to manipulate the data
+// 	using server data. It also allow user to put new item and delete items
 // Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.addItemDialog: put an item on the trading platform

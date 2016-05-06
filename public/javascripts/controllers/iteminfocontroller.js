@@ -3,7 +3,8 @@
 // Module: ItemInfo
 // Purpose: 
 // 	This module is used to show item information in iteminfo.html 
-// 	using server data and provide methods to manipulate the data
+// 	using server data. It also allows user to edit/delete item, send a message 
+// 	to seller, sell item, interest/uninterest item
 // Interface:
 // 	$scope.back: return to previous page if error occurs
 // 	$scope.editItemDialog: edit item content (seller is required)
