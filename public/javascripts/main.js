@@ -1,5 +1,6 @@
 'use strict';
 angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers', 'textAngular', 'ngMessages', 'md.data.table', 'btford.socket-io'])
+	// style configuration
 	.config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
 		.primaryPalette('purple')
@@ -7,6 +8,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 		.backgroundPalette('grey');
 	})
 
+	// route configuration and access control
 	.config(function($routeProvider) {
 		$routeProvider
 			.when('/', {
@@ -110,9 +112,11 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 			});
 	})
 
+	// http configuration
 	.config(function($httpProvider) {
 		$httpProvider.interceptors.push(function($q, $window, $location) {
 			return {
+				// attach token in every request so that server can identify user
 				request: function(config) {
 					config.headers = config.headers || {};
 					var token = $window.localStorage['cupToken'];
@@ -126,6 +130,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 					return response;
 				},
 
+				// if 401 error occurred, clear the localStorage of browser
 				responseError: function(rejection) {
 					if (rejection != undefined && rejection.status == 401) {
 						$window.localStorage.removeItem('uid');
@@ -140,6 +145,9 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 		});
 	})
 
+	// access control
+	// logged-in user cannot access visitor page, reroute to / (login page)
+	// visiter cannot access restricted page, reroute to / (homepage)
 	.run(function($rootScope, $location, $window, Auth) {
 		$rootScope.$on('$routeChangeStart', function(event, nextRoute) {
 			if (nextRoute !== null && nextRoute.requiredLogin && !Auth.isLogged) {
@@ -151,6 +159,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 		});
 	})
 
+	// upload file model
 	.directive('fileModel', function($parse) {
 		return {
 			restrict: 'A',
@@ -167,6 +176,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 		};
 	})
 
+	// compare password confirmation model
 	.directive('compareTo', function() {
 		return {
 			require: "ngModel",
@@ -186,6 +196,7 @@ angular.module('CUP', ['ngRoute', 'ngMaterial', 'CUPServices', 'CUPControllers',
 		};
 	})
 
+	// filter to remove html tag
 	.filter('htmlToPlaintext', function() {
 		return function(text) {
 			return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
